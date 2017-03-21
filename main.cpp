@@ -16,18 +16,21 @@ using namespace std;
 
 // forward declarations of built-in commands
 int my_cd(char **args);
+int my_pwd(char **args);
 int my_help(char **args);
 int my_exit(char **args);
 
 
 //it could be map, but for such amount of functions it looked obsolete
 const char (*my_builtin_str[]) = {
+        "pwd",
         "cd",
         "help",
         "exit"
 };
 
 int (*builtin_func[]) (char **) = {
+        &my_pwd,
         &my_cd,
         &my_help,
         &my_exit
@@ -38,6 +41,20 @@ int num_my_builtins() {
 }
 
 //Builtin implementation
+
+int my_pwd(char **args)
+{
+    try
+    {
+        std::cout << boost::filesystem::current_path() << endl;
+    }
+    catch (boost::filesystem::filesystem_error &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+
+    return 1;
+}
 
 
 int my_cd(char **args)
@@ -115,20 +132,21 @@ int my_launcher(char **args)
 
 //produced Kovalchuk, Refactored & extracted by Kushnir
 int str_vector_to_chars(vector<string> *args, char** cargs){
+    size_t i;
 
-    for(size_t i = 0; i < args->size(); ++i)
+    for(i = 0; i < args->size(); ++i)
     {
         cargs[i] = new char[(*args)[i].size() + 1];
         strcpy(cargs[i], (*args)[i].c_str());
     }
-
+    cargs[i] = NULL;
     return 0;
 }
 
 int my_execute(vector<string> args)
 {
 
-    char** cargs = new char*[args.size()];
+    char** cargs = new char*[args.size() + 1];
 
     str_vector_to_chars(&args , cargs);
 
@@ -145,9 +163,12 @@ int my_execute(vector<string> args)
     }
 */
 
+    cout<< "builtIns #" << num_my_builtins() << endl;
 
     for (int i = 0; i < num_my_builtins(); i++) {
+        cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
         if (strcmp(cargs[0], my_builtin_str[i]) == 0) {
+
             return (*builtin_func[i])(cargs);
         }
     }
@@ -213,10 +234,29 @@ void my_loop(void)
 
 int main(int argc, char **argv)
 {
+    cout<<"CHECK!>>>>>>>>>>>>>>>>"<<endl;
+    cout<<boost::filesystem::current_path()<<endl;
+    boost::filesystem::path this_path = boost::filesystem::current_path();
+    string this_path_str = this_path.c_str();
+    cout << this_path_str <<endl;
+
+    try
+    {
+        std::cout << boost::filesystem::current_path() << '\n';
+        boost::filesystem::current_path(this_path_str);
+        std::cout << boost::filesystem::current_path() << '\n';
+    }
+    catch (boost::filesystem::filesystem_error &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+
+
     // Load config files, if any.
 
     // Run command loop.
     my_loop();
+
 
     // Perform any shutdown/cleanup.
 
