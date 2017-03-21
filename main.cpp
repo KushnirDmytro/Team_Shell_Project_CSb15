@@ -112,8 +112,17 @@ int my_launcher(char **args)
     return 1;
 }
 
+
+//produced Kovalchuk, Refactored & extracted by Kushnir
 int str_vector_to_chars(vector<string> *args, char** cargs){
-return 0;
+
+    for(size_t i = 0; i < args->size(); ++i)
+    {
+        cargs[i] = new char[(*args)[i].size() + 1];
+        strcpy(cargs[i], (*args)[i].c_str());
+    }
+
+    return 0;
 }
 
 int my_execute(vector<string> args)
@@ -127,12 +136,14 @@ int my_execute(vector<string> args)
  //   test->size();
   //  printf("argsSize = %", test->size());
 
+
+    /*
     for(size_t i = 0; i < args.size(); ++i)
     {
         cargs[i] = new char[args[i].size() + 1];
         strcpy(cargs[i], args[i].c_str());
     }
-
+*/
 
 
     for (int i = 0; i < num_my_builtins(); i++) {
@@ -161,7 +172,7 @@ string my_read_line(void)
 {
     string buffer;
 
-    cin >> buffer;
+    getline(cin,buffer);
     buffer+=" ";
     return buffer;
 }
