@@ -13,6 +13,24 @@
 using namespace std;
 
 
+struct  system_path{
+    const u_int16_t max_path_length = 30;
+
+    boost::filesystem::path actual_path;
+
+    string path_buffer;
+
+    bool path_was_changed = false;
+};
+
+
+system_path this_path;
+
+
+
+
+
+
 
 // forward declarations of built-in commands
 int my_cd(char **args);
@@ -42,17 +60,22 @@ int num_my_builtins() {
 
 //Builtin implementation
 
-int my_pwd(char **args)
-{
+int refresh_path(){
     try
     {
-        std::cout << boost::filesystem::current_path() << endl;
+        this_path.actual_path = boost::filesystem::current_path();
     }
     catch (boost::filesystem::filesystem_error &e)
     {
         std::cerr << e.what() << '\n';
     }
+    return EXIT_SUCCESS;
+}
 
+int my_pwd(char **args)
+{
+    refresh_path();
+    printf("%s", this_path.actual_path.c_str());
     return 1;
 }
 
@@ -66,6 +89,8 @@ int my_cd(char **args)
             perror("my_Shell failed to change dir");
         }
     }
+    this_path.actual_path = boost::filesystem::current_path();
+    this_path.path_was_changed = true;
     return 1;
 }
 
@@ -216,6 +241,41 @@ vector <string> my_split_line(string input_str)
 }
 
 
+size_t trim_path_to_size(string *path, unsigned int size){
+    size_t position;
+    size_t was_trimmed = 0;
+    string path_delimiter = "/";
+    while (path->length() > size){
+        position = path->find(path_delimiter);
+        if (position != string::npos){
+            *path = path->substr(position+1);
+            was_trimmed += position+1;
+            cout << "path_trimmed ___" << *path << endl;
+        }
+    }
+    return was_trimmed;
+}
+
+
+void display_path(){
+
+    if (this_path.path_was_changed){
+        this_path.path_buffer = boost::filesystem::current_path().c_str();
+    }
+    size_t was_trimmed = 0;
+    if (this_path.path_buffer.length() > this_path.max_path_length){
+        was_trimmed = trim_path_to_size(&this_path.path_buffer, this_path.max_path_length);
+    }
+    if (was_trimmed) {
+        printf("%s%s%s", "~", this_path.path_buffer.c_str(), "$");
+    }
+    else{
+        printf("%s%s", this_path.path_buffer.c_str(), "$");
+    }
+    this_path.path_was_changed = false;
+
+}
+
 //execuion loop
 void my_loop(void)
 {
@@ -223,8 +283,9 @@ void my_loop(void)
     vector<string> args;
     int status;
 
+
     do {
-        printf("> ");
+        display_path();
         line = my_read_line();
         args = my_split_line(line);
         status = my_execute(args);
@@ -234,16 +295,11 @@ void my_loop(void)
 
 int main(int argc, char **argv)
 {
-    cout<<"CHECK!>>>>>>>>>>>>>>>>"<<endl;
-    cout<<boost::filesystem::current_path()<<endl;
-    boost::filesystem::path this_path = boost::filesystem::current_path();
-    string this_path_str = this_path.c_str();
-    cout << this_path_str <<endl;
+
 
     try
     {
         std::cout << boost::filesystem::current_path() << '\n';
-        boost::filesystem::current_path(this_path_str);
         std::cout << boost::filesystem::current_path() << '\n';
     }
     catch (boost::filesystem::filesystem_error &e)
@@ -253,6 +309,11 @@ int main(int argc, char **argv)
 
 
     // Load config files, if any.
+
+    //pass init
+    this_path.path_buffer = boost::filesystem::current_path().c_str();
+
+
 
     // Run command loop.
     my_loop();
