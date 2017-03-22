@@ -8,9 +8,34 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
+const char *homedir;
+
+
+
 
 
 using namespace std;
+
+
+#define  home_dir_call  "~"
+
+struct rights{
+    //prototype
+};
+
+struct user_data{
+    boost::filesystem::path home_dirrectory;
+    string name;
+    string pass;
+    rights user_rights;
+    bool is_defined = false;
+};
+
+user_data this_user;
 
 
 struct  system_path{
@@ -25,6 +50,55 @@ struct  system_path{
 
 
 system_path this_path;
+
+void init_user(user_data *user){
+    boost::filesystem::path buf;
+    buf = this_path.actual_path;
+    chdir("~");
+    printf("TEEEST!!! \n");
+
+    /* REFACTOR IF NEEDDED
+     * If you require multi-thread safety, you should use getpwuid_r instead
+     * of getpwuid like this (from the getpwnam(3) man page):
+     */
+
+    char *nameBuf;
+
+    if ((nameBuf = getenv("HOME")) != NULL) {
+        nameBuf = getpwuid(getuid())->pw_dir;
+        this_user.home_dirrectory = nameBuf;
+        cout << *nameBuf <<endl;
+    }
+    else {
+        printf("Homedirectory is undedfined \n");
+        this_user.home_dirrectory = "";
+    }
+    if ((nameBuf = getenv("USER")) != NULL) {
+        nameBuf = getpwuid(getuid())->pw_name;
+        this_user.name = nameBuf;
+        cout << *nameBuf <<endl;
+        printf("HELLO %s ! My_Shell is glad to see You ;0) \n", nameBuf);
+    }
+    else{
+        printf("Username is undedfined \n");
+    }
+
+
+
+    cout << this_user.name <<endl;
+    cout << this_user.home_dirrectory <<endl;
+
+    //cout << "HOME" << getenv("HOME") <<endl;
+
+    //cout << "MANPATH =>" << getenv("MANPATH") <<endl;
+
+    //cout << "USER" << getenv("USER") <<endl;
+
+    //cout << this_user.home_dirrectory;
+    //cout << homedir <<endl;
+    //cout << getpwuid(getuid())->pw_name << endl;
+    //boost::filesystem::current_path();
+};
 
 
 
@@ -64,6 +138,7 @@ int refresh_path(){
     try
     {
         this_path.actual_path = boost::filesystem::current_path();
+        this_path.path_buffer = boost::filesystem::current_path().string();
     }
     catch (boost::filesystem::filesystem_error &e)
     {
@@ -85,9 +160,21 @@ int my_cd(char **args)
     if (args[1] == NULL) { //has to have at least one arg
         fprintf(stderr, "my_Shell: expected argument to \"cd\"\n");
     } else {
-        if (chdir(args[1]) != 0) { // checking for return of default c++ func
-            perror("my_Shell failed to change dir");
+        string str(args[1]);
+        if (str == home_dir_call){
+            if (boost::filesystem::is_directory(this_user.home_dirrectory)){
+                boost::filesystem::current_path(this_user.home_dirrectory);
+            }
         }
+        else if (boost::filesystem::is_directory(args[1])){
+            boost::filesystem::current_path(args[1]);
+        }
+        else{
+            //TODO filesystem errors
+            //boost::filesystem::filesystem_error()
+            perror("\n my_Shell failed to change dir \t");
+        }
+
     }
     this_path.actual_path = boost::filesystem::current_path();
     this_path.path_was_changed = true;
@@ -241,9 +328,36 @@ vector <string> my_split_line(string input_str)
 }
 
 
+
+
+
+bool contains_home(boost::filesystem::path *dir){
+
+    if (this_user.home_dirrectory != ""){
+       // printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
+        //printf("%s \n", dir->c_str());
+        //printf("%s \n", this_user.home_dirrectory.c_str());
+
+        if ( (dir->string()).find(this_user.home_dirrectory.string()) != string::npos){
+        //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
+            return true;
+        }
+        //printf ("TEST>>>>>>>>>>>>>CONTAINS NO!!!  HOME<<<<<<<<<<<< \n");
+    }
+    return false;
+}
+
 size_t trim_path_to_size(string *path, unsigned int size){
     size_t position;
     size_t was_trimmed = 0;
+
+    boost::filesystem::path path_buf = *path;
+
+    if (contains_home(&path_buf)){
+        *path = path->substr(this_user.home_dirrectory.string().length());
+        cout << "TEST>>>>>>>>>>?????????????" <<endl;
+        cout << *path << endl;
+    }
     string path_delimiter = "/";
     while (path->length() > size){
         position = path->find(path_delimiter);
@@ -256,22 +370,30 @@ size_t trim_path_to_size(string *path, unsigned int size){
     return was_trimmed;
 }
 
-
 void display_path(){
+
+    string pref = "";
+    string postf = "$";
+    size_t was_trimmed = 0;
 
     if (this_path.path_was_changed){
         this_path.path_buffer = boost::filesystem::current_path().c_str();
+
     }
-    size_t was_trimmed = 0;
+
+    if ((contains_home(&this_path.actual_path))) {
+        pref.append("~");
+    }
+
     if (this_path.path_buffer.length() > this_path.max_path_length){
         was_trimmed = trim_path_to_size(&this_path.path_buffer, this_path.max_path_length);
     }
-    if (was_trimmed) {
-        printf("%s%s%s", "~", this_path.path_buffer.c_str(), "$");
+    if (was_trimmed){
+        pref.append("...");
     }
-    else{
-        printf("%s%s", this_path.path_buffer.c_str(), "$");
-    }
+
+    printf("\n%s%s%s", pref.c_str(), this_path.path_buffer.c_str(), postf.c_str());
+
     this_path.path_was_changed = false;
 
 }
@@ -293,25 +415,25 @@ void my_loop(void)
     } while (status);
 }
 
+
+void init_path(system_path* path){
+    path->actual_path = boost::filesystem::current_path();
+    refresh_path();
+}
+
 int main(int argc, char **argv)
 {
 
+    init_user(&this_user);
 
-    try
-    {
-        std::cout << boost::filesystem::current_path() << '\n';
-        std::cout << boost::filesystem::current_path() << '\n';
-    }
-    catch (boost::filesystem::filesystem_error &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    init_path(&this_path);
+
 
 
     // Load config files, if any.
 
     //pass init
-    this_path.path_buffer = boost::filesystem::current_path().c_str();
+    //this_path.path_buffer = boost::filesystem::current_path().c_str();
 
 
 
