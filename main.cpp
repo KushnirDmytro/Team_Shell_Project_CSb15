@@ -298,6 +298,8 @@ int main(int argc, char **argv)
 
 
     // Perform any shutdown/cleanup.
-
+    delete default_user;
+    delete current_directory;
+    delete console;
     return EXIT_SUCCESS;
 }
