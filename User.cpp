@@ -2,6 +2,7 @@
 // Created by d1md1m on 26.03.17.
 //
 
+#include <climits>
 #include "User.h"
 
 using namespace std;
@@ -31,7 +32,22 @@ User::User() {
     }
     else{
         printf("Username is undedfined \n");
+        this->setName("");
     }
+
+
+    char hostname[HOST_NAME_MAX];
+
+    if (gethostname(hostname, HOST_NAME_MAX))
+    {
+        perror("Hostname is Unknown");
+        this->setHostname("");
+    }
+    else{
+        this->setHostname(hostname);
+    }
+
+
 }
 
 
@@ -50,6 +66,14 @@ void User::setPass(const string &pass) {
 
 void User::setUser_rights(const rights &user_rights) {
     this->user_rights = user_rights;
+}
+
+const string &User::getHostname() const {
+    return hostname;
+}
+
+void User::setHostname(const string &hostname) {
+    User::hostname = hostname;
 }
 
 

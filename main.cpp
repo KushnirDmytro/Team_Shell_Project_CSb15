@@ -12,7 +12,7 @@
 
 
 
-#include "PromptConsoleInterface.h"
+#include "ConsoleView.h"
 #include "User.h"
 #include "Directory.h"
 
@@ -25,170 +25,15 @@ using namespace std;
 
 #define  home_dir_call  "~"
 
-User default_user;
+User *default_user;
 
 
 
-
-
-class Directory{
-public:
-
-    const boost::filesystem::path &getActual_path() const {
-        return actual_path;
-    }
-
-    void setActual_path(const boost::filesystem::path &actual_path) {
-        Directory::actual_path = actual_path;
-    }
-
-    bool isPath_was_changed() const {
-        return path_was_changed;
-    }
-
-    void setPath_was_changed(bool path_was_changed) {
-        Directory::path_was_changed = path_was_changed;
-    }
-
-private:
-
-    boost::filesystem::path actual_path;
-
-    bool path_was_changed;
-
-public:
-    Directory(){
-        this->refresh_path();
-        this->setPath_was_changed(true);
-    }
-
-    int refresh_path(){
-        try
-        {
-            this->setActual_path(boost::filesystem::current_path());
-        }
-        catch (boost::filesystem::filesystem_error &e)
-        {
-            std::cerr << e.what() << '\n';
-        }
-        return EXIT_SUCCESS;
-    }
-
-    //by default shows info about this object, but can do for any
-    bool contains_home( /*boost::filesystem::path &dir = getActual_path() */  User *this_user = &default_user){
-        if (this_user->getHome_dirrectory() != ""){
-
-            if ( this->getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos){
-                //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
-                return true;
-            }
-            //printf ("TEST>>>>>>>>>>>>>CONTAINS NO!!!  HOME<<<<<<<<<<<< \n");
-        }
-        return false;
-    }
-};
 
 
 Directory *current_directory;
 
 
-
-class ConsoleView{
-private:
-    Directory *current_directoryPtr;
-
-    string path_buffer;
-    const u_int16_t max_path_length = 30; //yes, it is "Magic"
-
-public:
-
-    ConsoleView(Directory *directory_adr){
-        this->setCurrent_directoryPtr(directory_adr);
-    }
-
-    const u_int16_t getMax_path_length() const {
-        return max_path_length;
-    }
-
-
-    Directory *getCurrent_directoryPtr() const {
-        return current_directoryPtr;
-    }
-
-    void setCurrent_directoryPtr(Directory *current_directoryPtr) {
-        this->current_directoryPtr = current_directoryPtr;
-    }
-
-
-
-
-    const string &getPath_buffer() const {
-        return path_buffer;
-    }
-
-    void setPath_buffer(const string &path_buffer) {
-        this->path_buffer = path_buffer;
-    }
-
-
-    void refresh_path_buffer(){
-        this->setPath_buffer(this->current_directoryPtr->getActual_path().c_str());
-    }
-
-    void display_path(){
-
-        string pref = "";
-        string postf = "$";
-        size_t was_trimmed = 0;
-
-
-        if (this->current_directoryPtr->isPath_was_changed()){
-            this->setPath_buffer(boost::filesystem::current_path().c_str());
-        }
-
-        if ( this->current_directoryPtr->contains_home() ) {
-            pref.append("~");
-        }
-
-        if ((this->getPath_buffer().length() > this->getMax_path_length()) || this->current_directoryPtr->contains_home() ){
-            was_trimmed = trim_path_to_size( &(this->path_buffer) , this->getMax_path_length());
-        }
-        if (was_trimmed){
-            pref.append("...");
-        }
-
-        printf("\n%s%s%s", pref.c_str(), this->getPath_buffer().c_str(), postf.c_str());
-
-        this->current_directoryPtr->setPath_was_changed(false);
-
-    }
-
-
-
-    size_t trim_path_to_size(string *path, unsigned int size, User *this_user = &default_user){
-        size_t position;
-        size_t was_trimmed = 0;
-        boost::filesystem::path path_buf = *path;
-
-        if (this->current_directoryPtr->contains_home(this_user)){
-            *path = path->substr(this_user->getHome_dirrectory().string().length());
-            //cout << "TEST>>>>>>>>>>?????????????" <<endl;
-            //cout << *path << endl;
-        }
-        string path_delimiter = "/";
-        while (path->length() > size){
-            position = path->find(path_delimiter);
-            if (position != string::npos){
-                *path = path->substr(position+1);
-                was_trimmed += position+1;
-                //cout << "path_trimmed ___" << *path << endl;
-            }
-        }
-        return was_trimmed;
-    }
-
-
-};
 
 
 
@@ -244,8 +89,8 @@ int my_cd(char **args)
     } else {
         string str(args[1]);
         if (str == home_dir_call){
-            if ( boost::filesystem::is_directory( default_user.getHome_dirrectory() ) ){
-                boost::filesystem::current_path(default_user.getHome_dirrectory());
+            if ( boost::filesystem::is_directory( default_user->getHome_dirrectory() ) ){
+                boost::filesystem::current_path(default_user->getHome_dirrectory());
             }
         }
         else if (boost::filesystem::is_directory(args[1])){
@@ -423,7 +268,7 @@ void my_loop(void)
 
 
     do {
-        console->display_path();
+        console->display_all();
         line = my_read_line();
         args = my_split_line(line);
         status = my_execute(args);
@@ -435,7 +280,7 @@ void my_loop(void)
 
 int main(int argc, char **argv)
 {
-    default_user;
+    default_user = new User();
 
     //init_user(&this_user);
     current_directory = new Directory();
