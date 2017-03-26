@@ -18,6 +18,7 @@ const char *homedir;
 
 
 
+
 using namespace std;
 
 
@@ -55,7 +56,7 @@ void init_user(user_data *user){
     boost::filesystem::path buf;
     buf = this_path.actual_path;
     chdir("~");
-    printf("TEEEST!!! \n");
+    //printf("TEEEST!!! \n");
 
     /* REFACTOR IF NEEDDED
      * If you require multi-thread safety, you should use getpwuid_r instead
@@ -67,7 +68,7 @@ void init_user(user_data *user){
     if ((nameBuf = getenv("HOME")) != NULL) {
         nameBuf = getpwuid(getuid())->pw_dir;
         this_user.home_dirrectory = nameBuf;
-        cout << *nameBuf <<endl;
+        //cout << *nameBuf <<endl;
     }
     else {
         printf("Homedirectory is undedfined \n");
@@ -76,7 +77,7 @@ void init_user(user_data *user){
     if ((nameBuf = getenv("USER")) != NULL) {
         nameBuf = getpwuid(getuid())->pw_name;
         this_user.name = nameBuf;
-        cout << *nameBuf <<endl;
+        //cout << *nameBuf <<endl;
         printf("HELLO %s ! My_Shell is glad to see You ;0) \n", nameBuf);
     }
     else{
@@ -85,8 +86,8 @@ void init_user(user_data *user){
 
 
 
-    cout << this_user.name <<endl;
-    cout << this_user.home_dirrectory <<endl;
+    //cout << this_user.name <<endl;
+    //cout << this_user.home_dirrectory <<endl;
 
     //cout << "HOME" << getenv("HOME") <<endl;
 
@@ -355,8 +356,8 @@ size_t trim_path_to_size(string *path, unsigned int size){
 
     if (contains_home(&path_buf)){
         *path = path->substr(this_user.home_dirrectory.string().length());
-        cout << "TEST>>>>>>>>>>?????????????" <<endl;
-        cout << *path << endl;
+        //cout << "TEST>>>>>>>>>>?????????????" <<endl;
+        //cout << *path << endl;
     }
     string path_delimiter = "/";
     while (path->length() > size){
@@ -364,7 +365,7 @@ size_t trim_path_to_size(string *path, unsigned int size){
         if (position != string::npos){
             *path = path->substr(position+1);
             was_trimmed += position+1;
-            cout << "path_trimmed ___" << *path << endl;
+            //cout << "path_trimmed ___" << *path << endl;
         }
     }
     return was_trimmed;
@@ -381,11 +382,11 @@ void display_path(){
 
     }
 
-    if ((contains_home(&this_path.actual_path))) {
+    if (contains_home(&this_path.actual_path)) {
         pref.append("~");
     }
 
-    if (this_path.path_buffer.length() > this_path.max_path_length){
+    if ((this_path.path_buffer.length() > this_path.max_path_length) || contains_home(&this_path.actual_path) ){
         was_trimmed = trim_path_to_size(&this_path.path_buffer, this_path.max_path_length);
     }
     if (was_trimmed){
