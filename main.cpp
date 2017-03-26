@@ -8,15 +8,16 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 
-#include <unistd.h>
-#include <sys/types.h>
 #include <pwd.h>
 
-const char *homedir;
 
 
+#include "PromptConsoleInterface.h"
+#include "User.h"
+#include "Directory.h"
 
 
+//const char *homedir;
 
 
 using namespace std;
@@ -24,82 +25,174 @@ using namespace std;
 
 #define  home_dir_call  "~"
 
-struct rights{
-    //prototype
-};
-
-struct user_data{
-    boost::filesystem::path home_dirrectory;
-    string name;
-    string pass;
-    rights user_rights;
-    bool is_defined = false;
-};
-
-user_data this_user;
+User default_user;
 
 
-struct  system_path{
-    const u_int16_t max_path_length = 30;
+
+
+
+class Directory{
+public:
+
+    const boost::filesystem::path &getActual_path() const {
+        return actual_path;
+    }
+
+    void setActual_path(const boost::filesystem::path &actual_path) {
+        Directory::actual_path = actual_path;
+    }
+
+    bool isPath_was_changed() const {
+        return path_was_changed;
+    }
+
+    void setPath_was_changed(bool path_was_changed) {
+        Directory::path_was_changed = path_was_changed;
+    }
+
+private:
 
     boost::filesystem::path actual_path;
 
+    bool path_was_changed;
+
+public:
+    Directory(){
+        this->refresh_path();
+        this->setPath_was_changed(true);
+    }
+
+    int refresh_path(){
+        try
+        {
+            this->setActual_path(boost::filesystem::current_path());
+        }
+        catch (boost::filesystem::filesystem_error &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        return EXIT_SUCCESS;
+    }
+
+    //by default shows info about this object, but can do for any
+    bool contains_home( /*boost::filesystem::path &dir = getActual_path() */  User *this_user = &default_user){
+        if (this_user->getHome_dirrectory() != ""){
+
+            if ( this->getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos){
+                //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
+                return true;
+            }
+            //printf ("TEST>>>>>>>>>>>>>CONTAINS NO!!!  HOME<<<<<<<<<<<< \n");
+        }
+        return false;
+    }
+};
+
+
+Directory *current_directory;
+
+
+
+class ConsoleView{
+private:
+    Directory *current_directoryPtr;
+
     string path_buffer;
+    const u_int16_t max_path_length = 30; //yes, it is "Magic"
 
-    bool path_was_changed = false;
+public:
+
+    ConsoleView(Directory *directory_adr){
+        this->setCurrent_directoryPtr(directory_adr);
+    }
+
+    const u_int16_t getMax_path_length() const {
+        return max_path_length;
+    }
+
+
+    Directory *getCurrent_directoryPtr() const {
+        return current_directoryPtr;
+    }
+
+    void setCurrent_directoryPtr(Directory *current_directoryPtr) {
+        this->current_directoryPtr = current_directoryPtr;
+    }
+
+
+
+
+    const string &getPath_buffer() const {
+        return path_buffer;
+    }
+
+    void setPath_buffer(const string &path_buffer) {
+        this->path_buffer = path_buffer;
+    }
+
+
+    void refresh_path_buffer(){
+        this->setPath_buffer(this->current_directoryPtr->getActual_path().c_str());
+    }
+
+    void display_path(){
+
+        string pref = "";
+        string postf = "$";
+        size_t was_trimmed = 0;
+
+
+        if (this->current_directoryPtr->isPath_was_changed()){
+            this->setPath_buffer(boost::filesystem::current_path().c_str());
+        }
+
+        if ( this->current_directoryPtr->contains_home() ) {
+            pref.append("~");
+        }
+
+        if ((this->getPath_buffer().length() > this->getMax_path_length()) || this->current_directoryPtr->contains_home() ){
+            was_trimmed = trim_path_to_size( &(this->path_buffer) , this->getMax_path_length());
+        }
+        if (was_trimmed){
+            pref.append("...");
+        }
+
+        printf("\n%s%s%s", pref.c_str(), this->getPath_buffer().c_str(), postf.c_str());
+
+        this->current_directoryPtr->setPath_was_changed(false);
+
+    }
+
+
+
+    size_t trim_path_to_size(string *path, unsigned int size, User *this_user = &default_user){
+        size_t position;
+        size_t was_trimmed = 0;
+        boost::filesystem::path path_buf = *path;
+
+        if (this->current_directoryPtr->contains_home(this_user)){
+            *path = path->substr(this_user->getHome_dirrectory().string().length());
+            //cout << "TEST>>>>>>>>>>?????????????" <<endl;
+            //cout << *path << endl;
+        }
+        string path_delimiter = "/";
+        while (path->length() > size){
+            position = path->find(path_delimiter);
+            if (position != string::npos){
+                *path = path->substr(position+1);
+                was_trimmed += position+1;
+                //cout << "path_trimmed ___" << *path << endl;
+            }
+        }
+        return was_trimmed;
+    }
+
+
 };
 
 
-system_path this_path;
 
-void init_user(user_data *user){
-    boost::filesystem::path buf;
-    buf = this_path.actual_path;
-    chdir("~");
-    //printf("TEEEST!!! \n");
-
-    /* REFACTOR IF NEEDDED
-     * If you require multi-thread safety, you should use getpwuid_r instead
-     * of getpwuid like this (from the getpwnam(3) man page):
-     */
-
-    char *nameBuf;
-
-    if ((nameBuf = getenv("HOME")) != NULL) {
-        nameBuf = getpwuid(getuid())->pw_dir;
-        this_user.home_dirrectory = nameBuf;
-        //cout << *nameBuf <<endl;
-    }
-    else {
-        printf("Homedirectory is undedfined \n");
-        this_user.home_dirrectory = "";
-    }
-    if ((nameBuf = getenv("USER")) != NULL) {
-        nameBuf = getpwuid(getuid())->pw_name;
-        this_user.name = nameBuf;
-        //cout << *nameBuf <<endl;
-        printf("HELLO %s ! My_Shell is glad to see You ;0) \n", nameBuf);
-    }
-    else{
-        printf("Username is undedfined \n");
-    }
-
-
-
-    //cout << this_user.name <<endl;
-    //cout << this_user.home_dirrectory <<endl;
-
-    //cout << "HOME" << getenv("HOME") <<endl;
-
-    //cout << "MANPATH =>" << getenv("MANPATH") <<endl;
-
-    //cout << "USER" << getenv("USER") <<endl;
-
-    //cout << this_user.home_dirrectory;
-    //cout << homedir <<endl;
-    //cout << getpwuid(getuid())->pw_name << endl;
-    //boost::filesystem::current_path();
-};
+ConsoleView *console;
 
 
 
@@ -135,23 +228,11 @@ int num_my_builtins() {
 
 //Builtin implementation
 
-int refresh_path(){
-    try
-    {
-        this_path.actual_path = boost::filesystem::current_path();
-        this_path.path_buffer = boost::filesystem::current_path().string();
-    }
-    catch (boost::filesystem::filesystem_error &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    return EXIT_SUCCESS;
-}
 
 int my_pwd(char **args)
 {
-    refresh_path();
-    printf("%s", this_path.actual_path.c_str());
+    current_directory->refresh_path();
+    printf("%s", current_directory->getActual_path().c_str());
     return 1;
 }
 
@@ -163,8 +244,8 @@ int my_cd(char **args)
     } else {
         string str(args[1]);
         if (str == home_dir_call){
-            if (boost::filesystem::is_directory(this_user.home_dirrectory)){
-                boost::filesystem::current_path(this_user.home_dirrectory);
+            if ( boost::filesystem::is_directory( default_user.getHome_dirrectory() ) ){
+                boost::filesystem::current_path(default_user.getHome_dirrectory());
             }
         }
         else if (boost::filesystem::is_directory(args[1])){
@@ -177,8 +258,8 @@ int my_cd(char **args)
         }
 
     }
-    this_path.actual_path = boost::filesystem::current_path();
-    this_path.path_was_changed = true;
+    current_directory->setActual_path(boost::filesystem::current_path());
+    current_directory->setPath_was_changed(true);
     return 1;
 }
 
@@ -332,72 +413,6 @@ vector <string> my_split_line(string input_str)
 
 
 
-bool contains_home(boost::filesystem::path *dir){
-
-    if (this_user.home_dirrectory != ""){
-       // printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
-        //printf("%s \n", dir->c_str());
-        //printf("%s \n", this_user.home_dirrectory.c_str());
-
-        if ( (dir->string()).find(this_user.home_dirrectory.string()) != string::npos){
-        //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
-            return true;
-        }
-        //printf ("TEST>>>>>>>>>>>>>CONTAINS NO!!!  HOME<<<<<<<<<<<< \n");
-    }
-    return false;
-}
-
-size_t trim_path_to_size(string *path, unsigned int size){
-    size_t position;
-    size_t was_trimmed = 0;
-
-    boost::filesystem::path path_buf = *path;
-
-    if (contains_home(&path_buf)){
-        *path = path->substr(this_user.home_dirrectory.string().length());
-        //cout << "TEST>>>>>>>>>>?????????????" <<endl;
-        //cout << *path << endl;
-    }
-    string path_delimiter = "/";
-    while (path->length() > size){
-        position = path->find(path_delimiter);
-        if (position != string::npos){
-            *path = path->substr(position+1);
-            was_trimmed += position+1;
-            //cout << "path_trimmed ___" << *path << endl;
-        }
-    }
-    return was_trimmed;
-}
-
-void display_path(){
-
-    string pref = "";
-    string postf = "$";
-    size_t was_trimmed = 0;
-
-    if (this_path.path_was_changed){
-        this_path.path_buffer = boost::filesystem::current_path().c_str();
-
-    }
-
-    if (contains_home(&this_path.actual_path)) {
-        pref.append("~");
-    }
-
-    if ((this_path.path_buffer.length() > this_path.max_path_length) || contains_home(&this_path.actual_path) ){
-        was_trimmed = trim_path_to_size(&this_path.path_buffer, this_path.max_path_length);
-    }
-    if (was_trimmed){
-        pref.append("...");
-    }
-
-    printf("\n%s%s%s", pref.c_str(), this_path.path_buffer.c_str(), postf.c_str());
-
-    this_path.path_was_changed = false;
-
-}
 
 //execuion loop
 void my_loop(void)
@@ -408,7 +423,7 @@ void my_loop(void)
 
 
     do {
-        display_path();
+        console->display_path();
         line = my_read_line();
         args = my_split_line(line);
         status = my_execute(args);
@@ -417,19 +432,14 @@ void my_loop(void)
 }
 
 
-void init_path(system_path* path){
-    path->actual_path = boost::filesystem::current_path();
-    refresh_path();
-}
 
 int main(int argc, char **argv)
 {
+    default_user;
 
-    init_user(&this_user);
-
-    init_path(&this_path);
-
-
+    //init_user(&this_user);
+    current_directory = new Directory();
+    console = new ConsoleView(current_directory);
 
     // Load config files, if any.
 
