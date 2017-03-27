@@ -9,6 +9,7 @@
 #include <boost/filesystem.hpp>
 
 #include <pwd.h>
+#include <map>
 
 
 #include "ConsoleView.h"
@@ -31,7 +32,6 @@ Directory *current_directory;
 
 
 ConsoleView *console;
-
 
 
 using  callable_function =  int (*)(size_t, char **);
@@ -103,7 +103,11 @@ Embedded_func *my_cd_obj;
 Embedded_func *my_help_obj;
 Embedded_func *my_exit_obj;
 
+map <string, Embedded_func*> embedded_lib;
+
+
 //it could be map, but for such amount of functions it looked obsolete
+/*
 //TODO mapHERE
 const char (*my_builtin_str[]) = {
         "pwd",
@@ -111,15 +115,15 @@ const char (*my_builtin_str[]) = {
         "help",
         "exit"
 };
-
+*/
 
 
 int num_my_builtins() {
-    return sizeof(my_builtin_str) / sizeof(char *);
+    return (int) embedded_lib.size();
 }
 
 
-Embedded_func *builtin_lib[4];
+//Embedded_func *builtin_lib[4];
 /*{
         my_pwd_obj,
         my_cd_obj,n
@@ -183,10 +187,10 @@ int my_help(size_t nargs, char **args)
     printf("Write command and arguments, if needed, then press Enter\n");
     printf("To get detailed information, write <command name> -help or <command name> -h:\n");
 
-    for (int i = 0; i < num_my_builtins(); i++) {
+/*    for (int i = 0; i < num_my_builtins(); i++) {
         printf("  %s\n", my_builtin_str[i]);
     }
-
+*/
     return 1;
 }
 
@@ -200,7 +204,7 @@ int my_exit(size_t nargs, char **args)
 
 
 // launcher for custom modules
-int my_launcher(char **args)
+int my_extern_launcher(char **args)
 {
     pid_t pid, wpid;
     int status;
@@ -262,14 +266,15 @@ int my_execute(vector<string> args)
     cout<< "builtIns #" << num_my_builtins() << endl;
 
     for (int i = 0; i < num_my_builtins(); i++) {
-        cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
-        if (strcmp(cargs[0], my_builtin_str[i]) == 0) {
-
-            return (builtin_lib[i])->call( args_number, cargs);
-        }
+//        cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
+        auto search_iter = embedded_lib.find(cargs[0]);
+        if (search_iter != embedded_lib.end() ) // case when we have such a func in our lib
+         {
+            return (search_iter->second)->call(args_number, cargs);
+         }
     }
 
-    return my_launcher(cargs);
+    return my_extern_launcher(cargs);
 
 
 }
@@ -343,7 +348,15 @@ int main(int argc, char **argv)
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
 
 
-    builtin_lib[0] =
+    embedded_lib= {
+            { "cd",  my_cd_obj},
+           { "pwd", my_pwd_obj },
+            { "help", my_help_obj },
+            { "exit", my_exit_obj }
+    };
+
+
+/*    builtin_lib[0] =
             my_pwd_obj;
 
     builtin_lib[1] =
@@ -354,7 +367,7 @@ int main(int argc, char **argv)
     builtin_lib[3] =
             my_exit_obj;
 
-
+*/
     default_user = new User();
 
     //init_user(&this_user);
