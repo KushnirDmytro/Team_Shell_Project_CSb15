@@ -28,16 +28,11 @@ using namespace std;
 User *default_user;
 
 
-
-
-
 Directory *current_directory;
 
 
-
-
-
 ConsoleView *console;
+
 
 
 
@@ -215,23 +210,12 @@ int my_execute(vector<string> args)
     return my_launcher(cargs);
 
 
-
-    // An empty command was entered (became obsolete with getline)
-    /*
-    if (cargs[0] == NULL) {
-        printf("Empty command was entered! \n");
-        return 1;
-    }
-     */
-
-
 }
 
 
 string my_read_line(void)
 {
     string buffer;
-
     getline(cin,buffer);
     buffer+=" ";
     return buffer;
@@ -246,8 +230,16 @@ vector <string> my_split_line(string input_str)
     size_t pos = 0;
     string tok; // for toke
 
+    unsigned long start;
+
+    start = input_str.find_first_not_of(" ");
+
+    input_str = input_str.substr(start);
+
+    //cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" <<endl;
     while ((pos = input_str.find(delim)) != string::npos) {
         tok = input_str.substr(0, pos);
+      //  cout << tok << endl;
         args.push_back(tok);
         input_str.erase(0, pos + delim.length());
     }
@@ -287,9 +279,6 @@ int main(int argc, char **argv)
     console = new ConsoleView(current_directory);
 
     // Load config files, if any.
-
-    //pass init
-    //this_path.path_buffer = boost::filesystem::current_path().c_str();
 
 
 
