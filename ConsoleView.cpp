@@ -113,7 +113,7 @@ ConsoleView::ConsoleView(Directory *directory_adr){
             if (position != string::npos){
                 *path = path->substr(position+1);
                 was_trimmed += position+1;
-                cout << "path_trimmed ___" << *path << "Trimmed "<< was_trimmed << endl;
+               // cout << "path_trimmed ___" << *path << "Trimmed "<< was_trimmed << endl;
             }
         }
         return was_trimmed;

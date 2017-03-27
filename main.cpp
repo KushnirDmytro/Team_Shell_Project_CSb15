@@ -11,7 +11,6 @@
 #include <pwd.h>
 
 
-
 #include "ConsoleView.h"
 #include "User.h"
 #include "Directory.h"
@@ -35,19 +34,69 @@ ConsoleView *console;
 
 
 
-
-
+using  callable_function =  int (*)(size_t, char **);
 
 
 
 // forward declarations of built-in commands
-int my_cd(char **args);
-int my_pwd(char **args);
-int my_help(char **args);
-int my_exit(char **args);
+
+int my_cd(size_t nargs, char **args);
+int my_pwd(size_t nargs, char **args);
+int my_help(size_t nargs, char **args);
+int my_exit(size_t nargs, char **args);
+
+callable_function my_cd_addr = my_cd;
+callable_function my_pwd_addr = my_pwd;
+callable_function my_help_addr = my_help;
+callable_function my_exit_addr = my_exit;
+
+
+
+
+class Embedded_func{
+private:
+    string name;
+    char** vargs;
+    size_t nargs;
+    string help_info;
+    bool initialized;
+    callable_function func;
+public:
+    Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg){
+        this->name=name;
+        this->func = funct_to_assign;
+        this->help_info = help_msg;
+    }
+
+
+    void search_for_help(unsigned int nargs, char** &argvector){
+
+    }
+
+    void output_help(string &helpMsg){
+
+    }
+
+
+    int call(size_t nargs, char **args){
+        this->nargs = nargs;
+        this->vargs = args;
+        this->initialized = true;
+        func (this->nargs, this->vargs);
+        return 1;
+    }
+
+};
+
+
+Embedded_func *my_pwd_obj;
+Embedded_func *my_cd_obj;
+Embedded_func *my_help_obj;
+Embedded_func *my_exit_obj;
 
 
 //it could be map, but for such amount of functions it looked obsolete
+//TODO mapHERE
 const char (*my_builtin_str[]) = {
         "pwd",
         "cd",
@@ -55,12 +104,23 @@ const char (*my_builtin_str[]) = {
         "exit"
 };
 
-int (*builtin_func[]) (char **) = {
+
+Embedded_func *builtin_lib[4];
+/*{
+        my_pwd_obj,
+        my_cd_obj,
+        my_help_obj,
+        my_exit_obj
+};*/
+
+/*
+int (*builtin_func[]) (unsigned int , char ** ) = {
         &my_pwd,
         &my_cd,
         &my_help,
         &my_exit
 };
+ */
 
 int num_my_builtins() {
     return sizeof(my_builtin_str) / sizeof(char *);
@@ -69,7 +129,7 @@ int num_my_builtins() {
 //Builtin implementation
 
 
-int my_pwd(char **args)
+int my_pwd(size_t nargs, char **args)
 {
     current_directory->refresh_path();
     printf("%s", current_directory->getActual_path().c_str());
@@ -77,7 +137,9 @@ int my_pwd(char **args)
 }
 
 
-int my_cd(char **args)
+
+
+int my_cd(size_t nargs, char **args)
 {
     if (args[1] == NULL) { //has to have at least one arg
         fprintf(stderr, "my_Shell: expected argument to \"cd\"\n");
@@ -104,8 +166,9 @@ int my_cd(char **args)
 }
 
 
+
 //shows help info
-int my_help(char **args)
+int my_help(size_t nargs, char **args)
 {
 
     printf("Write command and arguments, if needed, then press Enter\n");
@@ -119,7 +182,7 @@ int my_help(char **args)
 }
 
 //just exits, that is it
-int my_exit(char **args)
+int my_exit(size_t nargs, char **args)
 {
     printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
     return 0;
@@ -181,21 +244,11 @@ int my_execute(vector<string> args)
 {
 
     char** cargs = new char*[args.size() + 1];
+    unsigned int args_number = (int) args.size();
 
+
+    cout << "NUMBER OF ARGS FOUND: " <<args_number << endl;
     str_vector_to_chars(&args , cargs);
-
-//    vector<string>* test = &args;
- //   test->size();
-  //  printf("argsSize = %", test->size());
-
-
-    /*
-    for(size_t i = 0; i < args.size(); ++i)
-    {
-        cargs[i] = new char[args[i].size() + 1];
-        strcpy(cargs[i], args[i].c_str());
-    }
-*/
 
     cout<< "builtIns #" << num_my_builtins() << endl;
 
@@ -203,7 +256,7 @@ int my_execute(vector<string> args)
         cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
         if (strcmp(cargs[0], my_builtin_str[i]) == 0) {
 
-            return (*builtin_func[i])(cargs);
+            return (builtin_lib[i])->call( args_number, cargs);
         }
     }
 
@@ -247,9 +300,11 @@ vector <string> my_split_line(string input_str)
 }
 
 
+/*
+class Interpreter{
 
-
-
+}
+*/
 
 //execuion loop
 void my_loop(void)
@@ -263,7 +318,7 @@ void my_loop(void)
         console->display_all();
         line = my_read_line();
         args = my_split_line(line);
-        status = my_execute(args);
+        status = my_execute(args); //if 0 - finished, exited
 
     } while (status);
 }
@@ -272,16 +327,42 @@ void my_loop(void)
 
 int main(int argc, char **argv)
 {
+    string cd_help_msg = "SOME CD HELP";
+    my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
+    my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, cd_help_msg );
+    my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
+    my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
+
+
+    builtin_lib[0] =
+            my_pwd_obj;
+
+    builtin_lib[1] =
+            my_cd_obj;
+
+    builtin_lib[2] =
+            my_help_obj;
+    builtin_lib[3] =
+            my_exit_obj;
+
+
     default_user = new User();
 
     //init_user(&this_user);
     current_directory = new Directory();
     console = new ConsoleView(current_directory);
 
+
     // Load config files, if any.
 
-
-
+    //test
+    /*
+    char* args[] ={
+            "cd",
+            "~"
+    };
+    my_cd_obj->call(2, args);
+     */
     // Run command loop.
     my_loop();
 
