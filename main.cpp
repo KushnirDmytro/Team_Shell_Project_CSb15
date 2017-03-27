@@ -69,12 +69,17 @@ public:
     }
 
 
-    void search_for_help(unsigned int nargs, char** &argvector){
-
+    int search_for_help(size_t nargs, char** &argvector){
+        for (int i = 0; i< nargs ; ++i){
+            if (( strcmp(argvector[i], "--help") == 0  ) || ( strcmp(argvector[i], "-h") == 0  ) ){
+                return 1;
+            }
+        }
+        return 0;
     }
 
     void output_help(string &helpMsg){
-
+        printf("%s\n", this->help_info.c_str());
     }
 
 
@@ -82,6 +87,10 @@ public:
         this->nargs = nargs;
         this->vargs = args;
         this->initialized = true;
+        if (this->search_for_help(this->nargs, this->vargs)){
+            this->output_help(this->help_info);
+            return 1;
+        }
         func (this->nargs, this->vargs);
         return 1;
     }
@@ -94,7 +103,6 @@ Embedded_func *my_cd_obj;
 Embedded_func *my_help_obj;
 Embedded_func *my_exit_obj;
 
-
 //it could be map, but for such amount of functions it looked obsolete
 //TODO mapHERE
 const char (*my_builtin_str[]) = {
@@ -105,10 +113,16 @@ const char (*my_builtin_str[]) = {
 };
 
 
+
+int num_my_builtins() {
+    return sizeof(my_builtin_str) / sizeof(char *);
+}
+
+
 Embedded_func *builtin_lib[4];
 /*{
         my_pwd_obj,
-        my_cd_obj,
+        my_cd_obj,n
         my_help_obj,
         my_exit_obj
 };*/
@@ -121,11 +135,6 @@ int (*builtin_func[]) (unsigned int , char ** ) = {
         &my_exit
 };
  */
-
-int num_my_builtins() {
-    return sizeof(my_builtin_str) / sizeof(char *);
-}
-
 //Builtin implementation
 
 
