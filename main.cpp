@@ -7,9 +7,10 @@
 #include <vector>
 #include <iostream>
 #include <boost/filesystem.hpp>
-
+#include <boost/filesystem/fstream.hpp>
 #include <pwd.h>
 #include <map>
+#include <fstream>
 
 
 #include "ConsoleView.h"
@@ -30,11 +31,89 @@ int my_cd(size_t nargs, char **args);
 int my_pwd(size_t nargs, char **args);
 int my_help(size_t nargs, char **args);
 int my_exit(size_t nargs, char **args);
+int my_sh(size_t nargs, char **args);
+
 
 
 #define  home_dir_call  "~"
 
 User *default_user;
+
+class FileLaneIterator;
+
+
+
+
+class FileLaneIterator{
+private:
+    ifstream infile;
+    bool isGood;
+public:
+
+    FileLaneIterator(string filename){
+        if (boost::filesystem::exists(filename)){
+            infile.open(filename);
+
+            //cout << "ISOPEN:  " << infile.is_open() <<endl;
+            if (infile.is_open()){
+                isGood = true;
+                printf("FILE {%s} IS OPENED\n", filename.c_str());
+            }
+            else{
+                printf("%s Could not be open\n", filename.c_str());
+            }
+        }
+        else{
+            perror("Such a file does not found\n");
+            isGood = false;
+        }
+
+        //cout << "ISOPEN" << infile.is_open() <<endl;
+        //cout << "EOF:  "  << infile.eof() << endl;
+        //cout << "GOOD:  "  << infile.good() << endl;
+        //ifstream infile(filename);
+    }; //initialize via passing filename to open
+
+
+    bool fileIsReady(){
+        return (infile.good() && infile.is_open());
+    }
+
+    void getNextString(string *buf){
+
+      //  cout << "ISOPEN" << infile.is_open() <<endl;
+       // cout << "EOF:  "  << infile.eof() << endl;
+       // cout << "GOOD:  "  << infile.good() << endl;
+       // getchar();
+        if (infile.is_open() && !infile.eof()){
+
+            std::getline(infile, *buf);
+            //infile.getline(buf, 512);
+        }
+        else {
+            isGood = false;
+
+        }
+    }
+
+    ~FileLaneIterator(){
+        if(infile.is_open()){
+            infile.close();
+        }
+    }
+};
+
+class Interpreter{
+
+    int proceed_sting(string* values){
+        return 1;
+    }
+
+    //TODO check for function options
+    //TODO filemasks
+};
+
+
 
 
 Directory *current_directory;
@@ -103,10 +182,6 @@ int my_help(size_t nargs, char **args)
     printf("Write command and arguments, if needed, then press Enter\n");
     printf("To get detailed information, write <command name> -help or <command name> -h:\n");
 
-/*    for (int i = 0; i < num_my_builtins(); i++) {
-        printf("  %s\n", my_builtin_str[i]);
-    }
-*/
     return 1;
 }
 
@@ -115,6 +190,44 @@ int my_exit(size_t nargs, char **args)
 {
     printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
     return 0;
+}
+
+int my_sh(size_t nargs, char **args)
+{
+    if (nargs > 1){
+        string file_path;
+        file_path = current_directory->getActual_path().string();
+        file_path.append("/");
+        file_path.append(args[1]);
+        if (boost::filesystem::is_regular_file(args[1]) ){
+            FileLaneIterator *iter = new FileLaneIterator(args[1]);
+            string st;
+            cout << "------------FILE READING IN PROCESS------------------" << endl;
+            int i =0;
+            while(iter->fileIsReady()){
+                iter->getNextString(&st);
+                printf("String #%d red \n", i++);
+                cout << st << endl;
+
+            }
+        }
+        else if (boost::filesystem::is_regular_file(file_path) ){
+            FileLaneIterator *iter = new FileLaneIterator(file_path);
+            string st;
+            cout << "------------FILE READING IN PROCESS------------------" << endl;
+            while(iter->fileIsReady()){
+                iter->getNextString(&st);
+                cout << st << endl;
+            }
+        }
+        else{
+            perror(args[1]);
+            perror(file_path.c_str());
+        }
+
+
+    }
+    return 1;
 }
 
 
@@ -229,13 +342,6 @@ vector <string> my_split_line(string input_str)
     return args;
 }
 
-
-/*
-class Interpreter{
-
-}
-*/
-
 //execuion loop
 void my_loop(void)
 {
@@ -262,13 +368,15 @@ int main(int argc, char **argv)
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, cd_help_msg );
     my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
-
+    my_shell_fileinterpreter = new Embedded_func("MY_FILEINTERPRETER", my_sh, cd_help_msg);
 
     embedded_lib= {
             { "cd",  my_cd_obj},
-           { "pwd", my_pwd_obj },
+            { "pwd", my_pwd_obj },
             { "help", my_help_obj },
-            { "exit", my_exit_obj }
+            { "exit", my_exit_obj },
+            { "mysh", my_shell_fileinterpreter}
+
     };
 
 
@@ -277,10 +385,14 @@ int main(int argc, char **argv)
     //init_user(&this_user);
     current_directory = new Directory();
     console = new ConsoleView(current_directory);
-
-
+/*
+    char* test[] ={
+            "mysh",
+            "/home/d1md1m/CLionProjects/Lab_2_shell/testfiel.msh"
+    };
+  */
     // Load config files, if any.
-
+//    my_sh(2, test);
     // Run command loop.
     my_loop();
 
