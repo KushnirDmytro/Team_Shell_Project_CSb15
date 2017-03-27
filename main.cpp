@@ -15,12 +15,21 @@
 #include "ConsoleView.h"
 #include "User.h"
 #include "Directory.h"
+#include "Embedded_func.h"
 
 
 //const char *homedir;
 
 
 using namespace std;
+
+
+
+
+int my_cd(size_t nargs, char **args);
+int my_pwd(size_t nargs, char **args);
+int my_help(size_t nargs, char **args);
+int my_exit(size_t nargs, char **args);
 
 
 #define  home_dir_call  "~"
@@ -40,106 +49,13 @@ using  callable_function =  int (*)(size_t, char **);
 
 // forward declarations of built-in commands
 
-int my_cd(size_t nargs, char **args);
-int my_pwd(size_t nargs, char **args);
-int my_help(size_t nargs, char **args);
-int my_exit(size_t nargs, char **args);
-
-callable_function my_cd_addr = my_cd;
-callable_function my_pwd_addr = my_pwd;
-callable_function my_help_addr = my_help;
-callable_function my_exit_addr = my_exit;
-
-
-
-
-class Embedded_func{
-private:
-    string name;
-    char** vargs;
-    size_t nargs;
-    string help_info;
-    bool initialized;
-    callable_function func;
-public:
-    Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg){
-        this->name=name;
-        this->func = funct_to_assign;
-        this->help_info = help_msg;
-    }
-
-
-    int search_for_help(size_t nargs, char** &argvector){
-        for (int i = 0; i< nargs ; ++i){
-            if (( strcmp(argvector[i], "--help") == 0  ) || ( strcmp(argvector[i], "-h") == 0  ) ){
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    void output_help(string &helpMsg){
-        printf("%s\n", this->help_info.c_str());
-    }
-
-
-    int call(size_t nargs, char **args){
-        this->nargs = nargs;
-        this->vargs = args;
-        this->initialized = true;
-        if (this->search_for_help(this->nargs, this->vargs)){
-            this->output_help(this->help_info);
-            return 1;
-        }
-        func (this->nargs, this->vargs);
-        return 1;
-    }
-
-};
-
-
-Embedded_func *my_pwd_obj;
-Embedded_func *my_cd_obj;
-Embedded_func *my_help_obj;
-Embedded_func *my_exit_obj;
-
 map <string, Embedded_func*> embedded_lib;
 
-
-//it could be map, but for such amount of functions it looked obsolete
-/*
-//TODO mapHERE
-const char (*my_builtin_str[]) = {
-        "pwd",
-        "cd",
-        "help",
-        "exit"
-};
-*/
 
 
 int num_my_builtins() {
     return (int) embedded_lib.size();
 }
-
-
-//Embedded_func *builtin_lib[4];
-/*{
-        my_pwd_obj,
-        my_cd_obj,n
-        my_help_obj,
-        my_exit_obj
-};*/
-
-/*
-int (*builtin_func[]) (unsigned int , char ** ) = {
-        &my_pwd,
-        &my_cd,
-        &my_help,
-        &my_exit
-};
- */
-//Builtin implementation
 
 
 int my_pwd(size_t nargs, char **args)
@@ -356,18 +272,6 @@ int main(int argc, char **argv)
     };
 
 
-/*    builtin_lib[0] =
-            my_pwd_obj;
-
-    builtin_lib[1] =
-            my_cd_obj;
-
-    builtin_lib[2] =
-            my_help_obj;
-    builtin_lib[3] =
-            my_exit_obj;
-
-*/
     default_user = new User();
 
     //init_user(&this_user);
@@ -377,14 +281,6 @@ int main(int argc, char **argv)
 
     // Load config files, if any.
 
-    //test
-    /*
-    char* args[] ={
-            "cd",
-            "~"
-    };
-    my_cd_obj->call(2, args);
-     */
     // Run command loop.
     my_loop();
 
