@@ -13,6 +13,12 @@
 
 
 
+//User * default_user;
+
+
+//#include "default_definitions.h"
+
+
 class ConsoleView{
 private:
     Directory *current_directoryPtr;

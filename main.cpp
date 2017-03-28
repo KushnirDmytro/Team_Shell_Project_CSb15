@@ -14,7 +14,7 @@
 
 
 #include "ConsoleView.h"
-#include "User.h"
+//#include "User.h"
 #include "Directory.h"
 #include "Embedded_func.h"
 
@@ -24,86 +24,12 @@
 
 using namespace std;
 
+User * default_user;
 
 
-
-int my_cd(size_t nargs, char **args);
-int my_pwd(size_t nargs, char **args);
-int my_help(size_t nargs, char **args);
-int my_exit(size_t nargs, char **args);
-int my_sh(size_t nargs, char **args);
+Directory *current_directory;
 
 
-
-#define  home_dir_call  "~"
-
-User *default_user;
-
-class Interpreter;
-
-class FileLaneIterator;
-
-
-
-
-class FileLaneIterator{
-private:
-    ifstream infile;
-    bool isGood;
-public:
-
-    FileLaneIterator(string filename){
-        if (boost::filesystem::exists(filename)){
-            infile.open(filename);
-
-            //cout << "ISOPEN:  " << infile.is_open() <<endl;
-            if (infile.is_open()){
-                isGood = true;
-                printf("FILE {%s} IS OPENED\n", filename.c_str());
-            }
-            else{
-                printf("%s Could not be open\n", filename.c_str());
-            }
-        }
-        else{
-            perror("Such a file does not found\n");
-            isGood = false;
-        }
-
-        //cout << "ISOPEN" << infile.is_open() <<endl;
-        //cout << "EOF:  "  << infile.eof() << endl;
-        //cout << "GOOD:  "  << infile.good() << endl;
-        //ifstream infile(filename);
-    }; //initialize via passing filename to open
-
-
-    bool fileIsReady(){
-        return (infile.good() && infile.is_open());
-    }
-
-    void getNextString(string *buf){
-
-      //  cout << "ISOPEN" << infile.is_open() <<endl;
-       // cout << "EOF:  "  << infile.eof() << endl;
-       // cout << "GOOD:  "  << infile.good() << endl;
-       // getchar();
-        if (infile.is_open() && !infile.eof()){
-
-            std::getline(infile, *buf);
-            //infile.getline(buf, 512);
-        }
-        else {
-            isGood = false;
-
-        }
-    }
-
-    ~FileLaneIterator(){
-        if(infile.is_open()){
-            infile.close();
-        }
-    }
-};
 
 
 class Line_splitter{
@@ -159,6 +85,72 @@ public:
 
     }
 };
+
+
+Line_splitter* def_line_split;
+
+
+
+
+class FileLaneIterator{
+private:
+    ifstream infile;
+    bool isGood;
+public:
+
+    FileLaneIterator(string filename){
+        if (boost::filesystem::exists(filename)){
+            infile.open(filename);
+
+            //cout << "ISOPEN:  " << infile.is_open() <<endl;
+            if (infile.is_open()){
+                isGood = true;
+                printf("FILE {%s} IS OPENED\n", filename.c_str());
+            }
+            else{
+                printf("%s Could not be open\n", filename.c_str());
+            }
+        }
+        else{
+            perror("Such a file does not found\n");
+            isGood = false;
+        }
+
+        //cout << "ISOPEN" << infile.is_open() <<endl;
+        //cout << "EOF:  "  << infile.eof() << endl;
+        //cout << "GOOD:  "  << infile.good() << endl;
+        //ifstream infile(filename);
+    }; //initialize via passing filename to open
+
+
+    bool fileIsReady(){
+        return (infile.good() && infile.is_open());
+    }
+
+    void getNextString(string *buf){
+
+        //  cout << "ISOPEN" << infile.is_open() <<endl;
+        // cout << "EOF:  "  << infile.eof() << endl;
+        // cout << "GOOD:  "  << infile.good() << endl;
+        // getchar();
+        if (infile.is_open() && !infile.eof()){
+
+            std::getline(infile, *buf);
+            //infile.getline(buf, 512);
+        }
+        else {
+            isGood = false;
+
+        }
+    }
+
+    ~FileLaneIterator(){
+        if(infile.is_open()){
+            infile.close();
+        }
+    }
+};
+
 
 
 class Interpreter{
@@ -256,20 +248,28 @@ public:
 
 Interpreter* default_interpreter;
 
-Line_splitter* def_line_split;
-
-Directory *current_directory;
 
 
-ConsoleView *console;
+/*
+
+int my_cd(size_t nargs, char **args);
+int my_pwd(size_t nargs, char **args);
+int my_help(size_t nargs, char **args);
+int my_exit(size_t nargs, char **args);
+int my_sh(size_t nargs, char **args);
 
 
-using  callable_function =  int (*)(size_t, char **);
 
 
-// forward declarations of built-in commands
 
-map <string, Embedded_func*> embedded_lib;
+int my_cd(size_t nargs, char **args);
+int my_pwd(size_t nargs, char **args);
+int my_help(size_t nargs, char **args);
+int my_exit(size_t nargs, char **args);
+int my_sh(size_t nargs, char **args);
+*/
+
+
 
 
 int my_pwd(size_t nargs, char **args)
@@ -342,7 +342,7 @@ int my_sh(size_t nargs, char **args)
                 iter->getNextString(&st);
                 printf("String #%d red \n", i++);
                 cout << st << endl;
-               // st.append(" ");
+                // st.append(" ");
                 status = default_interpreter->proceed_sting(&st);
                 if (!status){
                     return 0;
@@ -371,6 +371,50 @@ int my_sh(size_t nargs, char **args)
 }
 
 
+
+callable_function my_cd_addr = my_cd;
+callable_function my_pwd_addr = my_pwd;
+callable_function my_help_addr = my_help;
+callable_function my_exit_addr = my_exit;
+callable_function my_sh_addr = my_sh;
+
+Embedded_func *my_shell_fileinterpreter;
+Embedded_func *my_pwd_obj;
+Embedded_func *my_cd_obj;
+Embedded_func *my_help_obj;
+Embedded_func *my_exit_obj;
+
+
+
+#define  home_dir_call  "~"
+
+
+
+
+//User *default_user;
+
+//class Interpreter;
+
+//class FileLaneIterator;
+
+
+//Interpreter* default_interpreter;
+
+//Line_splitter* def_line_split;
+
+//Directory *current_directory;
+
+
+ConsoleView *console;
+
+
+
+using  callable_function =  int (*)(size_t, char **);
+
+
+// forward declarations of built-in commands
+
+map <string, Embedded_func*> embedded_lib;
 
 
 string my_read_line(void)
