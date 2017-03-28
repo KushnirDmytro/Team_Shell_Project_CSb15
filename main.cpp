@@ -17,6 +17,9 @@
 //#include "User.h"
 #include "Directory.h"
 #include "Embedded_func.h"
+#include "Line_splitter.h"
+#include "Interpreter.h"
+#include "FileLaneIterator.h"
 
 
 //const char *homedir;
@@ -26,223 +29,9 @@ using namespace std;
 
 User * default_user;
 
-
 Directory *current_directory;
 
-
-
-
-class Line_splitter{
-public:
-    Line_splitter(){
-
-    }
-
-    // left it here = line delimiters " \t\r\n\a"
-    vector <string> my_split_line(string input_str)
-    {
-        input_str.append(" ");
-        vector<string>args;
-
-        string delim = " "; //for delimer
-        size_t pos = 0;
-        string tok; // for toke
-
-        unsigned long start;
-
-        start = input_str.find_first_not_of(" ");
-
-        input_str = input_str.substr(start);
-
-        //cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" <<endl;
-        while ((pos = input_str.find(delim)) != string::npos) {
-            tok = input_str.substr(0, pos);
-            //  cout << tok << endl;
-            args.push_back(tok);
-            input_str.erase(0, pos + delim.length());
-        }
-        return args;
-    }
-
-
-//produced Kovalchuk, Refactored & extracted by Kushnir
-    int str_vector_to_chars(vector<string> *args, char** cargs){
-        size_t i;
-
-        for(i = 0; i < args->size(); ++i)
-        {
-            cargs[i] = new char[(*args)[i].size() + 1];
-            strcpy(cargs[i], (*args)[i].c_str());
-        }
-        cargs[i] = NULL;
-        return 0;
-    }
-
-
-
-
-    ~Line_splitter(){
-
-    }
-};
-
-
 Line_splitter* def_line_split;
-
-
-
-
-class FileLaneIterator{
-private:
-    ifstream infile;
-    bool isGood;
-public:
-
-    FileLaneIterator(string filename){
-        if (boost::filesystem::exists(filename)){
-            infile.open(filename);
-
-            //cout << "ISOPEN:  " << infile.is_open() <<endl;
-            if (infile.is_open()){
-                isGood = true;
-                printf("FILE {%s} IS OPENED\n", filename.c_str());
-            }
-            else{
-                printf("%s Could not be open\n", filename.c_str());
-            }
-        }
-        else{
-            perror("Such a file does not found\n");
-            isGood = false;
-        }
-
-        //cout << "ISOPEN" << infile.is_open() <<endl;
-        //cout << "EOF:  "  << infile.eof() << endl;
-        //cout << "GOOD:  "  << infile.good() << endl;
-        //ifstream infile(filename);
-    }; //initialize via passing filename to open
-
-
-    bool fileIsReady(){
-        return (infile.good() && infile.is_open());
-    }
-
-    void getNextString(string *buf){
-
-        //  cout << "ISOPEN" << infile.is_open() <<endl;
-        // cout << "EOF:  "  << infile.eof() << endl;
-        // cout << "GOOD:  "  << infile.good() << endl;
-        // getchar();
-        if (infile.is_open() && !infile.eof()){
-
-            std::getline(infile, *buf);
-            //infile.getline(buf, 512);
-        }
-        else {
-            isGood = false;
-
-        }
-    }
-
-    ~FileLaneIterator(){
-        if(infile.is_open()){
-            infile.close();
-        }
-    }
-};
-
-
-
-class Interpreter{
-private:
-    Line_splitter *splitter;
-public:
-    Interpreter(){
-        this->splitter = new Line_splitter();
-    }
-
-
-    // launcher for custom modules
-    int my_extern_launcher(char **args)
-    {
-        pid_t pid, wpid;
-        int status;
-
-        pid = fork();
-        if (pid == 0) {
-            //  we are in Child process
-            if (execv(args[0], args) == -1) {
-                perror("my_Shell failed to launch this file");
-            }
-            exit(EXIT_FAILURE);
-        } else if (pid < 0) {
-            // Error forking
-            perror("my_Shell failed to fork");
-        } else {
-            // Parent process
-            do {
-                wpid = waitpid(pid, &status, WUNTRACED);
-                /*
-                 * WUNTRACED
-                 * also return if a child has stopped (but not traced via ptrace(2)).
-                 * Status for traced children which have stopped is provided even if this option is not specified.
-                 * WIFEXITED(status)
-                 * returns true if the child terminated normally, that is, by calling exit(3) or _exit(2),
-                 * or by returning from main().
-                 * WIFSIGNALED(status)
-                 * returns true if the child process was terminated by a signal.
-                 */
-            } while (!WIFEXITED(status) && !WIFSIGNALED(status)); //checks for valid scenarios of exiting (we borrowed it)
-        }
-
-        return 1;
-    }
-
-
-    int num_my_builtins() {
-        return (int) embedded_lib.size();
-    }
-
-    int my_execute(vector<string> args)
-    {
-
-        char** cargs = new char*[args.size() + 1];
-        unsigned int args_number = (int) args.size();
-
-
-        cout << "NUMBER OF ARGS FOUND: " <<args_number << endl;
-        splitter->str_vector_to_chars(&args , cargs);
-
-        cout<< "builtIns #" << num_my_builtins() << endl;
-
-        for (int i = 0; i < num_my_builtins(); i++) {
-//        cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
-            auto search_iter = embedded_lib.find(cargs[0]);
-            if (search_iter != embedded_lib.end() ) // case when we have such a func in our lib
-            {
-                return (search_iter->second)->call(args_number, cargs);
-            }
-        }
-
-        return my_extern_launcher(cargs);
-
-
-    }
-
-    int proceed_sting(string* values){
-
-        vector<string> args = splitter->my_split_line(*values);
-
-
-        return my_execute(args);
-    }
-
-    ~Interpreter(){
-
-    }
-    //TODO check for function options
-    //TODO filemasks
-};
 
 
 
@@ -258,15 +47,6 @@ int my_help(size_t nargs, char **args);
 int my_exit(size_t nargs, char **args);
 int my_sh(size_t nargs, char **args);
 
-
-
-
-
-int my_cd(size_t nargs, char **args);
-int my_pwd(size_t nargs, char **args);
-int my_help(size_t nargs, char **args);
-int my_exit(size_t nargs, char **args);
-int my_sh(size_t nargs, char **args);
 */
 
 
@@ -388,21 +168,6 @@ Embedded_func *my_exit_obj;
 
 #define  home_dir_call  "~"
 
-
-
-
-//User *default_user;
-
-//class Interpreter;
-
-//class FileLaneIterator;
-
-
-//Interpreter* default_interpreter;
-
-//Line_splitter* def_line_split;
-
-//Directory *current_directory;
 
 
 ConsoleView *console;
