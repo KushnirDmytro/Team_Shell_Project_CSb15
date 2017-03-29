@@ -44,6 +44,7 @@ using  callable_function =  int (*)(size_t, char **);
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
 
+int my_ls(size_t nargs, char **args);
 int my_cd(size_t nargs, char **args);
 int my_pwd(size_t nargs, char **args);
 int my_help(size_t nargs, char **args);
@@ -55,6 +56,8 @@ callable_function my_pwd_addr = my_pwd;
 callable_function my_help_addr = my_help;
 callable_function my_exit_addr = my_exit;
 callable_function my_sh_addr = my_sh;
+callable_function my_ls_addr = my_ls;
+
 
 Embedded_func *my_shell_fileinterpreter;
 Embedded_func *my_pwd_obj;
@@ -62,6 +65,7 @@ Embedded_func *my_cd_obj;
 Embedded_func *my_help_obj;
 Embedded_func *my_exit_obj;
 
+Embedded_func *my_ls_obj;
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
@@ -89,6 +93,29 @@ map <string, Embedded_func*> embedded_lib;
 
 
 //====================BUILT-IN COMMANDS ============
+
+#include <boost/range/iterator_range.hpp>
+
+namespace fs = boost::filesystem;
+
+//show current directory
+int my_ls(size_t nargs, char **args)
+{
+    fs::path p = fs::current_path();
+    if(fs::is_directory(p)) {
+        std::cout << p << " is a directory containing:\n";
+
+
+        //for (fs::path::iterator it = p.begin(); it != p.end(); ++it)
+        //    cout << " " << *it << '\n';
+
+        for(auto& entry : boost::make_iterator_range(fs::directory_iterator(p), {}))
+
+        std::cout << entry << "\n";
+
+    }
+}
+
 
 //show current directory
 int my_pwd(size_t nargs, char **args)
@@ -192,6 +219,29 @@ int my_sh(size_t nargs, char **args)
 //====================BUILT-IN COMMANDS END============
 
 
+// HOW TO CURE SPACED FILENAMES???
+void cure_spaced_filenemas(size_t nargs,char* vargs[]){
+    for (size_t i = 0; i < nargs; ++i){
+        //TODO
+        //USE BOOST::FILESYSTEM::PATH to recognise start, mid, end of directory
+    }
+}
+
+
+
+vector<boost::filesystem::path> regex_match_directories(string regex){
+    //TODO
+    //process via iterators all possible pathes that match such expression
+    vector<boost::filesystem::path> proceed_buffer;
+    vector<boost::filesystem::path> directories;
+    return directories;
+}
+
+
+
+
+
+
 //=============ASSIST FUNCTIONS============
 
 
@@ -236,14 +286,17 @@ int main(int argc, char **argv)
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, cd_help_msg );
     my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
+    my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
+
     my_shell_fileinterpreter = new Embedded_func("MY_FILEINTERPRETER", my_sh, cd_help_msg);
 
     embedded_lib= {
-            { "cd",  my_cd_obj},
-            { "pwd", my_pwd_obj },
-            { "help", my_help_obj },
-            { "exit", my_exit_obj },
-            { "mysh", my_shell_fileinterpreter}
+            {"cd",   my_cd_obj},
+            {"pwd",  my_pwd_obj},
+            {"help", my_help_obj},
+            {"exit", my_exit_obj},
+            {"mysh", my_shell_fileinterpreter},
+            {"ls", my_ls_obj}
 
     };
 
