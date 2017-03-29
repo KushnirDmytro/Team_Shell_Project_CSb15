@@ -13,6 +13,8 @@
 #include <fstream>
 
 
+//========================CLASSES IMPORT==================
+
 #include "ConsoleView.h"
 //#include "User.h"
 #include "Directory.h"
@@ -21,25 +23,24 @@
 #include "Interpreter.h"
 #include "FileLaneIterator.h"
 
+//====================CLASSES IMPORT END=====================
 
-//const char *homedir;
 
+
+//==============================DEFINITIONS====================
 
 using namespace std;
 
-User * default_user;
 
-Directory *current_directory;
-
-Line_splitter* def_line_split;
+#define  home_dir_call  "~"
 
 
+using  callable_function =  int (*)(size_t, char **);
 
-Interpreter* default_interpreter;
+//============================DEFINITIONS END======================
 
 
-
-/*
+//=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
 
 int my_cd(size_t nargs, char **args);
 int my_pwd(size_t nargs, char **args);
@@ -47,10 +48,45 @@ int my_help(size_t nargs, char **args);
 int my_exit(size_t nargs, char **args);
 int my_sh(size_t nargs, char **args);
 
-*/
+callable_function my_cd_addr = my_cd;
+callable_function my_pwd_addr = my_pwd;
+callable_function my_help_addr = my_help;
+callable_function my_exit_addr = my_exit;
+callable_function my_sh_addr = my_sh;
+
+Embedded_func *my_shell_fileinterpreter;
+Embedded_func *my_pwd_obj;
+Embedded_func *my_cd_obj;
+Embedded_func *my_help_obj;
+Embedded_func *my_exit_obj;
+
+
+//=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
+
+
+//==================DEFAULT OBJECTS DECLARATIONS===================
+
+User * default_user;
+
+Directory *current_directory;
+
+Line_splitter* def_line_split;
+
+Interpreter* default_interpreter;
+
+
+ConsoleView *console;
+
+map <string, Embedded_func*> embedded_lib;
 
 
 
+//=================DEFAULT OBJECTS DECLARATIONS END================
+
+
+
+
+//====================BUILT-IN COMMANDS ============
 
 int my_pwd(size_t nargs, char **args)
 {
@@ -58,7 +94,6 @@ int my_pwd(size_t nargs, char **args)
     printf("%s", current_directory->getActual_path().c_str());
     return 1;
 }
-
 
 int my_cd(size_t nargs, char **args)
 {
@@ -85,8 +120,6 @@ int my_cd(size_t nargs, char **args)
     current_directory->setPath_was_changed(true);
     return 1;
 }
-
-
 
 //shows help info
 int my_help(size_t nargs, char **args)
@@ -151,35 +184,12 @@ int my_sh(size_t nargs, char **args)
 }
 
 
-
-callable_function my_cd_addr = my_cd;
-callable_function my_pwd_addr = my_pwd;
-callable_function my_help_addr = my_help;
-callable_function my_exit_addr = my_exit;
-callable_function my_sh_addr = my_sh;
-
-Embedded_func *my_shell_fileinterpreter;
-Embedded_func *my_pwd_obj;
-Embedded_func *my_cd_obj;
-Embedded_func *my_help_obj;
-Embedded_func *my_exit_obj;
+//====================BUILT-IN COMMANDS END============
 
 
 
-#define  home_dir_call  "~"
 
-
-
-ConsoleView *console;
-
-
-
-using  callable_function =  int (*)(size_t, char **);
-
-
-// forward declarations of built-in commands
-
-map <string, Embedded_func*> embedded_lib;
+//=============ASSIST FUNCTIONS============
 
 
 string my_read_line(void)
@@ -210,9 +220,14 @@ void my_loop(void)
 }
 
 
+//=============ASSIST FUNCTIONS END============
+
+
 
 int main(int argc, char **argv)
 {
+
+    //===================DYNAMIC INITIALISATION ======================
     string cd_help_msg = "SOME CD HELP";
     my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, cd_help_msg );
@@ -237,13 +252,22 @@ int main(int argc, char **argv)
     current_directory = new Directory();
     console = new ConsoleView(current_directory);
 
+    //===================DYNAMIC INITIALISATION END======================
+
+
+
     // Run command loop.
     my_loop();
 
 
     // Perform any shutdown/cleanup.
+
+
+    //=====================MEMORY CLEAN / SHUTDOWN==========================
     delete default_user;
     delete current_directory;
     delete console;
+    //=====================MEMORY CLEAN SHUTDOWN END==========================
+
     return EXIT_SUCCESS;
 }
