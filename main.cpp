@@ -11,6 +11,7 @@
 #include <pwd.h>
 #include <map>
 #include <fstream>
+#include <cstring>
 
 
 //========================CLASSES IMPORT==================
@@ -22,6 +23,7 @@
 #include "Line_splitter.h"
 #include "Interpreter.h"
 #include "FileLaneIterator.h"
+#include "External_func.h"
 
 //====================CLASSES IMPORT END=====================
 
@@ -88,6 +90,7 @@ map <string, Embedded_func*> embedded_lib;
 
 //====================BUILT-IN COMMANDS ============
 
+//show current directory
 int my_pwd(size_t nargs, char **args)
 {
     current_directory->refresh_path();
@@ -95,6 +98,7 @@ int my_pwd(size_t nargs, char **args)
     return 1;
 }
 
+//changes directory
 int my_cd(size_t nargs, char **args)
 {
     if (args[1] == NULL) { //has to have at least one arg
@@ -138,6 +142,7 @@ int my_exit(size_t nargs, char **args)
     return 0;
 }
 
+//executes in this shell external ".msh" files
 int my_sh(size_t nargs, char **args)
 {
     if (nargs > 1){
@@ -185,8 +190,6 @@ int my_sh(size_t nargs, char **args)
 
 
 //====================BUILT-IN COMMANDS END============
-
-
 
 
 //=============ASSIST FUNCTIONS============

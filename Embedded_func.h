@@ -23,7 +23,7 @@ using  callable_function =  int (*)(size_t, char **);
 
 
 class Embedded_func{
-private:
+protected:
     string name;
     char** vargs;
     size_t nargs;
@@ -52,7 +52,7 @@ public:
     }
 
 
-    int call(size_t nargs, char **args){
+    virtual int call(size_t nargs, char **args){
         this->nargs = nargs;
         this->vargs = args;
         this->initialized = true;
