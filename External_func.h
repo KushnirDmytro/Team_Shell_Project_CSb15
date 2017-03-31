@@ -10,6 +10,16 @@
 #include <vector>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/range/iterator_range.hpp>
+
+#include "User.h"
+#include "Directory.h"
+#include "Line_splitter.h"
+#include "Interpreter.h"
+#include "ConsoleView.h"
+#include "FileLaneIterator.h"
+
 
 #include "Embedded_func.h"
 
@@ -142,6 +152,35 @@ private:
     }
 
 };
+
+
+
+
+
+//==================DEFAULT OBJECTS DECLARATIONS===================
+
+extern User * default_user;
+
+extern Directory *current_directory;
+
+extern Line_splitter* def_line_split;
+
+extern Interpreter* default_interpreter;
+
+
+extern ConsoleView *console;
+
+extern map <string, Embedded_func*> embedded_lib;
+
+
+
+//=================DEFAULT OBJECTS DECLARATIONS END================
+
+
+
+
+
+
 
 
 #endif //LAB_2_SHELL_EXTERNAL_FUNC_H
