@@ -86,10 +86,12 @@ public:
             auto search_iter = embedded_lib.find(cargs[0]);
             if (search_iter != embedded_lib.end() ) // case when we have such a func in our lib
             {
+                //CALLING INNER FUNCTION <=======================
                 return (search_iter->second)->call(args_number, cargs);
             }
         }
 
+        // CALLING EXTERN FUNC <======================
         return my_extern_launcher(cargs);
 
 

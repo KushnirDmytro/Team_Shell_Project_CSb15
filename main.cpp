@@ -24,7 +24,7 @@
 #include "Interpreter.h"
 #include "FileLaneIterator.h"
 #include "External_func.h"
-
+#include "Extern_LS.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -88,6 +88,7 @@ Embedded_func *my_cd_obj;
 Embedded_func *my_help_obj;
 Embedded_func *my_exit_obj;
 Embedded_func *my_ls_obj;
+Extern_LS *extern_ls_obj;
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
@@ -128,6 +129,8 @@ void my_loop(void)
 
 //=============ASSIST FUNCTIONS END============
 
+extern options_struct ls_options;
+
 
 
 int main(int argc, char **argv)
@@ -139,9 +142,19 @@ int main(int argc, char **argv)
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, cd_help_msg );
     my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
+
     my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
 
-    my_shell_fileinterpreter = new Embedded_func("MY_FILEINTERPRETER", my_sh, cd_help_msg);
+/*
+    (const string &name,
+    callable_function funct_to_assign,
+    options_struct options,
+    string &help_msg):
+*/
+
+   // extern_ls_obj = new Extern_LS("MY_LS", my_ls, ls_options, cd_help_msg);
+
+    //my_shell_fileinterpreter = new Embedded_func("MY_FILEINTERPRETER", my_sh, cd_help_msg);
 
     embedded_lib= {
             {"cd",   my_cd_obj},

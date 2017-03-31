@@ -25,6 +25,11 @@
 
 using namespace std;
 
+
+namespace fs = boost::filesystem;
+
+
+
 /*
 
 class Embedded_func{
@@ -51,42 +56,97 @@ struct command_option{
     size_t opt_n;
     const string name;
     command_option *opt_args;
-    options_validator opt_valid;
+    options_validator opt_inner_valid;
 };
 
-struct options_array{
-    command_option* options;
-    size_t opt_n;
+struct options_struct{
+    map <string,  command_option> func_opts_map;
+    options_validator opt_cross_valid;
 };
 
+class Function_options{
+private:
+    map <string,  command_option*> *func_opts_map;
 
+    //field for classes to initialize
+    options_validator opt_cross_valid = nullptr;
+public:
+
+    Function_options(map <string,  command_option*> *func_opts_map){
+        *this->func_opts_map = *func_opts_map;
+    }
+
+    command_option* get_option(string potential_arg) {
+        if (this->func_opts_map->find(potential_arg)
+            ==
+            this->func_opts_map->end())
+            return nullptr;
+        else
+            return this->func_opts_map->at(potential_arg);
+    }
+
+
+    bool are_options_cross_valid(size_t nargs, char *argv[]){
+        if (opt_cross_valid == nullptr){
+            cout << "cross_validator is not initialised" << endl;
+            return true;
+        }
+        vector<string> args_vec;
+        args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
+
+
+        //==========CHECK =========
+        for (int i = 0; i < nargs; ++i){
+            printf("function get  ===>%s<===  \n", argv[i]);
+        }
+        for(auto i: args_vec)
+            cout<< "vector inserted word ===>" << i <<"<===" << endl;
+        //==========CHECK =========
+
+
+        command_option *founded_option = nullptr;
+        int first_arg_pos =0;
+        int last_arg_pos = 0;
+        char* first_arg_addr = nullptr;
+
+        for(auto i: args_vec){
+            if (get_option(i) == nullptr){
+                if (founded_option == nullptr){
+                    founded_option = this->get_option(i);
+                }
+                }
+            else{
+                if (founded_option == nullptr){
+                    printf("Argument ");
+                    return false;
+                }
+//                founded_option->opt_inner_valid(first_arg_pos - last_arg_pos, )
+
+            }
+        }
+            return  this->opt_cross_valid(nargs, argv);
+    }
+
+};
 
 
 class External_func : public Embedded_func{
+
 private:
-    options_array options_arr;
-
-    options_validator opt_valid;
-
+    Function_options *func_opts;
+protected:
     External_func (const string &name,
                    callable_function funct_to_assign,
-                   options_array options,
-                   options_validator opt_valid,
+                   Function_options *options_ptr,
+                   //options_validator opt_cross_valid,
                    string &help_msg):
             Embedded_func(name, funct_to_assign,  help_msg){
-        this->options_arr = options;
-        this->opt_valid = opt_valid;
+        this->func_opts = options_ptr;
+       // this->opt_cross_valid = opt_cross_valid;
     }
 
+    //options_validator opt_cross_valid;
 
-    int is_option(string potential_arg) {
-        for(int i=0; i < this->options_arr.opt_n; ++i) {
-            if (strcmp(this->options_arr.options->name.c_str(), potential_arg.c_str()) == 0 ) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
 
     /*
@@ -95,8 +155,8 @@ private:
      * 3)validate if option arguments are good
      */
     bool are_options_valid(){
-
-
+        this->func_opts->are_options_cross_valid(this->nargs, this->vargs);
+        /*
         int options_index = 0;
         size_t args_index = 0;
         bool is_arg = false;
@@ -105,13 +165,13 @@ private:
         vector<char*> founded_args;
 
         while (args_index < this->nargs) {
-            options_index = is_option(this->vargs[args_index]);
+            options_index = this->func_opts->is_option(this->vargs[args_index]);
             if ( options_index != -1) {
                 is_arg = true;
                 last_founded_option = options_index;
                 if (last_founded_option != -1) {
-                    if( ! this->options_arr.options[last_founded_option].opt_valid(founded_args.size(), &founded_args[0])) {
-                        printf(" ARGUMENT %s FOR OPTION %s IS INVALID \n", this->vargs[nargs], this->options_arr.options->name.c_str() );
+                    if( ! this->func_opts.options[last_founded_option].opt_inner_valid(founded_args.size(), &founded_args[0])) {
+                        printf(" ARGUMENT %s FOR OPTION %s IS INVALID \n", this->vargs[nargs], this->func_opts.options->name.c_str() );
                         return false;
                     }
                 }
@@ -128,6 +188,7 @@ private:
             ++args_index;
         }
         return true;
+         */
     }
 
 
@@ -149,15 +210,17 @@ private:
         return true;
     }
 
+public:
 //Overriding
     int call(size_t nargs, char **args) override {
         this->nargs = nargs;
         this->vargs = args;
-        if (this->opt_valid(this->nargs, this->vargs)){
+        if (this->func_opts->are_options_cross_valid(this->nargs, this->vargs)){
             return Embedded_func::call(this->nargs, this->vargs);
         }
         else return 0;
     }
+
 
 };
 
