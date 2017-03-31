@@ -68,6 +68,8 @@ class Function_options{
 private:
     map <string,  command_option*> *func_opts_map;
 
+    //default value definition
+    bool noargs_allowed = true;
     //field for classes to initialize
     options_validator opt_cross_valid = nullptr;
 public:
@@ -87,12 +89,25 @@ public:
 
 
     bool are_options_cross_valid(size_t nargs, char *argv[]){
+        if (nargs == 1){
+            if (this->noargs_allowed)
+                return true;
+            else{
+                printf("FOUNDED NO ARGUMENTS\n");
+                return false;
+            }
+        }
+
+        //!IMPORTANT!!!
+        --nargs;
+
+
         if (opt_cross_valid == nullptr){
             cout << "cross_validator is not initialised" << endl;
             return true;
         }
         vector<string> args_vec;
-        args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
+        args_vec.insert(args_vec.end(), &argv[1], &argv[nargs]);
 
 
         //==========CHECK =========
@@ -104,28 +119,50 @@ public:
         //==========CHECK =========
 
 
-        command_option *founded_option = nullptr;
-        int first_arg_pos =0;
-        int last_arg_pos = 0;
-        char* first_arg_addr = nullptr;
+        command_option *prev_founded_option = nullptr;
+        command_option *new_founded_option = nullptr;
 
-        for(auto i: args_vec){
-            if (get_option(i) == nullptr){
-                if (founded_option == nullptr){
-                    founded_option = this->get_option(i);
-                }
-                }
-            else{
-                if (founded_option == nullptr){
-                    printf("Argument ");
+
+        vector<string> arg_buf;
+
+        for(auto iter_arg_name: args_vec){
+            //founded_option = get_option(i);
+            new_founded_option = get_option(iter_arg_name);
+            if (new_founded_option == nullptr) {
+                if (prev_founded_option == nullptr) {
+                    printf("EROOR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
                     return false;
+                } else {
+                    arg_buf.push_back(iter_arg_name);
                 }
-//                founded_option->opt_inner_valid(first_arg_pos - last_arg_pos, )
-
+            }
+            else{
+                if(prev_founded_option == nullptr){
+                    prev_founded_option = new_founded_option;
+                }
+                else{
+                    char* temp_buf[arg_buf.size()];
+                    str_vec_to_char_arr(arg_buf, temp_buf);
+                    if (!prev_founded_option->opt_inner_valid(args_vec.size(), temp_buf)){
+                        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", iter_arg_name.c_str());
+                        return false;
+                    }
+                }
             }
         }
-            return  this->opt_cross_valid(nargs, argv);
+        printf("ARGUMENT CHECK DONE \n");
+        return true;
     }
+
+
+
+
+    void str_vec_to_char_arr(vector<string> vec, char**arr){
+        for (int i =0; i < vec.size(); ++i){
+            strcpy(arr[i], vec[i].c_str());
+        }
+    }
+
 
 };
 
