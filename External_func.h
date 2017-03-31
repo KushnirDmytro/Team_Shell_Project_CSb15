@@ -66,9 +66,16 @@ class External_func : public Embedded_func{
 private:
     options_array options_arr;
 
-    External_func (const string &name, callable_function funct_to_assign, options_array options, string &help_msg):
+    options_validator opt_valid;
+
+    External_func (const string &name,
+                   callable_function funct_to_assign,
+                   options_array options,
+                   options_validator opt_valid,
+                   string &help_msg):
             Embedded_func(name, funct_to_assign,  help_msg){
         this->options_arr = options;
+        this->opt_valid = opt_valid;
     }
 
 
@@ -88,6 +95,7 @@ private:
      * 3)validate if option arguments are good
      */
     bool are_options_valid(){
+
 
         int options_index = 0;
         size_t args_index = 0;
@@ -145,7 +153,7 @@ private:
     int call(size_t nargs, char **args) override {
         this->nargs = nargs;
         this->vargs = args;
-        if (this->are_options_valid()){
+        if (this->opt_valid(this->nargs, this->vargs)){
             return Embedded_func::call(this->nargs, this->vargs);
         }
         else return 0;
