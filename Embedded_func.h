@@ -31,38 +31,13 @@ protected:
     bool initialized;
     callable_function func;
 public:
-    Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg){
-        this->name=name;
-        this->func = funct_to_assign;
-        this->help_info = help_msg;
-    }
+    Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg);
 
+    int search_for_help(size_t nargs, char** &argvector);
 
-    int search_for_help(size_t nargs, char** &argvector){
-        for (int i = 0; i< nargs ; ++i){
-            if (( strcmp(argvector[i], "--help") == 0  ) || ( strcmp(argvector[i], "-h") == 0  ) ){
-                return 1;
-            }
-        }
-        return 0;
-    }
+    void output_help(string &helpMsg);
 
-    void output_help(string &helpMsg){
-        printf("%s\n", this->help_info.c_str());
-    }
-
-
-    virtual int call(size_t nargs, char **args){
-        this->nargs = nargs;
-        this->vargs = args;
-        this->initialized = true;
-        if (this->search_for_help(this->nargs, this->vargs)){
-            this->output_help(this->help_info);
-            return 1;
-        }
-        return func (this->nargs, this->vargs);
-   //     return 1;
-    }
+    virtual int call(size_t nargs, char **args);
 
 };
 
