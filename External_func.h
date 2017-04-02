@@ -158,7 +158,7 @@ public:
                 if (iter_arg_name == args_vec[args_vec.size()-1]){
                     char* temp_buf[arg_buf.size()];
                     str_vec_to_char_arr(arg_buf, temp_buf);
-                    if (!prev_founded_option->opt_inner_valid(args_vec.size(), temp_buf)){
+                    if (!prev_founded_option->opt_inner_valid(arg_buf.size(), temp_buf)){
                         printf("ARGUMENT CHECK FAILED AT OPTION %s\n", iter_arg_name.c_str());
                         return false;
                     }
