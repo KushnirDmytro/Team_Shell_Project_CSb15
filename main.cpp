@@ -133,6 +133,13 @@ extern options_struct ls_options;
 
 
 
+
+
+
+
+
+
+
 int main(int argc, char **argv)
 {
 
@@ -143,7 +150,19 @@ int main(int argc, char **argv)
     my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
 
-    my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
+ //   my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
+
+
+
+
+
+//TODO ASK HOW IT WORKS
+    //Function_options *ls_func_opts = new Function_options(ls_func_opts_map_ptr);
+
+    Function_options *ls_func_opts = new Function_options(nullptr);
+
+
+    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls ,  ls_func_opts , cd_help_msg);
 
 /*
     (const string &name,
@@ -162,7 +181,7 @@ int main(int argc, char **argv)
             {"help", my_help_obj},
             {"exit", my_exit_obj},
             {"mysh", my_shell_fileinterpreter},
-            {"ls", my_ls_obj}
+            {"ls", extern_ls_obj}
 
     };
 

@@ -54,7 +54,7 @@ using options_validator = bool (*) (size_t, char**);
 
 struct command_option{
     size_t opt_n;
-    const string name;
+    string name;
     command_option *opt_args;
     options_validator opt_inner_valid;
 };
@@ -64,8 +64,14 @@ struct options_struct{
     options_validator opt_cross_valid;
 };
 
+
+
+
+
 class Function_options{
-private:
+
+    //TODO MAKE PRIVATE WHEN SOLVE INIT PROBLEM
+public:
     map <string,  command_option*> *func_opts_map;
 
     //default value definition
@@ -89,7 +95,7 @@ public:
 
 
     bool are_options_cross_valid(size_t nargs, char *argv[]){
-        if (nargs == 1){
+        if (nargs == 0){
             if (this->noargs_allowed)
                 return true;
             else{
@@ -99,15 +105,15 @@ public:
         }
 
         //!IMPORTANT!!!
-        --nargs;
+        //--nargs;
 
 
         if (opt_cross_valid == nullptr){
             cout << "cross_validator is not initialised" << endl;
-            return true;
+            //return true;
         }
         vector<string> args_vec;
-        args_vec.insert(args_vec.end(), &argv[1], &argv[nargs]);
+        args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
 
 
         //==========CHECK =========
@@ -141,6 +147,15 @@ public:
                     prev_founded_option = new_founded_option;
                 }
                 else{
+                    //perform arguments checking
+                    char* temp_buf[arg_buf.size()];
+                    str_vec_to_char_arr(arg_buf, temp_buf);
+                    if (!prev_founded_option->opt_inner_valid(args_vec.size(), temp_buf)){
+                        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", iter_arg_name.c_str());
+                        return false;
+                    }
+                }
+                if (iter_arg_name == args_vec[args_vec.size()-1]){
                     char* temp_buf[arg_buf.size()];
                     str_vec_to_char_arr(arg_buf, temp_buf);
                     if (!prev_founded_option->opt_inner_valid(args_vec.size(), temp_buf)){
@@ -150,6 +165,7 @@ public:
                 }
             }
         }
+        //block for last argument
         printf("ARGUMENT CHECK DONE \n");
         return true;
     }
@@ -170,8 +186,11 @@ public:
 class External_func : public Embedded_func{
 
 private:
-    Function_options *func_opts;
 protected:
+
+    Function_options *func_opts;
+
+
     External_func (const string &name,
                    callable_function funct_to_assign,
                    Function_options *options_ptr,
@@ -191,8 +210,8 @@ protected:
      * 2)assume other words are referring to options arguments
      * 3)validate if option arguments are good
      */
-    bool are_options_valid(){
-        this->func_opts->are_options_cross_valid(this->nargs, this->vargs);
+   // bool are_options_valid(){
+    //    this->func_opts->are_options_cross_valid(this->nargs, this->vargs);
         /*
         int options_index = 0;
         size_t args_index = 0;
@@ -226,7 +245,7 @@ protected:
         }
         return true;
          */
-    }
+  // }
 
 
 
@@ -250,10 +269,10 @@ protected:
 public:
 //Overriding
     int call(size_t nargs, char **args) override {
-        this->nargs = nargs;
-        this->vargs = args;
-        if (this->func_opts->are_options_cross_valid(this->nargs, this->vargs)){
-            return Embedded_func::call(this->nargs, this->vargs);
+       // this->nargs = nargs;
+       // this->vargs = args;
+        if (this->func_opts->are_options_cross_valid(nargs, args)){
+            return Embedded_func::call(nargs, args);
         }
         else return 0;
     }

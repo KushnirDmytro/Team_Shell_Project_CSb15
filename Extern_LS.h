@@ -6,25 +6,46 @@
 #define LAB_2_SHELL_EXTERN_LS_H
 
 
+
+/*
+
+Здається у  вигляді посилання на Гіт проекту.
+
+        Прим. Джерело (авторство) комітів не являєтсья визначним для авторства проекту (вагома його частина була виконана до першого комміту та/або на інших репозиторіях, зокрема зовнішні ф-ї).
+
+https://github.com/Lewbolew/Lab_2_shell
+
+Команда виконавців (внески у різних частинах, відповідно до виконаного обсягу роботи):
+Кушнір Дмитро
+Ковальчук Богдан
+Петришак Богдан
+
+
+прим.:"
+Олег 15:19
+
+Але туди таки закиньте — я Вам зразу гарантую, що я забуду про цю розмову, якщо там не буде :=)
+
+"
+*/
+
+
+
 #include "External_func.h"
 
 
+extern command_option ls_opt_help;
+extern command_option ls_opt_l;
+extern command_option ls_opt_sort;
+extern command_option ls_opt_revers;
+extern command_option ls_opt_recursive;
+
+
+
+
+
+
 /*
-command_option ls_opt_help{
-
-};
-command_option ls_opt_l{
-
-};
-command_option ls_opt_sort{
-
-};
-command_option ls_opt_revers{
-
-};
-command_option ls_opt_recursive{
-
-};
 
 options_struct ls_opts = {
         ls_opts.func_opts_map = {
@@ -39,11 +60,15 @@ options_struct ls_opts = {
 };
 
 */
+//options_struct ls_opts;
 
 
 class Extern_LS : public External_func{
 
 private:
+
+    size_t args_start_position = 1;
+    vector<fs::path> *passes_to_apply;
 
 public:
     Extern_LS(const string &name,
@@ -54,7 +79,32 @@ public:
                           funct_to_assign,
                           options,
                           help_msg)
-    {}
+    {
+
+        this->passes_to_apply = new vector<fs::path>;
+
+/*
+        ls_func_opts_map_ptr = new map<string, command_option*>;
+        (*ls_func_opts_map_ptr)["--help"] = &ls_opt_help;
+*/
+        //TODO GEI IT OUT WHEN PROBLEM SOLVED
+
+        this->func_opts->func_opts_map = new map<string, command_option*>;//ls_func_opts_map_ptr;
+        (*this->func_opts->func_opts_map) ["-l"] = &ls_opt_l;
+        (*this->func_opts->func_opts_map) ["--sort"] = &ls_opt_sort;
+        (*this->func_opts->func_opts_map) ["-r"] = &ls_opt_revers;
+        (*this->func_opts->func_opts_map) ["-R"] = &ls_opt_recursive;
+
+
+    }
+
+
+
+    // {"-l", ls_opt_l},
+    // {"--sort", ls_opt_sort},
+    // {"-r", ls_opt_revers},
+    // {"-R", ls_opt_recursive}
+    // ,{"", ls_opt_},
 
 
 
@@ -98,13 +148,16 @@ public:
         }
 
 
-        char *arg_buf_ptr = argv[0];
+        char *arg_buf_ptr = argv[i];
 
 
-        fs::path p; //path to directory (buffer)
+        fs::path p; //path to directory (buffer)args_start_position
 
+
+        //while first command option marker is not met in line of arguments
+//ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort
         while ( i<nargs && arg_buf_ptr[0] != '-'){
-            arg_buf_ptr = argv[i];
+
 
             p = fs::path(arg_buf_ptr);
 
@@ -112,28 +165,7 @@ public:
             {
                 if (fs::exists(p))    // does p actually exist?
                 {
-
-                    /*
-
-                    Здається у  вигляді посилання на Гіт проекту.
-
-                            Прим. Джерело (авторство) комітів не являєтсья визначним для авторства проекту (вагома його частина була виконана до першого комміту та/або на інших репозиторіях, зокрема зовнішні ф-ї).
-
-                    https://github.com/Lewbolew/Lab_2_shell
-
-                    Команда виконавців (внески у різних частинах, відповідно до виконаного обсягу роботи):
-                    Кушнір Дмитро
-                    Ковальчук Богдан
-                    Петришак Богдан
-
-
-                    прим.:"
-                    Олег 15:19
-
-                    Але туди таки закиньте — я Вам зразу гарантую, що я забуду про цю розмову, якщо там не буде :=)
-
-                    "
-    */
+                    p_form_args->push_back(p);
 
                     if (fs::is_regular_file(p))        // is p a regular file?
                         cout << p << " size is " << file_size(p) << '\n';
@@ -183,6 +215,7 @@ public:
 
 
             ++i;
+            arg_buf_ptr = argv[i];
         }
 
 
@@ -194,13 +227,38 @@ public:
 
 
 
+
+    map <string,  command_option*> ls_func_opts_map;
+
+
+    map <string,  command_option*> *ls_func_opts_map_ptr; // = &ls_func_opts_map;
+
+/*
+    ls_func_opts_map  = new map<string, command_option*>{
+        // {"-l", ls_opt_l},
+        // {"--sort", ls_opt_sort},
+        // {"-r", ls_opt_revers},
+        // {"-R", ls_opt_recursive}
+        // ,{"", ls_opt_},
+    };
+
+  */
 //show current directory
     int my_ls_inner(size_t nargs, char **argv)
     {
-        vector<fs::path> p_form_args;
-        get_passes_from_args(nargs, argv, &p_form_args);
 
-        for (fs::path p : p_form_args){
+        //vector<fs::path> p_form_args;
+        //get_passes_from_args(nargs, argv, &p_form_args);
+
+        //args_start_position += p_form_args.size();
+
+
+
+        //this->func_opts->are_options_cross_valid(this->args_start_position, this->vargs);
+
+
+        //TODO dummy_command over iter
+        for (fs::path p : (*this->passes_to_apply)){
             cout << p << endl;
         }
 
@@ -238,6 +296,30 @@ public:
     }
 
 
+//Overriding
+//ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort
+    int call(size_t nargs, char **argv) override {
+
+       // this->nargs = nargs;
+       // this->vargs = argv;
+
+        if (this->search_for_help(nargs, argv)){
+            this->output_help(this->help_info);
+            return 1;
+        }
+
+        get_passes_from_args(nargs, argv, this->passes_to_apply);
+
+        args_start_position += this->passes_to_apply->size();
+        if (nargs == 1){
+            args_start_position -= 1; // case of default directory adding
+        }
+
+        //shifting pointer to actual arguments position start
+       argv += args_start_position;
+       nargs -= args_start_position;
+        return External_func::call(nargs, argv);
+    }
 
 };
 

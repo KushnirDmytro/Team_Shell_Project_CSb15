@@ -7,4 +7,43 @@
 extern int my_ls(size_t nargs, char **argv)
 {
     return extern_ls_obj->my_ls_inner(nargs, argv);
+    //my_ls_inner(nargs, argv);
 }
+
+
+command_option ls_opt_help{
+        ls_opt_help.opt_n = 0,
+        ls_opt_help.name = "Help",
+        ls_opt_help.opt_args = nullptr,
+        .opt_inner_valid = [](size_t nargs, char** vargs = nullptr){
+            return nargs == 0;
+        }
+};
+command_option ls_opt_l{
+        ls_opt_help.opt_n = 0,
+        ls_opt_help.name = "DetailedList",
+        ls_opt_help.opt_args = nullptr,
+        .opt_inner_valid = [](size_t nargs, char** vargs = nullptr){
+            return nargs == 0;
+        }
+};
+command_option ls_opt_sort;
+command_option ls_opt_revers;
+command_option ls_opt_recursive;
+
+
+
+/*
+
+options_struct ls_opts = {
+        ls_opts.func_opts_map = {
+                {"--help", ls_opt_help},
+                {"-h", ls_opt_help},
+                {"-l", ls_opt_l},
+                {"--sort", ls_opt_sort},
+                {"-r", ls_opt_revers},
+                {"-R", ls_opt_recursive}
+                // ,{"", ls_opt_},
+        }
+};
+ */
