@@ -43,25 +43,17 @@ extern command_option ls_opt_recursive;
 
 
 
+enum ls_sorts{NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION };
 
 
-/*
-
-options_struct ls_opts = {
-        ls_opts.func_opts_map = {
-                {"--help", ls_opt_help},
-                {"-h", ls_opt_help},
-                {"-l", ls_opt_l},
-                {"--sort", ls_opt_sort},
-                {"-r", ls_opt_revers},
-                {"-R", ls_opt_recursive}
-                // ,{"", ls_opt_},
-        }
+struct ls_option_flags: func_opts_flags{
+    bool detailed_listing = false;
+    bool recursive = false;
+    bool reverse_output = false;
+    ls_sorts sort_type;
 };
 
-*/
-//options_struct ls_opts;
-
+//ls_option_flags ls_flags;
 
 class Extern_LS : public External_func{
 
@@ -69,6 +61,7 @@ private:
 
     size_t args_start_position = 1;
     vector<fs::path> *passes_to_apply;
+
 
 public:
     Extern_LS(const string &name,
@@ -82,6 +75,7 @@ public:
     {
 
         this->passes_to_apply = new vector<fs::path>;
+        this->opts_flags = new ls_option_flags ;
 
 /*
         ls_func_opts_map_ptr = new map<string, command_option*>;
@@ -97,14 +91,10 @@ public:
 
 
     }
-
-
-
-    // {"-l", ls_opt_l},
-    // {"--sort", ls_opt_sort},
-    // {"-r", ls_opt_revers},
-    // {"-R", ls_opt_recursive}
-    // ,{"", ls_opt_},
+    ~Extern_LS(){
+        delete this->opts_flags;
+        delete this->passes_to_apply;
+    }
 
 
 
@@ -155,7 +145,6 @@ public:
 
 
         //while first command option marker is not met in line of arguments
-//ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort
         while ( i<nargs && arg_buf_ptr[0] != '-'){
 
 
@@ -210,10 +199,6 @@ public:
                 cout << ex.what() << '\n';
             }
 
-
-
-
-
             ++i;
             arg_buf_ptr = argv[i];
         }
@@ -233,16 +218,7 @@ public:
 
     map <string,  command_option*> *ls_func_opts_map_ptr; // = &ls_func_opts_map;
 
-/*
-    ls_func_opts_map  = new map<string, command_option*>{
-        // {"-l", ls_opt_l},
-        // {"--sort", ls_opt_sort},
-        // {"-r", ls_opt_revers},
-        // {"-R", ls_opt_recursive}
-        // ,{"", ls_opt_},
-    };
 
-  */
 //show current directory
     int my_ls_inner(size_t nargs, char **argv)
     {
