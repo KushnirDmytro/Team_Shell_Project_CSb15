@@ -162,41 +162,10 @@ public:
             {
                 if (fs::exists(p))    // does p actually exist?
                 {
+
+                    if (fs::is_directory(p) || fs::is_regular_file(p)) {
                     p_form_args->push_back(p);
-
-                    if (fs::is_regular_file(p))        // is p a regular file?
-                        cout << p << " size is " << file_size(p) << '\n';
-
-                    else if (is_directory(p))      // is p a directory?
-                    {
-                        cout << p << " is a directory containing:\n";
-
-                        //STAGE OF DIR ENTRIES COLLECTIONc
-
-                        typedef vector<fs::path> vec;             // store paths,
-                        vec v;                                // so we can sort them later
-
-                        copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(v));
-
-
-
-                        //TODO COMPARING RULES
-
-                        sort(v.begin(), v.end());             // sort, since directory iteration
-                        // is not ordered on some file systems
-
-
-
-
-                        vector<fs::path> dir_buf;
-                        // OUTPUT FINAL RESULT SECTION
-                        // TODO CHECK IF REVERSE NEEDED
-                        for (vec::const_iterator it (v.begin()); it != v.end(); ++it)
-                        {
-                            cout << "   " << *it << '\n';
-                        }
                     }
-
                     else
                         cout << p << " exists, but is neither a regular file nor a directory\n";
                 }
@@ -216,8 +185,85 @@ public:
         return 0; //number of OK pathes
     }
 
+    int process_passes_from_saved(vector<fs::path> *p_form_args){
+
+        //TODO sort vector here
+
+        using vect = vector<fs::path> ;
+
+        vect dir_entries_buf;
 
 
+
+        //while first command option marker is not met in line of arguments
+        for(fs::path p:*p_form_args){
+
+
+            try
+            {
+                if (fs::exists(p))    // does p actually exist?
+                {
+                    //dir_entries_buf.push_back(p);
+
+                    if (fs::is_regular_file(p)) {
+
+                        // if p is file just save it and print report
+                        dir_entries_buf.push_back(p);
+
+
+                        //not final, just report
+                        cout << p << " size is " << file_size(p) << '\n';
+
+                    }
+                    else if (is_directory(p))      // is p a directory?
+                    {
+                        if ( ((ls_option_flags*)this->func_opts->opts_flags)->recursive ) {
+                            //if recursive flag -> we can proceed
+                            cout << p << " is a directory containing:\n";
+                            vect subdir_contain_ptr;
+
+                            copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain_ptr));
+
+
+                            //TODO special sorting
+                            sort(subdir_contain_ptr.begin(), subdir_contain_ptr.end());
+
+                            process_passes_from_saved(&subdir_contain_ptr);
+                        }
+                        else{
+                            dir_entries_buf.push_back(p);
+                            cout <<  "/" << p.filename().c_str() << "\n";
+
+                            //TODO printing out directory
+                           // cout <<  "/" <<p.path().filename().c_str() << "\n";
+
+                          //  std::cout<< p.path().filename().c_str()  << "\n";
+                        }
+
+                    }
+
+                    else
+                        cout << p << " exists, but is neither a regular file nor a directory\n";
+                }
+                else
+                    cout << p << " does not exist\n";
+            }
+
+            catch (const fs::filesystem_error& ex)
+            {
+                cout << ex.what() << '\n';
+            }
+
+        }
+
+        //now all entries are in vector
+        for (vect::const_iterator it (dir_entries_buf.begin()); it != dir_entries_buf.end(); ++it)
+        {
+            cout << "   " << (*it).filename().c_str() << '\n';
+        }
+
+        return 0; //number of OK pathes
+    }
 
 
 
@@ -236,11 +282,17 @@ public:
 
 
 
+        cout << "from bottom_layer MY_LS_INNER" <<endl;
+
         for (fs::path p : (*this->passes_to_apply)){
             //passes are there from argument line
 
             cout << p << endl;
         }
+
+        this->process_passes_from_saved(this->passes_to_apply);
+
+
 
 
 
