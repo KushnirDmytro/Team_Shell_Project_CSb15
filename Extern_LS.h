@@ -75,7 +75,7 @@ public:
     {
 
         this->passes_to_apply = new vector<fs::path>;
-        this->opts_flags = new ls_option_flags ;
+        this->func_opts->opts_flags= new ls_option_flags ;
 
 /*
         ls_func_opts_map_ptr = new map<string, command_option*>;
@@ -92,7 +92,6 @@ public:
 
     }
     ~Extern_LS(){
-        delete this->opts_flags;
         delete this->passes_to_apply;
     }
 
@@ -138,6 +137,15 @@ public:
         }
 
 
+        // 1--getting pathes from args
+        // 2--verifying options and setting flags
+        // 3--sorting directories according to flags
+        // 3.5 -- in case of recursion expanding directories while sorting on preliminar stages
+        // 3.6 -- sorted vector allready can be printed with additional info
+        // 3.4 -- on every stage check for additional info
+        // 3.6 -- else just outputting
+
+
         char *arg_buf_ptr = argv[i];
 
 
@@ -172,13 +180,15 @@ public:
 
 
 
-
                         //TODO COMPARING RULES
 
                         sort(v.begin(), v.end());             // sort, since directory iteration
                         // is not ordered on some file systems
 
 
+
+
+                        vector<fs::path> dir_buf;
                         // OUTPUT FINAL RESULT SECTION
                         // TODO CHECK IF REVERSE NEEDED
                         for (vec::const_iterator it (v.begin()); it != v.end(); ++it)
@@ -203,40 +213,36 @@ public:
             arg_buf_ptr = argv[i];
         }
 
-
-
-
-
         return 0; //number of OK pathes
     }
 
 
 
 
-    map <string,  command_option*> ls_func_opts_map;
 
 
-    map <string,  command_option*> *ls_func_opts_map_ptr; // = &ls_func_opts_map;
+    int recursively_get_dirs() {
+        return 1;
+    }
+
+
 
 
 //show current directory
     int my_ls_inner(size_t nargs, char **argv)
     {
 
-        //vector<fs::path> p_form_args;
-        //get_passes_from_args(nargs, argv, &p_form_args);
-
-        //args_start_position += p_form_args.size();
-
-
-
-        //this->func_opts->are_options_cross_valid(this->args_start_position, this->vargs);
-
-
         //TODO dummy_command over iter
+
+
+
         for (fs::path p : (*this->passes_to_apply)){
+            //passes are there from argument line
+
             cout << p << endl;
         }
+
+
 
 
 
@@ -273,7 +279,17 @@ public:
 
 
 //Overriding
-//ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort
+/*
+
+ //NOT FAIL
+ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort -l -R
+
+ //FAIL
+ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort N -l -R
+
+
+  */
+
     int call(size_t nargs, char **argv) override {
 
        // this->nargs = nargs;

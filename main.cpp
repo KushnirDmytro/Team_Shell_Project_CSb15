@@ -162,18 +162,7 @@ int main(int argc, char **argv)
     Function_options *ls_func_opts = new Function_options(nullptr);
 
 
-    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls ,  ls_func_opts , cd_help_msg);
-
-/*
-    (const string &name,
-    callable_function funct_to_assign,
-    options_struct options,
-    string &help_msg):
-*/
-
-   // extern_ls_obj = new Extern_LS("MY_LS", my_ls, ls_options, cd_help_msg);
-
-    //my_shell_fileinterpreter = new Embedded_func("MY_FILEINTERPRETER", my_sh, cd_help_msg);
+    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls , ls_func_opts , cd_help_msg);
 
     embedded_lib= {
             {"cd",   my_cd_obj},

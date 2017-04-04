@@ -11,6 +11,11 @@ Function_options::Function_options(map <string,  command_option*> *func_opts_map
 *this->func_opts_map = *func_opts_map;
 }
 
+Function_options::~Function_options() {
+    delete this->opts_flags;
+    delete this->func_opts_map;
+}
+
 command_option* Function_options::get_option(string potential_arg) {
     if (this->func_opts_map->find(potential_arg)
         ==
@@ -21,7 +26,7 @@ command_option* Function_options::get_option(string potential_arg) {
 }
 
 
-bool Function_options::are_options_cross_valid(size_t nargs, char *argv[], External_func* ref_to_owner){
+bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
     if (nargs == 0){
         if (this->noargs_allowed)
             return true;
@@ -35,10 +40,6 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[], Exter
     //--nargs;
 
 
-    if (opt_cross_valid == nullptr){
-        cout << "cross_validator is not initialised" << endl;
-        //return true;
-    }
     vector<string> args_vec;
     args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
 
@@ -60,6 +61,10 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[], Exter
 
     for(auto iter_arg_name: args_vec){
         //founded_option = get_option(i);
+
+        if (new_founded_option != nullptr) {
+            prev_founded_option = new_founded_option;
+        }
         new_founded_option = get_option(iter_arg_name);
         if (new_founded_option == nullptr) {
             if (prev_founded_option == nullptr) {
@@ -67,6 +72,12 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[], Exter
                 return false;
             } else {
                 arg_buf.push_back(iter_arg_name);
+
+
+                cout << "arg added to arg buffer vector "<< iter_arg_name << endl;
+                cout << "new size of arg vector " << arg_buf.size() << endl;
+
+
             }
         }
         else{
@@ -74,25 +85,43 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[], Exter
                 prev_founded_option = new_founded_option;
             }
             else{
+
+
+                //TODO MAKE THIS PART INLINE FUNCTION
                 //perform arguments checking
                 char* temp_buf[arg_buf.size()];
                 str_vec_to_char_arr(arg_buf, temp_buf);
-                if (! ((options_validator) prev_founded_option->opt_inner_valid)(arg_buf.size(), temp_buf, ref_to_owner )){
+                if (! (*prev_founded_option->opt_inner_valid)(arg_buf.size(), temp_buf, this) ){
                     printf("ARGUMENT CHECK FAILED AT OPTION %s\n", prev_founded_option->name.c_str());
                     return false;
                 }
+                arg_buf.clear();
             }
+
+            //block for last argument
             if (iter_arg_name == args_vec[args_vec.size()-1]){
+
                 char* temp_buf[arg_buf.size()];
                 str_vec_to_char_arr(arg_buf, temp_buf);
-                if (!prev_founded_option->opt_inner_valid(arg_buf.size(), temp_buf, ref_to_owner)){
-                    printf("ARGUMENT CHECK FAILED AT OPTION %s\n", prev_founded_option->name.c_str());
+
+
+                if (! (*new_founded_option->opt_inner_valid)(arg_buf.size(), temp_buf, this) ){
+                    printf("ARGUMENT CHECK FAILED AT OPTION %s\n", new_founded_option->name.c_str());
                     return false;
                 }
+                arg_buf.clear();
             }
         }
     }
-    //block for last argument
+
+    if (opt_cross_valid == nullptr){
+        cout << "cross_validator is not initialised" << endl;
+        //return true;
+    }
+    else{
+        cout << "CROSS_VALIDATION" << endl;
+        return opt_cross_valid(nargs, argv, this);
+    }
     printf("ARGUMENT CHECK DONE \n");
     return true;
 }
@@ -182,13 +211,18 @@ bool External_func::validate_is_directory(size_t nargs, char** vargs){
     return true;
 }
 
+
 //Overriding
 int External_func::call(size_t nargs, char **args){
-    // this->nargs = nargs;
-    // this->vargs = args;
-    if (this->func_opts->are_options_cross_valid(nargs, args, this)){
 
-        cout<< ((ls_option_flags*)this->opts_flags)->detailed_listing <<endl;
+    if (this->func_opts->are_options_cross_valid(nargs, args)){
+        cout << "problem checking" << endl;
+
+
+        cout<< "Detailed listing flag "<<((ls_option_flags*)this->func_opts->opts_flags)->detailed_listing <<endl;
+        cout<< "Recursive output flag "<<((ls_option_flags*)this->func_opts->opts_flags)->recursive <<endl;
+        cout<< "Reverted output flag "<<((ls_option_flags*)this->func_opts->opts_flags)->reverse_output <<endl;
+        cout<< "Sorting type "<<  ((ls_option_flags*)this->func_opts->opts_flags)->sort_type <<endl;
 
         return Embedded_func::call(nargs, args);
     }

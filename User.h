@@ -49,7 +49,7 @@ public:
     void setUser_rights(const rights &user_rights);
 
     const boost::filesystem::path &getHome_dirrectory() const {
-       return home_dirrectory;
+         return home_dirrectory;
     }
 
     const string &getName() const {
