@@ -185,19 +185,25 @@ public:
         return 0; //number of OK pathes
     }
 
-    int process_passes_from_saved(vector<fs::path> *p_form_args){
+
+
+
+
+
+    int process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth = 0){
 
         //TODO sort vector here
 
+        // ===============INIT===========
         using vect = vector<fs::path> ;
 
         vect dir_entries_buf;
 
+        // ===============INIT END===========
 
 
-        //while first command option marker is not met in line of arguments
+        //iterate list of arguments get
         for(fs::path p:*p_form_args){
-
 
             try
             {
@@ -212,32 +218,45 @@ public:
 
 
                         //not final, just report
-                        cout << p << " size is " << file_size(p) << '\n';
+                        for(int i= 0; i < rec_depth; ++i)
+                            printf("   ");
+                        cout << p.filename() << " size is " << file_size(p) << '\n';
+                       // cout << p << " size is " << file_size(p) << '\n';
 
                     }
+
+
                     else if (is_directory(p))      // is p a directory?
                     {
-                        if ( ((ls_option_flags*)this->func_opts->opts_flags)->recursive ) {
                             //if recursive flag -> we can proceed
+                            for(int i= 0; i < rec_depth; ++i)
+                                printf("   ");
                             cout << p << " is a directory containing:\n";
-                            vect subdir_contain_ptr;
+                            vect subdir_contain;
 
-                            copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain_ptr));
-
+                            copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
 
                             //TODO special sorting
-                            sort(subdir_contain_ptr.begin(), subdir_contain_ptr.end());
+                            sort(subdir_contain.begin(), subdir_contain.end());
 
-                            process_passes_from_saved(&subdir_contain_ptr);
-                        }
-                        else{
-                            dir_entries_buf.push_back(p);
-                            cout <<  "/" << p.filename().c_str() << "\n";
+                        //RECURSIVE EXEC BRANCH
+                        if ( ((ls_option_flags*)this->func_opts->opts_flags)->recursive ) {
+                            process_passes_from_saved(&subdir_contain, rec_depth + 1);
 
-                            //TODO printing out directory
-                           // cout <<  "/" <<p.path().filename().c_str() << "\n";
+                            //NON_RECURSIVE
+                        } else {
+                            for(fs::path subpath:subdir_contain){
+                                if (fs::is_directory(subpath)) {
+                                    print_dir_about(&subpath, rec_depth+1);
+                                   // cout << "/ check" << subpath.filename().c_str() << endl;
+                                }
+                                else if (fs::is_regular_file(subpath)){
+                                    print_file_about(&subpath, rec_depth+1);
+                                    //cout << subpath.filename().c_str() << "  S= " << file_size(subpath) << endl;
+                                }
+                            }
+                            //print out_dir_contain
 
-                          //  std::cout<< p.path().filename().c_str()  << "\n";
                         }
 
                     }
@@ -256,14 +275,33 @@ public:
 
         }
 
+
+
+        /*
         //now all entries are in vector
         for (vect::const_iterator it (dir_entries_buf.begin()); it != dir_entries_buf.end(); ++it)
         {
             cout << "   " << (*it).filename().c_str() << '\n';
         }
+        */
 
         return 0; //number of OK pathes
     }
+
+
+    void inline print_file_about(fs::path *path_to_print, int depth){
+        for (int i=0; i<=depth; ++i)
+            printf("    ");
+        printf("%s  Siz=%d\n", path_to_print->filename().c_str(), (int)file_size(*path_to_print) );
+    }
+
+    void inline print_dir_about(fs::path *path_to_print, int depth){
+        for (int i=0; i<=depth; ++i)
+            printf("    ");
+        printf("/%s  \n", path_to_print->filename().c_str() );
+    }
+
+
 
 
 
@@ -335,6 +373,10 @@ public:
 
  //NOT FAIL
  ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort -l -R
+
+
+ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort -l -R
+
 
  //FAIL
 ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort N -l -R
