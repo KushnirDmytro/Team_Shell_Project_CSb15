@@ -30,7 +30,6 @@ https://github.com/Lewbolew/Lab_2_shell
 */
 
 
-
 #include "External_func.h"
 
 
@@ -53,7 +52,6 @@ struct ls_option_flags: func_opts_flags{
     ls_sorts sort_type;
 };
 
-//ls_option_flags ls_flags;
 
 class Extern_LS : public External_func{
 
@@ -127,6 +125,9 @@ public:
     }
 
 
+
+
+
     int get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args){
 
         int i = 1; //argv index
@@ -193,11 +194,10 @@ public:
     int process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth = 0){
 
         //TODO sort vector here
-
+        sort( (*p_form_args).begin() , (*p_form_args).end() );
         // ===============INIT===========
         using vect = vector<fs::path> ;
 
-        vect dir_entries_buf;
 
         // ===============INIT END===========
 
@@ -209,54 +209,35 @@ public:
             {
                 if (fs::exists(p))    // does p actually exist?
                 {
-                    //dir_entries_buf.push_back(p);
+
 
                     if (fs::is_regular_file(p)) {
-
-                        // if p is file just save it and print report
-                        dir_entries_buf.push_back(p);
-
-
-                        //not final, just report
-                        for(int i= 0; i < rec_depth; ++i)
-                            printf("   ");
-                        cout << p.filename() << " size is " << file_size(p) << '\n';
-                       // cout << p << " size is " << file_size(p) << '\n';
-
+                        print_file_about(&p, rec_depth);
                     }
 
 
-                    else if (is_directory(p))      // is p a directory?
+                        //need to fill buffer before processing
+                    else if (is_directory(p))
                     {
-                            //if recursive flag -> we can proceed
-                            for(int i= 0; i < rec_depth; ++i)
-                                printf("   ");
-                            cout << p << " is a directory containing:\n";
                             vect subdir_contain;
 
                             copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
 
-                            //TODO special sorting
-                            sort(subdir_contain.begin(), subdir_contain.end());
-
                         //RECURSIVE EXEC BRANCH
                         if ( ((ls_option_flags*)this->func_opts->opts_flags)->recursive ) {
+
+                            for(int i= 0; i < rec_depth; ++i)
+                                printf("   ");
+                            cout << p << " is a directory containing:\n";
                             process_passes_from_saved(&subdir_contain, rec_depth + 1);
+                        }
 
-                            //NON_RECURSIVE
-                        } else {
-                            for(fs::path subpath:subdir_contain){
-                                if (fs::is_directory(subpath)) {
-                                    print_dir_about(&subpath, rec_depth+1);
-                                   // cout << "/ check" << subpath.filename().c_str() << endl;
-                                }
-                                else if (fs::is_regular_file(subpath)){
-                                    print_file_about(&subpath, rec_depth+1);
-                                    //cout << subpath.filename().c_str() << "  S= " << file_size(subpath) << endl;
-                                }
-                            }
-                            //print out_dir_contain
-
+                            //linear exec branch
+                        else
+                        {
+                            //TODO special sorting
+                            sort(subdir_contain.begin(), subdir_contain.end());
+                            print_dir_contain(&p, &subdir_contain, rec_depth);
                         }
 
                     }
@@ -275,16 +256,6 @@ public:
 
         }
 
-
-
-        /*
-        //now all entries are in vector
-        for (vect::const_iterator it (dir_entries_buf.begin()); it != dir_entries_buf.end(); ++it)
-        {
-            cout << "   " << (*it).filename().c_str() << '\n';
-        }
-        */
-
         return 0; //number of OK pathes
     }
 
@@ -293,6 +264,7 @@ public:
         for (int i=0; i<=depth; ++i)
             printf("    ");
         printf("%s  Siz=%d\n", path_to_print->filename().c_str(), (int)file_size(*path_to_print) );
+        //TODO add falg-check and additional info listing
     }
 
     void inline print_dir_about(fs::path *path_to_print, int depth){
@@ -302,11 +274,19 @@ public:
     }
 
 
+    void inline print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth) {
 
+        for(int i= 0; i < rec_depth; ++i)
+            printf("   ");
+        cout << (*dir) << " is a directory containing:\n";
 
-
-    int recursively_get_dirs() {
-        return 1;
+        for (fs::path subpath: (*dir_contain) ) {
+            if (fs::is_directory(subpath)) {
+                print_dir_about(&subpath, rec_depth + 1);
+            } else if (fs::is_regular_file(subpath)) {
+                print_file_about(&subpath, rec_depth + 1);
+            }
+        }
     }
 
 
@@ -325,7 +305,7 @@ public:
         for (fs::path p : (*this->passes_to_apply)){
             //passes are there from argument line
 
-            cout << p << endl;
+      //      cout << p << endl;
         }
 
         this->process_passes_from_saved(this->passes_to_apply);
@@ -337,38 +317,10 @@ public:
 
 
         return 1;
-        /*
-        fs::path p = fs::current_path();
-        if(fs::is_directory(p)) {
-            std::cout << p << " is a directory containing:\n";
 
-            //for (fs::path::iterator it = p.begin(); it != p.end(); ++it)
-            //    cout << " " << *it << '\n';
-
-            if (nargs>1 && args[1] == "-l" ){
-                //detailed case
-
-
-            }
-
-
-            for (auto &entry : boost::make_iterator_range(fs::directory_iterator(p), {})) {
-                if(fs::is_directory(entry.path())) {
-                    //printf("IS DIRECTORY\n");
-                    cout <<  "/" <<entry.path().filename().c_str() << "\n";
-                }
-                else if(fs::is_regular_file(entry.path()))
-                    //printf("IS FILENAME\n");
-                    std::cout<< entry.path().filename().c_str()  << "\n";
-                //std::cout << entry << "\n";
-            }
-
-        }
-         */
     }
 
 
-//Overriding
 /*
 
  //NOT FAIL
@@ -384,10 +336,9 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionPr
 
   */
 
-    int call(size_t nargs, char **argv) override {
 
-       // this->nargs = nargs;
-       // this->vargs = argv;
+//Overriding
+    int call(size_t nargs, char **argv) override {
 
         if (this->search_for_help(nargs, argv)){
             this->output_help(this->help_info);
@@ -415,6 +366,5 @@ extern Extern_LS *extern_ls_obj;
 //just activator-function
 //TODO uncomment
 
-/*
- */
+
 #endif //LAB_2_SHELL_EXTERN_LS_H
