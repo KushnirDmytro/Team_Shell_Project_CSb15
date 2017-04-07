@@ -34,16 +34,6 @@ https://github.com/Lewbolew/Lab_2_shell
 #include "External_func.h"
 #include "ctime"
 
-/*
-extern command_option ls_opt_help;
-extern command_option ls_opt_l;
-extern command_option ls_opt_sort;
-extern command_option ls_opt_revers;
-extern command_option ls_opt_recursive;
-*/
-
-
-
 
 
 
@@ -55,22 +45,6 @@ public:
     bool* flag_to_write;
 };
 
-/*
-
-class Ls_opt_revers : public Options {
-public:
-    Ls_opt_revers(map<string, Options*> *opts_map, string name, Options* host);
-    bool are_suboptions_valid(size_t nargs, char **argv) override;
-    bool* flag_to_write;
-};
-
-class Ls_opt_recur : public Options {
-public:
-    Ls_opt_recur(map<string, Options*> *opts_map, string name, Options* host);
-    bool are_suboptions_valid(size_t nargs, char **argv) override;
-    bool* flag_to_write;
-};
-*/
 
 enum ls_sorts{NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION };
 
@@ -117,10 +91,8 @@ public:
              string &help_msg);
 
 
-    ~Extern_LS(){
-        delete this->passes_to_apply;
-    }
 
+    ~Extern_LS();
 
 
 
@@ -149,9 +121,7 @@ public:
 
     int get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args);
 
-
     int process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth = 0);
-
 
     void print_file_about(fs::path *path_to_print, int depth);
 
@@ -174,7 +144,7 @@ public:
 
 
  //FAIL
-ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort N -l -R
+ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
 
   */

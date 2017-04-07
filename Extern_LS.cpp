@@ -17,25 +17,6 @@ extern int my_ls(size_t nargs, char **argv)
 
 extern Extern_LS *extern_ls_obj;
 
-//OBSOLETE (global help check on higher lvl
-
-
-
-
-/*
-
-
-command_option ls_opt_help{
-        ls_opt_help.opt_n = 0,
-        ls_opt_help.name = "Help",
-        ls_opt_help.opt_args = nullptr,
-        .opt_inner_valid = [](size_t nargs, char** vargs = nullptr, Function_options* owner_opt_obj) {
-            return nargs == 0;
-        }
-};
-
-
- */
 
 
 
@@ -55,34 +36,6 @@ LS_simple_opt::LS_simple_opt(string name, bool* host_flag, map<string, Options*>
             return false;
         }
     }
-
-/*
-Ls_opt_revers::Ls_opt_revers(map<string, Options*> *opts_map, string name, Options* host) : Options(opts_map, name){
-        this->options_flags = nullptr;
-        this->noargs_allowed = true;
-        this->opts_map = nullptr;
-        this->name = "-r";
-    this->host = host;
-    }
-
-    bool Ls_opt_revers::are_suboptions_valid(size_t nargs, char **argv){
-        return nargs == 0 ;
-    }
-
-
-Ls_opt_recur::Ls_opt_recur(map<string, Options*> *opts_map, string name, Options* host) : Options(opts_map, name){
-        this->options_flags = nullptr;
-        this->noargs_allowed = true;
-        this->opts_map = nullptr;
-        this->name = "-R";
-    this->host = host;
-    }
-
-    bool Ls_opt_recur::are_suboptions_valid(size_t nargs, char **argv) {
-        return nargs == 0 ;
-    }
-
-*/
 
     Ls_opt_sort::Ls_opt_sort( string name, ls_sorts *sorts, map<string, Options*> *opts_map) : Options(opts_map, name){
         this->options_flags = nullptr;
@@ -116,8 +69,8 @@ Ls_opt_recur::Ls_opt_recur(map<string, Options*> *opts_map, string name, Options
         }
         else{
 
-            cout << argv[0] << " RECEIVED AS ARG" << endl;
 
+            cout << argv[0] << " RECEIVED AS ARG" << endl;
 
             if (nargs == 1) {
 
@@ -134,6 +87,8 @@ Ls_opt_recur::Ls_opt_recur(map<string, Options*> *opts_map, string name, Options
                     return true;
                 }
 
+                *this->sorts = this->sort_opts_map->at(argument);
+                return true;
 
             }
             else {
@@ -146,113 +101,6 @@ Ls_opt_recur::Ls_opt_recur(map<string, Options*> *opts_map, string name, Options
 
 
 
-/*
-command_option ls_opt_l{
-        ls_opt_l.opt_n = 0,
-        ls_opt_l.name = "-l",
-        ls_opt_l.opt_args = nullptr,
-        ls_opt_l.opt_inner_valid = {
-                cout << "ENTERED DETAILED_OUTPUT" <<endl;
-                if (nargs == 0){
-                    //Mamma, I'm a crimminal
-                    ( (ls_option_flags*) ->options_flags)->detailed_listing = true;
-                    return true;
-                }
-                else{
-                    return false;
-                }
-        }
-};
-command_option ls_opt_sort = {
-
-        ls_opt_sort.opt_n = 0,
-        ls_opt_sort.name = "--sort",
-        ls_opt_sort.opt_args = nullptr,
-        ls_opt_sort.opt_inner_valid = [](size_t nargs, char **vargs = nullptr, Function_options* owner_opt_obj) {
-            cout << "ENTERED SORT_OPTIONS" <<endl;
-            cout << nargs << " Args number" << endl;
-
-            if (nargs == 0){
-                //Mamma, I'm a crimminal
-                ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = EXTENTION;
-                return true;
-            }
-            else{
-                //( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = EXTENTION;
-
-                cout << vargs[0] << " RECEIVED AS ARG" << endl;
-
-
-                if (nargs == 1) {
-                    if ( !strcmp(vargs[0], "U") ){
-                        ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = UNSORT;
-                        return true;
-                    }
-                    else if( !strcmp(vargs[0], "S") ){
-                        ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = SIZE;
-                        cout << ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type << "<============= CHECK\n";
-                        return true;
-                    }
-                    else if( !strcmp(vargs[0], "t") ){
-                        ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = TIME_MODIFIED;
-                        return true;
-                    }
-                    else if( !strcmp(vargs[0], "X") ){
-                        ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = EXTENTION;
-                        return true;
-                    }
-                    else if( !strcmp(vargs[0], "N") ){
-                        ( (ls_option_flags*) owner_opt_obj->options_flags)->sort_type = NAME;
-                        return true;
-                    }
-                    else {
-
-                        printf("UNDEFINED SPECIFIER FOR SORTING OPTION %s \n", vargs[0]);
-                        return false;
-                    }
-                }
-                else {
-                    printf("Error on argumnets number (%d) for  option --sort\n", (int)nargs );
-                    return false;
-                }
-                }
-            }
-};
-
-command_option ls_opt_revers = {
-        ls_opt_revers.opt_n = 0,
-        ls_opt_revers.name = "-r",
-        ls_opt_revers.opt_args = nullptr,
-        ls_opt_revers.opt_inner_valid = [](size_t nargs, char **vargs = nullptr,Function_options* owner_opt_obj) {
-            cout << "ENTERED REVERS_OUTPUT" <<endl;
-            if (nargs == 0){
-                //Mamma, I'm a crimminal
-                ( (ls_option_flags*) owner_opt_obj->options_flags)->reverse_output = true;
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-};
-
-command_option ls_opt_recursive = {
-        ls_opt_recursive.opt_n = 0,
-        ls_opt_recursive.name = "-R",
-        ls_opt_recursive.opt_args = nullptr,
-        ls_opt_recursive.opt_inner_valid = [](size_t nargs, char **vargs = nullptr, Function_options* owner_opt_obj) {
-            cout << "ENTERED RECURSIVE_PROCEED" <<endl;
-            if (nargs == 0){
-                //Mamma, I'm a crimminal
-                ( (ls_option_flags*) owner_opt_obj->options_flags)->recursive = true;
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-};
-*/
 
 
 // 1--getting pathes from args
@@ -394,7 +242,6 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
        cout << "FOUND PATH TO APPLY" << p << endl;
     }
 
-
     this->process_passes_from_saved(this->passes_to_apply);
     clear_flags();
     return 1;
@@ -485,6 +332,12 @@ void inline Extern_LS::print_dir_contain(fs::path *dir, vector<fs::path> *dir_co
         }
     }
 }
+
+
+Extern_LS::~Extern_LS(){
+    delete this->passes_to_apply;
+}
+
 
 Extern_LS::Extern_LS(const string &name,
           callable_function funct_to_assign,
