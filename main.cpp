@@ -129,7 +129,7 @@ void my_loop(void)
 
 //=============ASSIST FUNCTIONS END============
 
-extern options_struct ls_options;
+//extern options_struct ls_options;
 
 
 
@@ -159,7 +159,13 @@ int main(int argc, char **argv)
 //TODO ASK HOW IT WORKS
     //Function_options *ls_func_opts = new Function_options(ls_func_opts_map_ptr);
 
-    Function_options *ls_func_opts = new Function_options(nullptr);
+
+
+
+
+
+    Options *ls_func_opts = new Options(nullptr,
+            "LS_options");
 
 
     extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls , ls_func_opts , cd_help_msg);

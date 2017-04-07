@@ -32,24 +32,74 @@ https://github.com/Lewbolew/Lab_2_shell
 
 
 #include "External_func.h"
+#include "ctime"
 
-
+/*
 extern command_option ls_opt_help;
 extern command_option ls_opt_l;
 extern command_option ls_opt_sort;
 extern command_option ls_opt_revers;
 extern command_option ls_opt_recursive;
+*/
 
+
+
+
+
+
+
+class LS_simple_opt : public Options {
+public:
+    LS_simple_opt(string name, bool* flag_to_write, map<string, Options*> *opts_map = nullptr, bool noargs_allowed = true);
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
+    bool* flag_to_write;
+};
+
+/*
+
+class Ls_opt_revers : public Options {
+public:
+    Ls_opt_revers(map<string, Options*> *opts_map, string name, Options* host);
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
+    bool* flag_to_write;
+};
+
+class Ls_opt_recur : public Options {
+public:
+    Ls_opt_recur(map<string, Options*> *opts_map, string name, Options* host);
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
+    bool* flag_to_write;
+};
+*/
 
 enum ls_sorts{NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION };
 
 
-struct ls_option_flags: func_opts_flags{
+
+struct ls_option_flags: opts_flags{
     bool detailed_listing = false;
     bool recursive = false;
     bool reverse_output = false;
     ls_sorts sort_type;
 };
+
+
+class Ls_opt_sort : public Options {
+private:
+
+    map<string, ls_sorts> *sort_opts_map;
+    ls_sorts *sorts;
+
+
+public:
+    Ls_opt_sort( string name, ls_sorts* sorts, map<string, Options*> *opts_map = nullptr);
+
+    ~Ls_opt_sort();
+
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
+
+};
+
 
 
 class Extern_LS : public External_func{
@@ -58,12 +108,12 @@ private:
 
     size_t args_start_position = 1;
     vector<fs::path> *passes_to_apply;
-
+    ls_option_flags flags;
 
 public:
     Extern_LS(const string &name,
              callable_function funct_to_assign,
-             Function_options *options,
+             Options *options,
              string &help_msg);
 
 
@@ -110,9 +160,7 @@ public:
 
     void print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth);
 
-
-
-
+    void clear_flags();
 //show current directory
     int my_ls_inner(size_t nargs, char **argv);
 

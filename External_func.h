@@ -27,58 +27,71 @@
 //extern Extern_LS *extern_ls_obj;
 
 
+
+
+// =====================>class OPTIONS  DECLARATION
+
 using namespace std;
 
 
 namespace fs = boost::filesystem;
 
-class Function_options;
+class Options;
 
 //takes some arguments and checks are they in valid list (or of valid kind)
-using options_validator = bool (*) (size_t, char**, Function_options* ref_to_owner_object);
+
+using options_validator = bool (*) (size_t, char**, Options* ref_to_owner_object);
+
+struct opts_flags{};
 
 
-struct func_opts_flags{};
 
+/*
 
 struct command_option{
     size_t opt_n;
     string name;
     command_option *opt_args;
-    options_validator opt_inner_valid;
+    options_validator opt_inner_valid = virt_opt_inner_valid;
 
 };
 
+ */
+/*
 struct options_struct{
-    map <string,  command_option> func_opts_map;
+    map <string,  Options> opts_map;
     options_validator opt_cross_valid;
 };
+*/
 
 
 
-
-class Function_options{
+class Options{
 
     //TODO MAKE PRIVATE WHEN SOLVE INIT PROBLEM
 public:
 
-    func_opts_flags *opts_flags = nullptr;
+    string name;
 
-    map <string,  command_option*> *func_opts_map;
+    opts_flags *options_flags = nullptr;
 
+    map <string,  Options*> *opts_map;
 
     //default value definition
     bool noargs_allowed = true;
     //field for classes to initialize
-    options_validator opt_cross_valid = nullptr;
+    //options_validator opt_cross_valid = nullptr;
+
 public:
 
-    Function_options(map <string,  command_option*> *func_opts_map);
-    ~Function_options();
+    Options(map <string,  Options*> *opts_map, string name);
+    ~Options();
 
-    command_option* get_option(string potential_arg);
+    Options* get_option(string potential_arg);
 
-    bool are_options_cross_valid(size_t nargs, char *argv[]);
+    virtual bool are_suboptions_valid(size_t nargs, char **argv);
+
+    virtual bool are_options_cross_valid();
 
     void str_vec_to_char_arr(vector<string> vec, char**arr);
 
@@ -86,23 +99,26 @@ public:
 };
 
 
+// =====================>class OPTIONS DECLARATION END
+
+
+
+//=======================> class External Funcion
+
 class External_func : public Embedded_func{
-
-
 
 private:
 protected:
 
-    Function_options *func_opts;
+    Options *func_opts;
 
     External_func (const string &name,
                    callable_function funct_to_assign,
-                   Function_options *options_ptr,
+                   Options *options_ptr,
                    string &help_msg):
             Embedded_func(name, funct_to_assign,  help_msg){
         this->func_opts = options_ptr;
     }
-
 
 
     bool validate_is_directory(size_t nargs, char** vargs);
@@ -114,6 +130,7 @@ public:
 
 };
 
+//=======================> class External Funcion END
 
 
 

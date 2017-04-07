@@ -7,26 +7,33 @@
 #include "Extern_LS.h"
 
 
-Function_options::Function_options(map <string,  command_option*> *func_opts_map){
-*this->func_opts_map = *func_opts_map;
+Options::Options(map <string, Options*> *opts_map, string name){
+*this->opts_map = *opts_map;
+    this->name=name;
 }
 
-Function_options::~Function_options() {
-    delete this->opts_flags;
-    delete this->func_opts_map;
+
+Options::~Options() {
+    delete this->options_flags;
+    delete this->opts_map;
 }
 
-command_option* Function_options::get_option(string potential_arg) {
-    if (this->func_opts_map->find(potential_arg)
+Options* Options::get_option(string potential_arg) {
+    if (this->opts_map->find(potential_arg)
         ==
-        this->func_opts_map->end())
+        this->opts_map->end())
         return nullptr;
     else
-        return this->func_opts_map->at(potential_arg);
+        return this->opts_map->at(potential_arg);
 }
 
 
-bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
+bool Options::are_options_cross_valid(){
+    printf("Purely default crosscheck, no aditional restrictions set\n");
+    return true;
+}
+
+bool Options::are_suboptions_valid(size_t nargs, char **argv){
     if (nargs == 0){
         if (this->noargs_allowed)
             return true;
@@ -53,8 +60,8 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
     //==========CHECK =========
 
 
-    command_option *prev_founded_option = nullptr;
-    command_option *new_founded_option = nullptr;
+    Options *prev_founded_option = nullptr;
+    Options *new_founded_option = nullptr;
 
 
     vector<string> arg_buf;
@@ -68,7 +75,7 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
         new_founded_option = get_option(iter_arg_name);
         if (new_founded_option == nullptr) {
             if (prev_founded_option == nullptr) {
-                printf("EROOR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
+                printf("EROR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
                 return false;
             } else {
                 arg_buf.push_back(iter_arg_name);
@@ -91,7 +98,7 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
                 //perform arguments checking
                 char* temp_buf[arg_buf.size()];
                 str_vec_to_char_arr(arg_buf, temp_buf);
-                if (! (*prev_founded_option->opt_inner_valid)(arg_buf.size(), temp_buf, this) ){
+                if (! (prev_founded_option->are_suboptions_valid(arg_buf.size(), temp_buf) ) ){
                     printf("ARGUMENT CHECK FAILED AT OPTION %s\n", prev_founded_option->name.c_str());
                     return false;
                 }
@@ -105,7 +112,7 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
                 str_vec_to_char_arr(arg_buf, temp_buf);
 
 
-                if (! (*new_founded_option->opt_inner_valid)(arg_buf.size(), temp_buf, this) ){
+                if (! (new_founded_option->are_suboptions_valid(arg_buf.size(), temp_buf) ) ){
                     printf("ARGUMENT CHECK FAILED AT OPTION %s\n", new_founded_option->name.c_str());
                     return false;
                 }
@@ -114,22 +121,20 @@ bool Function_options::are_options_cross_valid(size_t nargs, char *argv[]){
         }
     }
 
-    if (opt_cross_valid == nullptr){
-        cout << "cross_validator is not initialised" << endl;
-        //return true;
-    }
-    else{
-        cout << "CROSS_VALIDATION" << endl;
-        return opt_cross_valid(nargs, argv, this);
-    }
-    printf("ARGUMENT CHECK DONE \n");
-    return true;
+
+    cout << "CROSS_VALIDATION" << endl;
+    if (this->are_options_cross_valid()){
+        printf("ARGUMENT CHECK DONE \n");
+        return true;
+
+}
+    else return false;
 }
 
 
 
 
-void Function_options::str_vec_to_char_arr(vector<string> vec, char**arr){
+void Options::str_vec_to_char_arr(vector<string> vec, char**arr){
     for (int i =0; i < vec.size(); ++i){
         strcpy(arr[i], vec[i].c_str());
     }
@@ -156,7 +161,7 @@ void Function_options::str_vec_to_char_arr(vector<string> vec, char**arr){
  * 3)validate if option arguments are good
  */
 // bool are_options_valid(){
-//    this->func_opts->are_options_cross_valid(this->nargs, this->vargs);
+//    this->func_opts->are_suboptions_valid(this->nargs, this->vargs);
 /*
 int options_index = 0;
 size_t args_index = 0;
@@ -215,14 +220,14 @@ bool External_func::validate_is_directory(size_t nargs, char** vargs){
 //Overriding
 int External_func::call(size_t nargs, char **args){
 
-    if (this->func_opts->are_options_cross_valid(nargs, args)){
+    if (this->func_opts->are_suboptions_valid(nargs, args)){
         cout << "problem checking" << endl;
 
 
-        cout<< "Detailed listing flag "<<((ls_option_flags*)this->func_opts->opts_flags)->detailed_listing <<endl;
-        cout<< "Recursive output flag "<<((ls_option_flags*)this->func_opts->opts_flags)->recursive <<endl;
-        cout<< "Reverted output flag "<<((ls_option_flags*)this->func_opts->opts_flags)->reverse_output <<endl;
-        cout<< "Sorting type "<<  ((ls_option_flags*)this->func_opts->opts_flags)->sort_type <<endl;
+        cout<< "Detailed listing flag "<<((ls_option_flags*)this->func_opts->options_flags)->detailed_listing <<endl;
+        cout<< "Recursive output flag "<<((ls_option_flags*)this->func_opts->options_flags)->recursive <<endl;
+        cout<< "Reverted output flag "<<((ls_option_flags*)this->func_opts->options_flags)->reverse_output <<endl;
+        cout<< "Sorting type "<<  ((ls_option_flags*)this->func_opts->options_flags)->sort_type <<endl;
 
         return Embedded_func::call(nargs, args);
     }
