@@ -45,8 +45,6 @@ LS_opts::~LS_opts(){
    // bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) override;
 
 
-
-
 void LS_opts::clear_flags(){
     this->LS_flags.recursive = false;
     this->LS_flags.detailed_listing=false;
@@ -84,7 +82,7 @@ LS_simple_opt::LS_simple_opt(string name,
 
 
 // option block for sorting
-    Ls_sort_opt::Ls_sort_opt( string name, ls_sorts *sorts, map<string, Options*> *opts_map)
+    Ls_sort_opt::Ls_sort_opt( string name, ls_sorts *sorts)
             : Options( name){
         this->noargs_allowed = false;
         this->sort_opts_map = new map<string, ls_sorts>{
@@ -97,7 +95,6 @@ LS_simple_opt::LS_simple_opt(string name,
         this->sorts = sorts;
 
     };
-
 
     Ls_sort_opt::~Ls_sort_opt() {
         delete this->sort_opts_map;
@@ -169,6 +166,21 @@ Extern_LS::Extern_LS(const string &name,
 
 
 
+
+void inline Extern_LS::clean_up_after_execution() {
+    clear_flags();
+    this->passes_to_apply->clear();
+    this->args_start_position_shift = 1;
+}
+
+void inline Extern_LS::set_default_directory() {
+    passes_to_apply->push_back(fs::current_path());
+    args_start_position_shift-=1; //counting this data modification
+}
+
+
+
+
 // 1--getting pathes from args
 // 2--verifying options and setting flags
 // 3--sorting directories according to flags
@@ -178,15 +190,15 @@ Extern_LS::Extern_LS(const string &name,
 int Extern_LS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args){
 
     int i = 1; //argv index
-
+/*
     if (nargs == 1){
         p_form_args->push_back(fs::current_path());
         return 1;
     }
-
+*/
     char *arg_buf_ptr = argv[i];
 
-    fs::path p; //path to directory (buffer)args_start_position
+    fs::path p; //path to directory (buffer)args_start_position_shift
 
     //while first command option marker is not met in line of arguments
     while ( i<nargs && arg_buf_ptr[0] != '-'){
@@ -229,8 +241,6 @@ int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_
     sort( (*p_form_args).begin() , (*p_form_args).end() );
     // ===============INIT===========
     using vect = vector<fs::path> ;
-
-
     // ===============INIT END===========
 
 
@@ -306,7 +316,13 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
     }
 
     this->process_passes_from_saved(this->passes_to_apply);
+
+
+    clean_up_after_execution();
+
     clear_flags();
+    this->passes_to_apply->clear();
+    this->args_start_position_shift = 1;
     return 1;
 }
 
@@ -320,14 +336,16 @@ int Extern_LS::call(size_t nargs, char **argv){
 
     get_passes_from_args(nargs, argv, this->passes_to_apply);
 
-    args_start_position += this->passes_to_apply->size();
-    if (nargs == 1){
-        args_start_position -= 1; // case of default directory adding
+    if (passes_to_apply->size() == 0){
+        set_default_directory();
     }
 
+
+    args_start_position_shift += this->passes_to_apply->size();
+
     //shifting pointer to actual arguments position start
-    argv += args_start_position;
-    nargs -= args_start_position;
+    argv += args_start_position_shift;
+    nargs -= args_start_position_shift;
     return External_func::call(nargs, argv);
 }
 
@@ -337,7 +355,7 @@ void inline Extern_LS::clear_flags(){
 }
 
 
-void inline Extern_LS::print_file_about(fs::path *path_to_print, int depth){
+void Extern_LS::print_file_about(fs::path *path_to_print, int depth){
     for (int i=0; i<=depth; ++i)
         printf("    ");
     printf("%s \n", path_to_print->filename().c_str() );
@@ -371,18 +389,18 @@ void inline Extern_LS::print_file_about(fs::path *path_to_print, int depth){
 }
 
 
-void inline Extern_LS::print_dir_about(fs::path *path_to_print, int depth){
+void Extern_LS::print_dir_about(fs::path *path_to_print, int depth){
     for (int i=0; i<=depth; ++i)
         printf("    ");
     printf("/%s  \n", path_to_print->filename().c_str() );
 }
 
 
-void inline Extern_LS::print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth) {
+void Extern_LS::print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth) {
 
     for(int i= 0; i < rec_depth; ++i)
         printf("   ");
-    cout << (*dir) << " is a directory containing:\n";
+    cout << (*dir) << " CONTAINS:\n";
 
     for (fs::path subpath: (*dir_contain) ) {
         if (fs::is_directory(subpath)) {

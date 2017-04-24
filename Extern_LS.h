@@ -12,8 +12,7 @@
 #include "External_func.h"
 #include "ctime"
 
-
-
+//==================DECLARATIONS of defaults ==============
 enum ls_sorts{NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION };
 
 struct ls_option_flags{
@@ -22,6 +21,9 @@ struct ls_option_flags{
     bool reverse_output = false;
     ls_sorts sort_type;
 };
+
+
+//==================DECLARATIONS of defaults ==============
 
 //general options class for LS
 class LS_opts : public Options{
@@ -63,7 +65,7 @@ private:
 
 
 public:
-    Ls_sort_opt( string name, ls_sorts* host_sorts, map<string, Options*> *opts_map = nullptr);
+    Ls_sort_opt( string name, ls_sorts* host_sorts);
 
     ~Ls_sort_opt();
 
@@ -81,7 +83,7 @@ class Extern_LS : public External_func{
 
 private:
 
-    size_t args_start_position = 1;
+    size_t args_start_position_shift = 1;
     vector<fs::path> *passes_to_apply;
     ls_option_flags flags;
 
@@ -119,6 +121,8 @@ public:
 
     int get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args);
 
+    void set_default_directory();
+
     int process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth = 0);
 
     void print_file_about(fs::path *path_to_print, int depth);
@@ -128,6 +132,8 @@ public:
     void print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth);
 
     void clear_flags();
+
+    void clean_up_after_execution();
 //show current directory
     int my_ls_inner(size_t nargs, char **argv);
 
