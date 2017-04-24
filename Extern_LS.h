@@ -4,28 +4,6 @@
 
 
 
-/*
-
-Здається у  вигляді посилання на Гіт проекту.
-
-        Прим. Джерело (авторство) комітів не являєтсья визначним для авторства проекту (вагома його частина була виконана до першого комміту та/або на інших репозиторіях, зокрема зовнішні ф-ї).
-
-https://github.com/Lewbolew/Lab_2_shell
-
-Команда виконавців (внески у різних частинах, відповідно до виконаного обсягу роботи):
-Кушнір Дмитро
-Ковальчук Богдан
-Петришак Богдан
-
-
-прим.:"
-Олег 15:19
-
-Але туди таки закиньте — я Вам зразу гарантую, що я забуду про цю розмову, якщо там не буде :=)
-
-"
-*/
-
 #ifndef LAB_2_SHELL_EXTERN_LS_H
 #define LAB_2_SHELL_EXTERN_LS_H
 
@@ -36,29 +14,48 @@ https://github.com/Lewbolew/Lab_2_shell
 
 
 
-
-
-class LS_simple_opt : public Options {
-public:
-    LS_simple_opt(string name, bool* flag_to_write, map<string, Options*> *opts_map = nullptr, bool noargs_allowed = true);
-    bool are_suboptions_valid(size_t nargs, char **argv) override;
-    bool* flag_to_write;
-};
-
-
 enum ls_sorts{NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION };
 
-
-
-struct ls_option_flags: opts_flags{
+struct ls_option_flags{
     bool detailed_listing = false;
     bool recursive = false;
     bool reverse_output = false;
     ls_sorts sort_type;
 };
 
+//general options class for LS
+class LS_opts : public Options{
+public:
+    ls_option_flags LS_flags;
 
-class Ls_opt_sort : public Options {
+public:
+    LS_opts (string name,
+             bool noargs_allowed = true);
+
+    ~LS_opts();
+
+    void clear_flags();
+};
+
+
+
+
+
+class LS_simple_opt : public Options {
+public:
+
+    bool* flag_to_write;
+
+    LS_simple_opt(string name,
+                  bool* host_flag_to_write,
+                  bool noargs_allowed = true);
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
+
+};
+
+
+
+class Ls_sort_opt : public Options {
 private:
 
     map<string, ls_sorts> *sort_opts_map;
@@ -66,13 +63,17 @@ private:
 
 
 public:
-    Ls_opt_sort( string name, ls_sorts* sorts, map<string, Options*> *opts_map = nullptr);
+    Ls_sort_opt( string name, ls_sorts* host_sorts, map<string, Options*> *opts_map = nullptr);
 
-    ~Ls_opt_sort();
+    ~Ls_sort_opt();
 
     bool are_suboptions_valid(size_t nargs, char **argv) override;
 
 };
+
+
+// ==================== OPTIONS ===============
+
 
 
 
@@ -87,7 +88,7 @@ private:
 public:
     Extern_LS(const string &name,
              callable_function funct_to_assign,
-             Options *options,
+             //Options *options,
              string &help_msg);
 
 
@@ -109,9 +110,6 @@ public:
     }
 
 
-
-
-
     // 1--getting pathes from args
     // 2--verifying options and setting flags
     // 3--sorting directories according to flags
@@ -126,7 +124,6 @@ public:
     void print_file_about(fs::path *path_to_print, int depth);
 
     void print_dir_about(fs::path *path_to_print, int depth);
-
 
     void print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth);
 
@@ -154,6 +151,10 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
     int call(size_t nargs, char **argv) override ;
 };
 
+
+
+
+// ==================== OPTIONS ===============
 
 extern Extern_LS *extern_ls_obj;
 

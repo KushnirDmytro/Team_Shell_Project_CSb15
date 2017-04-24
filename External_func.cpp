@@ -7,14 +7,12 @@
 #include "Extern_LS.h"
 
 
-Options::Options(map <string, Options*> *opts_map, string name){
-*this->opts_map = *opts_map;
+Options::Options( string name){
     this->name=name;
 }
 
-
 Options::~Options() {
-    delete this->options_flags;
+    //delete this->options_flags;
     delete this->opts_map;
 }
 
@@ -28,11 +26,14 @@ Options* Options::get_option(string potential_arg) {
 }
 
 
+
+//checks for crossvalidations of flags setting
 bool Options::are_options_cross_valid(){
     printf("Purely default crosscheck, no aditional restrictions set\n");
     return true;
 }
 
+//default validator for suboptions and it's flags
 bool Options::are_suboptions_valid(size_t nargs, char **argv){
     if (nargs == 0){
         if (this->noargs_allowed)
@@ -45,7 +46,6 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
 
     //!IMPORTANT!!!
     //--nargs;
-
 
     vector<string> args_vec;
     args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
@@ -80,10 +80,8 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
             } else {
                 arg_buf.push_back(iter_arg_name);
 
-
                 cout << "arg added to arg buffer vector "<< iter_arg_name << endl;
                 cout << "new size of arg vector " << arg_buf.size() << endl;
-
 
             }
         }
@@ -110,7 +108,6 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
 
                 char* temp_buf[arg_buf.size()];
                 str_vec_to_char_arr(arg_buf, temp_buf);
-
 
                 if (! (new_founded_option->are_suboptions_valid(arg_buf.size(), temp_buf) ) ){
                     printf("ARGUMENT CHECK FAILED AT OPTION %s\n", new_founded_option->name.c_str());
@@ -220,14 +217,17 @@ bool External_func::validate_is_directory(size_t nargs, char** vargs){
 //Overriding
 int External_func::call(size_t nargs, char **args){
 
+
+    string hello =  "HelloWorld";
+
     if (this->func_opts->are_suboptions_valid(nargs, args)){
         cout << "problem checking" << endl;
 
 
-        cout<< "Detailed listing flag "<<((ls_option_flags*)this->func_opts->options_flags)->detailed_listing <<endl;
-        cout<< "Recursive output flag "<<((ls_option_flags*)this->func_opts->options_flags)->recursive <<endl;
-        cout<< "Reverted output flag "<<((ls_option_flags*)this->func_opts->options_flags)->reverse_output <<endl;
-        cout<< "Sorting type "<<  ((ls_option_flags*)this->func_opts->options_flags)->sort_type <<endl;
+        cout<< "Detailed listing flag "<<  ( (LS_opts*)this->func_opts)->LS_flags.detailed_listing  <<endl;
+        cout<< "Recursive output flag "<<( (LS_opts*)this->func_opts)->LS_flags.recursive  <<endl;
+        cout<< "Reverted output flag "<<( (LS_opts*)this->func_opts)->LS_flags.reverse_output  <<endl;
+        cout<< "Sorting type "<<  ( (LS_opts*)this->func_opts)->LS_flags.sort_type <<endl;
 
         return Embedded_func::call(nargs, args);
     }

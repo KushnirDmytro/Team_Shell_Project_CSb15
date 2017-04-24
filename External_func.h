@@ -42,49 +42,25 @@ class Options;
 
 using options_validator = bool (*) (size_t, char**, Options* ref_to_owner_object);
 
-struct opts_flags{};
-
-
-
-/*
-
-struct command_option{
-    size_t opt_n;
-    string name;
-    command_option *opt_args;
-    options_validator opt_inner_valid = virt_opt_inner_valid;
-
-};
-
- */
-/*
-struct options_struct{
-    map <string,  Options> opts_map;
-    options_validator opt_cross_valid;
-};
-*/
-
-
 
 class Options{
 
-    //TODO MAKE PRIVATE WHEN SOLVE INIT PROBLEM
+    //TODO MAKE PROTECTED WHEN SOLVE INIT PROBLEM
 public:
 
     string name;
-
-    opts_flags *options_flags = nullptr;
 
     map <string,  Options*> *opts_map;
 
     //default value definition
     bool noargs_allowed = true;
+
+
     //field for classes to initialize
     //options_validator opt_cross_valid = nullptr;
 
-public:
+    Options(string name);
 
-    Options(map <string,  Options*> *opts_map, string name);
     ~Options();
 
     Options* get_option(string potential_arg);
@@ -114,10 +90,10 @@ protected:
 
     External_func (const string &name,
                    callable_function funct_to_assign,
-                   Options *options_ptr,
+                   //Options *options_ptr,
                    string &help_msg):
             Embedded_func(name, funct_to_assign,  help_msg){
-        this->func_opts = options_ptr;
+        //this->func_opts = options_ptr;
     }
 
 

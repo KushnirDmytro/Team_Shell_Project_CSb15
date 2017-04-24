@@ -164,11 +164,20 @@ int main(int argc, char **argv)
 
 
 
-    Options *ls_func_opts = new Options(nullptr,
-            "LS_options");
+    //=========================ATTENTION!!!==========++++++!!!!!
+
+    //Options *ls_func_opts = new Options("LS_options");
+
+    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls , cd_help_msg);
+
+    //=========================ATTENTION!!!==========++++++!!!!!
 
 
-    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls , ls_func_opts , cd_help_msg);
+
+
+
+
+
 
     embedded_lib= {
             {"cd",   my_cd_obj},

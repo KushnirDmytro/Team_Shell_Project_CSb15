@@ -6,7 +6,6 @@
 #include <boost/lexical_cast.hpp>
 
 
-
 //just activator-function
 extern int my_ls(size_t nargs, char **argv)
 {
@@ -18,14 +17,56 @@ extern int my_ls(size_t nargs, char **argv)
 extern Extern_LS *extern_ls_obj;
 
 
+LS_opts::LS_opts (string name,
+             bool noargs_allowed ) :
+        Options(name){
+
+    this->noargs_allowed = noargs_allowed;
+
+    this->opts_map = new map<string, Options*>{
+            {"-l",
+                    new LS_simple_opt( "-l", &this->LS_flags.detailed_listing) },
+            {"-r",
+                    new LS_simple_opt( "-r", &this->LS_flags.reverse_output)},
+            {"-R",
+                    new LS_simple_opt( "-R", &this->LS_flags.recursive)},
+            {"--sort",
+                    new Ls_sort_opt( "--sort", &this->LS_flags.sort_type)}
+    };
+};
 
 
-LS_simple_opt::LS_simple_opt(string name, bool* host_flag, map<string, Options*> *opts_map,   bool noargs_allowed) : Options(opts_map, name){
-    this->options_flags = nullptr;
+LS_opts::~LS_opts(){
+    delete this->opts_map->at("-l");
+    delete this->opts_map->at("-r");
+    delete this->opts_map->at("-R");
+    delete this->opts_map->at("--sort");
+}
+   // bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) override;
+
+
+
+
+void LS_opts::clear_flags(){
+    this->LS_flags.recursive = false;
+    this->LS_flags.detailed_listing=false;
+    this->LS_flags.reverse_output=false;
+    this->LS_flags.sort_type=NAME;
+};
+
+
+
+//prototype for unspecified option
+LS_simple_opt::LS_simple_opt(string name,
+                             bool* host_flag,
+                             bool noargs_allowed)
+        : Options(name){
+    this->opts_map = nullptr;
     this->noargs_allowed = noargs_allowed;
     this->flag_to_write = host_flag;
     }
 
+//checker for received suboptions
     bool LS_simple_opt::are_suboptions_valid(size_t nargs, char **argv) {
         if (noargs_allowed && nargs == 0) {
             (*this->flag_to_write) = true;
@@ -37,8 +78,14 @@ LS_simple_opt::LS_simple_opt(string name, bool* host_flag, map<string, Options*>
         }
     }
 
-    Ls_opt_sort::Ls_opt_sort( string name, ls_sorts *sorts, map<string, Options*> *opts_map) : Options(opts_map, name){
-        this->options_flags = nullptr;
+
+
+
+
+
+// option block for sorting
+    Ls_sort_opt::Ls_sort_opt( string name, ls_sorts *sorts, map<string, Options*> *opts_map)
+            : Options( name){
         this->noargs_allowed = false;
         this->sort_opts_map = new map<string, ls_sorts>{
                 {"U", UNSORT},
@@ -52,23 +99,22 @@ LS_simple_opt::LS_simple_opt(string name, bool* host_flag, map<string, Options*>
     };
 
 
-    Ls_opt_sort::~Ls_opt_sort() {
+    Ls_sort_opt::~Ls_sort_opt() {
         delete this->sort_opts_map;
     }
 
 
-
-    bool Ls_opt_sort::are_suboptions_valid(size_t nargs, char **argv) {
+// suboptions validator
+    bool Ls_sort_opt::are_suboptions_valid(size_t nargs, char **argv) {
         cout << "ENTERED SORT_OPTIONS" <<endl;
         cout << nargs << " Args number" << endl;
 
-
         if (nargs == 0){
+            // setting defaul sorting scheme
             *this->sorts = SIZE;
             return true;
         }
         else{
-
 
             cout << argv[0] << " RECEIVED AS ARG" << endl;
 
@@ -86,10 +132,6 @@ LS_simple_opt::LS_simple_opt(string name, bool* host_flag, map<string, Options*>
                     *this->sorts = this->sort_opts_map->at(argument);
                     return true;
                 }
-
-                *this->sorts = this->sort_opts_map->at(argument);
-                return true;
-
             }
             else {
                 printf("Error on argumnets number (%d) for  option --sort\n", (int)nargs );
@@ -100,6 +142,30 @@ LS_simple_opt::LS_simple_opt(string name, bool* host_flag, map<string, Options*>
 
 
 
+
+
+
+Extern_LS::~Extern_LS(){
+    delete this->passes_to_apply;
+    delete this->func_opts;
+}
+
+
+Extern_LS::Extern_LS(const string &name,
+                     callable_function funct_to_assign,
+                     //Options *options,
+                     string &help_msg):
+        External_func(name,
+                      funct_to_assign,
+                      //options,
+                      help_msg)
+{
+    this->passes_to_apply = new vector<fs::path>;
+    //TODO GEI IT OUT WHEN PROBLEM SOLVED
+    this->func_opts =  new LS_opts("LS_opts_object");
+
+
+};
 
 
 
@@ -120,13 +186,10 @@ int Extern_LS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> 
 
     char *arg_buf_ptr = argv[i];
 
-
     fs::path p; //path to directory (buffer)args_start_position
-
 
     //while first command option marker is not met in line of arguments
     while ( i<nargs && arg_buf_ptr[0] != '-'){
-
 
         p = fs::path(arg_buf_ptr);
 
@@ -193,7 +256,7 @@ int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_
                     copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
 
                     //RECURSIVE EXEC BRANCH
-                    if ( ((ls_option_flags*)this->func_opts->options_flags)->recursive ) {
+                    if ( ( (LS_opts*)func_opts)->LS_flags.recursive ) {
 
                         for(int i= 0; i < rec_depth; ++i)
                             printf("   ");
@@ -270,10 +333,7 @@ int Extern_LS::call(size_t nargs, char **argv){
 
 
 void inline Extern_LS::clear_flags(){
-    ( (ls_option_flags*)this->func_opts->options_flags)->detailed_listing = false;
-    ( (ls_option_flags*)this->func_opts->options_flags)->recursive = false;
-    ( (ls_option_flags*)this->func_opts->options_flags)->reverse_output = false;
-    ( (ls_option_flags*)this->func_opts->options_flags)->sort_type = NAME;
+    ((LS_opts *) this->func_opts)->clear_flags();
 }
 
 
@@ -332,44 +392,3 @@ void inline Extern_LS::print_dir_contain(fs::path *dir, vector<fs::path> *dir_co
         }
     }
 }
-
-
-Extern_LS::~Extern_LS(){
-    delete this->passes_to_apply;
-}
-
-
-Extern_LS::Extern_LS(const string &name,
-          callable_function funct_to_assign,
-          Options *options,
-          string &help_msg):
-        External_func(name,
-                      funct_to_assign,
-                      options,
-                      help_msg)
-{
-
-    this->passes_to_apply = new vector<fs::path>;
-    this->func_opts->options_flags=  (opts_flags*) &flags;;
-
-/*
-        ls_func_opts_map_ptr = new map<string, command_option*>;
-        (*ls_func_opts_map_ptr)["--help"] = &ls_opt_help;
-*/
-    //TODO GEI IT OUT WHEN PROBLEM SOLVED
-
-
-    this->func_opts->opts_map = new map<string, Options*>;//ls_func_opts_map_ptr;
-    (*this->func_opts->opts_map) ["-l"] = new LS_simple_opt( "-l",
-                                                            &((ls_option_flags*)this->func_opts->options_flags)->detailed_listing);
-    (*this->func_opts->opts_map) ["-r"] = new LS_simple_opt( "-r",
-                                                             &((ls_option_flags*)this->func_opts->options_flags)->reverse_output);
-    (*this->func_opts->opts_map) ["-R"] = new LS_simple_opt( "-R",
-                                                             &((ls_option_flags*)this->func_opts->options_flags)->recursive);
-
-    (*this->func_opts->opts_map) ["--sort"] = new Ls_opt_sort( "--sort",
-                                                              &((ls_option_flags*)this->func_opts->options_flags)->sort_type);
-
-
-};
-
