@@ -16,7 +16,7 @@ Options::~Options() {
     delete this->opts_map;
 }
 
-Options* Options::get_option(string potential_arg) {
+inline Options* Options::get_option(string potential_arg) {
     if (this->opts_map->find(potential_arg)
         ==
         this->opts_map->end())
@@ -26,15 +26,13 @@ Options* Options::get_option(string potential_arg) {
 }
 
 
-
 //checks for crossvalidations of flags setting
 bool Options::are_options_cross_valid(){
     printf("Purely default crosscheck, no aditional restrictions set\n");
     return true;
 }
 
-//default validator for suboptions and it's flags
-bool Options::are_suboptions_valid(size_t nargs, char **argv){
+bool Options::argumentless_option_check(size_t nargs, char **argv) {
     if (nargs == 0){
         if (this->noargs_allowed)
             return true;
@@ -43,15 +41,23 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
             return false;
         }
     }
+        //case when operations should be performed by other function
+    else return are_suboptions_valid(nargs, argv);
+}
 
-    //!IMPORTANT!!!
-    //--nargs;
+//default validator for suboptions and it's flags
+bool Options::are_suboptions_valid(size_t nargs, char **argv){
+
+    if (nargs == 0){
+        return argumentless_option_check(nargs, argv);
+    }
+
 
     vector<string> args_vec;
     args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
 
 
-    //==========CHECK =========
+    //==========CHECK of vector insertion performed =========
     for (int i = 0; i < nargs; ++i){
         printf("function get  ===>%s<===  \n", argv[i]);
     }
@@ -66,13 +72,26 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
 
     vector<string> arg_buf;
 
-    for(auto iter_arg_name: args_vec){
-        //founded_option = get_option(i);
+    string iter_arg_name;
 
-        if (new_founded_option != nullptr) {
+    for(int i = 0; i<args_vec.size(); ++i ){
+
+        iter_arg_name = args_vec[i];
+
+        if (new_founded_option != nullptr) { //case when it is not first iteration
             prev_founded_option = new_founded_option;
         }
-        new_founded_option = get_option(iter_arg_name);
+
+        //new_founded_option =
+        if (this->opts_map->find(iter_arg_name)
+                                ==
+                                this->opts_map->end())
+            new_founded_option = nullptr;
+        else
+            new_founded_option = this->opts_map->at(iter_arg_name);
+               // get_option(iter_arg_name);
+
+
         if (new_founded_option == nullptr) {
             if (prev_founded_option == nullptr) {
                 printf("EROR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
@@ -85,37 +104,26 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
 
             }
         }
-        else{
-            if(prev_founded_option == nullptr){
+
+
+        else {
+            if (prev_founded_option == nullptr) {
                 prev_founded_option = new_founded_option;
-            }
-            else{
+            } else {
 
-
-                //TODO MAKE THIS PART INLINE FUNCTION
-                //perform arguments checking
-                char* temp_buf[arg_buf.size()];
-                str_vec_to_char_arr(arg_buf, temp_buf);
-                if (! (prev_founded_option->are_suboptions_valid(arg_buf.size(), temp_buf) ) ){
-                    printf("ARGUMENT CHECK FAILED AT OPTION %s\n", prev_founded_option->name.c_str());
+                if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
                     return false;
-                }
-                arg_buf.clear();
             }
 
-            //block for last argument
-            if (iter_arg_name == args_vec[args_vec.size()-1]){
 
-                char* temp_buf[arg_buf.size()];
-                str_vec_to_char_arr(arg_buf, temp_buf);
-
-                if (! (new_founded_option->are_suboptions_valid(arg_buf.size(), temp_buf) ) ){
-                    printf("ARGUMENT CHECK FAILED AT OPTION %s\n", new_founded_option->name.c_str());
-                    return false;
-                }
-                arg_buf.clear();
-            }
         }
+            //LAST option check
+        if ( i == nargs - 1){
+
+            if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
+                return false;
+        }
+
     }
 
 
@@ -123,11 +131,23 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
     if (this->are_options_cross_valid()){
         printf("ARGUMENT CHECK DONE \n");
         return true;
+    }
+
+    else    return false;
 
 }
-    else return false;
-}
 
+
+bool Options::suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) {
+    char* temp_buf[(*arg_buf).size()];
+    str_vec_to_char_arr((*arg_buf), temp_buf);
+    if (! (opt_to_check->are_suboptions_valid((*arg_buf).size(), temp_buf) ) ){
+        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->name.c_str());
+        return false;
+    }
+    (*arg_buf).clear();
+    return true;
+}
 
 
 
@@ -145,54 +165,6 @@ void Options::str_vec_to_char_arr(vector<string> vec, char**arr){
 //=============================CLASSED BORDER==============================
 
 
-
-
-
-//options_validator opt_cross_valid;
-
-
-
-/*
- * 1)find options in function's options list
- * 2)assume other words are referring to options arguments
- * 3)validate if option arguments are good
- */
-// bool are_options_valid(){
-//    this->func_opts->are_suboptions_valid(this->nargs, this->vargs);
-/*
-int options_index = 0;
-size_t args_index = 0;
-bool is_arg = false;
-int last_founded_option = -1;
-
-vector<char*> founded_args;
-
-while (args_index < this->nargs) {
-    options_index = this->func_opts->is_option(this->vargs[args_index]);
-    if ( options_index != -1) {
-        is_arg = true;
-        last_founded_option = options_index;
-        if (last_founded_option != -1) {
-            if( ! this->func_opts.options[last_founded_option].opt_inner_valid(founded_args.size(), &founded_args[0])) {
-                printf(" ARGUMENT %s FOR OPTION %s IS INVALID \n", this->vargs[nargs], this->func_opts.options->name.c_str() );
-                return false;
-            }
-        }
-        else{
-            printf("UNKNONW ARGUMENT %s FOUND BEFORE ANY OPTIONS ", this->vargs[args_index]);
-            return false;
-        }
-    }else {
-        if (last_founded_option != -1) {
-            is_arg = false;
-            founded_args.push_back(this->vargs[args_index]);
-        }
-    }
-    ++args_index;
-}
-return true;
- */
-// }
 
 
 
@@ -219,7 +191,7 @@ int External_func::call(size_t nargs, char **args){
 
 
     string hello =  "HelloWorld";
-
+/*(
     if (this->func_opts->are_suboptions_valid(nargs, args)){
         cout << "problem checking" << endl;
 
@@ -228,11 +200,10 @@ int External_func::call(size_t nargs, char **args){
         cout<< "Recursive output flag "<<( (LS_opts*)this->func_opts)->LS_flags.recursive  <<endl;
         cout<< "Reverted output flag "<<( (LS_opts*)this->func_opts)->LS_flags.reverse_output  <<endl;
         cout<< "Sorting type "<<  ( (LS_opts*)this->func_opts)->LS_flags.sort_type <<endl;
-
+*/
         return Embedded_func::call(nargs, args);
-    }
-    else return 0;
-}
+
+};
 
 
 

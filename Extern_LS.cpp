@@ -52,6 +52,109 @@ void LS_opts::clear_flags(){
     this->LS_flags.sort_type=NAME;
 };
 
+bool LS_opts::suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf){
+    char* temp_buf[(*arg_buf).size()];
+    str_vec_to_char_arr((*arg_buf), temp_buf);
+    if (! (opt_to_check->are_suboptions_valid((*arg_buf).size(), temp_buf) ) ){
+        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->name.c_str());
+        return false;
+    }
+    (*arg_buf).clear();
+    return true;
+};
+
+bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) {
+
+    if (nargs == 0){
+        return argumentless_option_check(nargs, argv);
+    }
+
+
+    vector<string> args_vec;
+    args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
+
+
+    //==========CHECK of vector insertion performed =========
+    for (int i = 0; i < nargs; ++i){
+        printf("function get  ===>%s<===  \n", argv[i]);
+    }
+    for(auto i: args_vec)
+        cout<< "vector inserted word ===>" << i <<"<===" << endl;
+    //==========CHECK =========
+
+
+    Options *prev_founded_option = nullptr;
+    Options *new_founded_option = nullptr;
+
+
+    vector<string> arg_buf;
+
+    string iter_arg_name;
+
+    for(int i = 0; i<args_vec.size(); ++i ){
+
+        iter_arg_name = args_vec[i];
+
+        if (new_founded_option != nullptr) { //case when it is not first iteration
+            prev_founded_option = new_founded_option;
+        }
+
+        //new_founded_option =
+        if (this->opts_map->find(iter_arg_name)
+            ==
+            this->opts_map->end())
+            new_founded_option = nullptr;
+        else
+            new_founded_option = this->opts_map->at(iter_arg_name);
+        // get_option(iter_arg_name);
+
+
+        if (new_founded_option == nullptr) {
+            if (prev_founded_option == nullptr) {
+                printf("EROR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
+                return false;
+            } else {
+                arg_buf.push_back(iter_arg_name);
+
+                cout << "arg added to arg buffer vector "<< iter_arg_name << endl;
+                cout << "new size of arg vector " << arg_buf.size() << endl;
+
+            }
+        }
+
+
+        else {
+            if (prev_founded_option == nullptr) {
+                prev_founded_option = new_founded_option;
+            } else {
+
+                if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
+                    return false;
+            }
+
+
+        }
+        //LAST option check
+        if ( i == nargs - 1){
+
+            if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
+                return false;
+        }
+
+    }
+
+
+    cout << "CROSS_VALIDATION" << endl;
+    if (this->are_options_cross_valid()){
+        printf("ARGUMENT CHECK DONE \n");
+        return true;
+    }
+
+    else    return false;
+};
+
+
+
 
 
 //prototype for unspecified option
@@ -101,10 +204,14 @@ LS_simple_opt::LS_simple_opt(string name,
     }
 
 
+
+
+
 // suboptions validator
     bool Ls_sort_opt::are_suboptions_valid(size_t nargs, char **argv) {
         cout << "ENTERED SORT_OPTIONS" <<endl;
         cout << nargs << " Args number" << endl;
+
 
         if (nargs == 0){
             // setting defaul sorting scheme
@@ -119,6 +226,8 @@ LS_simple_opt::LS_simple_opt(string name,
 
                 string argument = string(argv[0]);
 
+
+
                 if (this->sort_opts_map->find(argument) == this->sort_opts_map->end()) {
                     printf("ERROR argument %s is not defined for %s\n", argument.c_str(), this->name.c_str());
                     return false;
@@ -126,7 +235,14 @@ LS_simple_opt::LS_simple_opt(string name,
 
                     printf("found option %d\n ",this->sort_opts_map->at(argument) );
 
-                    *this->sorts = this->sort_opts_map->at(argument);
+                    cout << "TEEEEST" << endl;
+                    cout << ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->name <<endl;
+
+
+                    * (( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sorts)  =
+                            ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sort_opts_map->at(argument) ;
+
+                  //  *this->sorts = this->sort_opts_map->at(argument);
                     return true;
                 }
             }
@@ -144,26 +260,24 @@ LS_simple_opt::LS_simple_opt(string name,
 
 Extern_LS::~Extern_LS(){
     delete this->passes_to_apply;
-    delete this->func_opts;
+    delete this->ls_opts;
 }
 
 
 Extern_LS::Extern_LS(const string &name,
                      callable_function funct_to_assign,
-                     //Options *options,
                      string &help_msg):
         External_func(name,
                       funct_to_assign,
-                      //options,
                       help_msg)
 {
+
     this->passes_to_apply = new vector<fs::path>;
     //TODO GEI IT OUT WHEN PROBLEM SOLVED
-    this->func_opts =  new LS_opts("LS_opts_object");
+    this->ls_opts =  new LS_opts("LS_opts_object");
 
 
 };
-
 
 
 
@@ -173,7 +287,7 @@ void inline Extern_LS::clean_up_after_execution() {
     this->args_start_position_shift = 1;
 }
 
-void inline Extern_LS::set_default_directory() {
+void inline Extern_LS::set_default_directory_as_pass_to_apply() {
     passes_to_apply->push_back(fs::current_path());
     args_start_position_shift-=1; //counting this data modification
 }
@@ -190,12 +304,7 @@ void inline Extern_LS::set_default_directory() {
 int Extern_LS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args){
 
     int i = 1; //argv index
-/*
-    if (nargs == 1){
-        p_form_args->push_back(fs::current_path());
-        return 1;
-    }
-*/
+
     char *arg_buf_ptr = argv[i];
 
     fs::path p; //path to directory (buffer)args_start_position_shift
@@ -266,7 +375,7 @@ int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_
                     copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
 
                     //RECURSIVE EXEC BRANCH
-                    if ( ( (LS_opts*)func_opts)->LS_flags.recursive ) {
+                    if ( ls_opts->LS_flags.recursive ) {
 
                         for(int i= 0; i < rec_depth; ++i)
                             printf("   ");
@@ -320,24 +429,21 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
 
     clean_up_after_execution();
 
-    clear_flags();
-    this->passes_to_apply->clear();
-    this->args_start_position_shift = 1;
     return 1;
 }
 
 //Overriding
-int Extern_LS::call(size_t nargs, char **argv){
+int Extern_LS::call(size_t nargs, char **argv) {
 
-    if (this->search_for_help(nargs, argv)){
+    if (this->search_for_help(nargs, argv)) {
         this->output_help(this->help_info);
         return 1;
     }
 
     get_passes_from_args(nargs, argv, this->passes_to_apply);
 
-    if (passes_to_apply->size() == 0){
-        set_default_directory();
+    if (passes_to_apply->size() == 0) {
+        set_default_directory_as_pass_to_apply();
     }
 
 
@@ -346,13 +452,25 @@ int Extern_LS::call(size_t nargs, char **argv){
     //shifting pointer to actual arguments position start
     argv += args_start_position_shift;
     nargs -= args_start_position_shift;
-    return External_func::call(nargs, argv);
-}
+
+    if (ls_opts->are_suboptions_valid(nargs, argv)) {
+        cout << "problem checking" << endl;
+
+
+        cout << "Detailed listing flag " << ls_opts->LS_flags.detailed_listing << endl;
+        cout << "Recursive output flag " << ls_opts->LS_flags.recursive << endl;
+        cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output << endl;
+        cout << "Sorting type " << ls_opts->LS_flags.sort_type << endl;
+
+
+        return External_func::call(nargs, argv);
+    }
+};
 
 
 void inline Extern_LS::clear_flags(){
-    ((LS_opts *) this->func_opts)->clear_flags();
-}
+    this->ls_opts->clear_flags();
+};
 
 
 void Extern_LS::print_file_about(fs::path *path_to_print, int depth){

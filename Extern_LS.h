@@ -23,6 +23,7 @@ struct ls_option_flags{
 };
 
 
+
 //==================DECLARATIONS of defaults ==============
 
 //general options class for LS
@@ -37,6 +38,12 @@ public:
     ~LS_opts();
 
     void clear_flags();
+
+
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
+
+    bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) override;
+
 };
 
 
@@ -60,18 +67,24 @@ public:
 class Ls_sort_opt : public Options {
 private:
 
-    map<string, ls_sorts> *sort_opts_map;
-    ls_sorts *sorts;
 
 
 public:
+
+
+    map<string, ls_sorts> *sort_opts_map;
+    ls_sorts *sorts;
     Ls_sort_opt( string name, ls_sorts* host_sorts);
 
     ~Ls_sort_opt();
 
     bool are_suboptions_valid(size_t nargs, char **argv) override;
 
+
+
 };
+
+
 
 
 // ==================== OPTIONS ===============
@@ -85,9 +98,16 @@ private:
 
     size_t args_start_position_shift = 1;
     vector<fs::path> *passes_to_apply;
-    ls_option_flags flags;
 
 public:
+
+
+    //I HAD TO DO IT TO AVOID BUG
+    LS_opts *ls_opts;
+
+    //ls_option_flags flags;
+
+
     Extern_LS(const string &name,
              callable_function funct_to_assign,
              //Options *options,
@@ -121,7 +141,7 @@ public:
 
     int get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args);
 
-    void set_default_directory();
+    void set_default_directory_as_pass_to_apply();
 
     int process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth = 0);
 

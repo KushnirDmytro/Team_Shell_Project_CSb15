@@ -71,6 +71,10 @@ public:
 
     void str_vec_to_char_arr(vector<string> vec, char**arr);
 
+    bool argumentless_option_check(size_t nargs, char **argv);
+
+    virtual bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf);
+
 
 };
 
@@ -86,7 +90,7 @@ class External_func : public Embedded_func{
 private:
 protected:
 
-    Options *func_opts;
+    //Options *func_opts;
 
     External_func (const string &name,
                    callable_function funct_to_assign,
