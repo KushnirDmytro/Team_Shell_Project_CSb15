@@ -148,11 +148,12 @@ int main(int argc, char **argv)
     string pwd_help_msg = "displays fullname of current execution directory";
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
+    string shell_script_interpreter_help_msg = "file interpreter to execute shell scripts \n 'mysh' <filename> to execurte script file";
     my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, pwd_help_msg );
-    my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
-    my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
-
+    my_help_obj = new Embedded_func("MY_HELP", my_help, help_help_msg );
+    my_exit_obj = new Embedded_func("MY_EXIT", my_exit, exit_help_msg );
+    my_shell_fileinterpreter =  new Embedded_func("MY_shell_script_interpreter", my_sh, shell_script_interpreter_help_msg );
  //   my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
 
 

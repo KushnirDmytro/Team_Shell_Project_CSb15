@@ -23,7 +23,6 @@ Line_splitter* def_line_split;
 
 Interpreter* default_interpreter;
 
-
 ConsoleView *console;
 
 map <string, Embedded_func*> embedded_lib;
@@ -118,8 +117,10 @@ int my_help(size_t nargs, char **args)
     printf("List of Commands:\n");
     printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
     printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
+    printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
+
     printf(" In case of external function name inputed (some Shell extentions) it will be executed if founded\n");
-    printf(" Allso can launch *.sh scripts interpreting them\n");
+
     printf(" 'exit' terminates executions of Shell program\n");
 
     printf("\n");
