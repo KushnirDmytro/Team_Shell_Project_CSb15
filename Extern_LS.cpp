@@ -242,7 +242,7 @@ LS_simple_opt::LS_simple_opt(string name,
                     * (( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sorts)  =
                             ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sort_opts_map->at(argument) ;
 
-                  //  *this->sorts = this->sort_opts_map->at(argument);
+                  // *this->sorts = this->sort_opts_map->at(argument);
                     return true;
                 }
             }
@@ -252,6 +252,8 @@ LS_simple_opt::LS_simple_opt(string name,
             }
         }
     }
+
+
 
 
 
@@ -278,6 +280,7 @@ Extern_LS::Extern_LS(const string &name,
 
 
 };
+
 
 
 

@@ -113,8 +113,16 @@ int my_cd(size_t nargs, char **args)
 int my_help(size_t nargs, char **args)
 {
 
-    printf("Write command and arguments, if needed, then press Enter\n");
-    printf("To get detailed information, write <command name> -help or <command name> -h:\n");
+    printf("Write command and arguments, if needed, then press 'Enter'\n");
+    printf("To get detailed information, write <command name> --help or <command name> -h:\n");
+    printf("List of Commands:\n");
+    printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
+    printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
+    printf(" In case of external function name inputed (some Shell extentions) it will be executed if founded\n");
+    printf(" Allso can launch *.sh scripts interpreting them\n");
+    printf(" 'exit' terminates executions of Shell program\n");
+
+    printf("\n");
 
     return 1;
 }

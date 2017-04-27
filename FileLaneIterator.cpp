@@ -48,7 +48,6 @@ void FileLaneIterator::getNextString(string *buf){
     }
     else {
         isGood = false;
-
     }
 }
 

@@ -144,9 +144,12 @@ int main(int argc, char **argv)
 {
 
     //===================DYNAMIC INITIALISATION ======================
-    string cd_help_msg = "SOME CD HELP";
+    string cd_help_msg = "to change directory type in: cd <directory name> \n<~> = 'HOME' dirrectory if one defined \n<.> = current dirrectory  \n<..> = 'parrent directory'  ";
+    string pwd_help_msg = "displays fullname of current execution directory";
+    string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
+    string exit_help_msg = "function 'exit' terminates My_Shell execution";
     my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
-    my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, cd_help_msg );
+    my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, pwd_help_msg );
     my_help_obj = new Embedded_func("MY_HELP", my_help, cd_help_msg );
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, cd_help_msg );
 
