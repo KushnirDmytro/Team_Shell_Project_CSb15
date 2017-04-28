@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 //
 // Created by d1md1m on 27.03.17.
 //
@@ -154,6 +157,8 @@ int my_sh(size_t nargs, char **args)
                 printf("String #%d red \n", i++);
                 cout << st << endl;
                 // st.append(" ");
+                if (st.length() == 0)
+                    continue;
                 status = default_interpreter->proceed_sting(&st);
                 if (!status){
                     return 0;

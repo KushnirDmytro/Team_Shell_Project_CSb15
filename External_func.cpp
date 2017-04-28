@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 //
 // Created by d1md1m on 29.03.17.
 //
@@ -7,8 +10,8 @@
 #include "Extern_LS.h"
 
 
-Options::Options( string name){
-    this->name=name;
+Options::Options( string name_){
+    name=name_;
 }
 
 Options::~Options() {
@@ -153,6 +156,8 @@ bool Options::suboptionS_arguments_validation(Options* opt_to_check, vector<stri
 
 void Options::str_vec_to_char_arr(vector<string> vec, char**arr){
     for (int i =0; i < vec.size(); ++i){
+        //TODO HANDLE THIS MEM LEACK !!!
+        arr[i] = new char[vec[i].size()+1];
         strcpy(arr[i], vec[i].c_str());
     }
 }

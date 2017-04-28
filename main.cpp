@@ -1,4 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
 
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -119,6 +121,9 @@ void my_loop(void)
     do {
         console->display_all();
         line = my_read_line();
+        if (strlen(line.c_str()) == 0){
+            continue;
+        }
         status = default_interpreter->proceed_sting(&line);
         //args = my_split_line(line);
         //status = my_execute(args); //if 0 - finished, exited

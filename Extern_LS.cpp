@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 //
 // Created by d1md1m on 31.03.17.
 //
@@ -71,7 +74,7 @@ bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) {
 
 
     vector<string> args_vec;
-    args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
+    args_vec.insert(args_vec.end(), argv, argv + nargs);
 
 
     //==========CHECK of vector insertion performed =========
@@ -236,7 +239,9 @@ LS_simple_opt::LS_simple_opt(string name,
                     printf("found option %d\n ",this->sort_opts_map->at(argument) );
 
                     cout << "TEEEEST" << endl;
-                    cout << ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->name <<endl;
+                    auto p = dynamic_cast<Ls_sort_opt*>(extern_ls_obj->ls_opts->opts_map->at("--sort"));
+                    if(p!=0)
+                        cout << p->name <<endl;
 
 
                     * (( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sorts)  =
@@ -273,7 +278,9 @@ Extern_LS::Extern_LS(const string &name,
                       funct_to_assign,
                       help_msg)
 {
+    cout << "S: " << name << endl;
 
+    //TODO make this vector static ptr
     this->passes_to_apply = new vector<fs::path>;
     //TODO GEI IT OUT WHEN PROBLEM SOLVED
     this->ls_opts =  new LS_opts("LS_opts_object");

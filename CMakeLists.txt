@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 project(Lab_2_shell)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -11,3 +11,17 @@ FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 target_link_libraries( Lab_2_shell ${Boost_LIBRARIES} )
+
+include(PVS-Studio.cmake)
+
+#pvs_studio_add_target(TARGET analyze ALL
+ #       FORMAT errorfile
+  #      PREPROCESSOR gcc
+#        LOG "Lab_2_shell.tasks"
+   #     ANALYZE Lab_2_shell
+    #    )
+
+pvs_studio_add_target(TARGET analyze ALL
+        OUTPUT FORMAT errorfile
+        ANALYZE Lab_2_shell
+        )

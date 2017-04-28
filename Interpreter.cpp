@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 //
 // Created by d1md1m on 28.03.17.
 //
@@ -61,14 +64,14 @@ int Interpreter::my_execute(vector<string> args)
     cout << "NUMBER OF ARGS FOUND: " <<args_number << endl;
     splitter->str_vector_to_chars(&args , cargs);
 
-    cout<< "builtIns #" << num_my_builtins() << endl;
+    //cout<< "builtIns #" << num_my_builtins() << endl;
 
     for (int i = 0; i < num_my_builtins(); i++) {
 //        cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
         auto search_iter = embedded_lib.find(cargs[0]);
         if (search_iter != embedded_lib.end() ) // case when we have such a func in our lib
         {
-            //CALLING INNER FUNCTION <=======================
+            //=============CALLING INNER FUNCTION <=======================
             return (search_iter->second)->call(args_number, cargs);
         }
     }
