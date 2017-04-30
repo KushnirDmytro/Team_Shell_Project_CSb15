@@ -7,6 +7,7 @@
 
 #include "Extern_LS.h"
 #include <boost/lexical_cast.hpp>
+#include <queue>
 
 
 //just activator-function
@@ -55,26 +56,34 @@ void LS_opts::clear_flags(){
     this->LS_flags.sort_type=NAME;
 };
 
+/*
 bool LS_opts::suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf){
     char* temp_buf[(*arg_buf).size()];
     str_vec_to_char_arr((*arg_buf), temp_buf);
     if (! (opt_to_check->are_suboptions_valid((*arg_buf).size(), temp_buf) ) ){
-        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->name.c_str());
+        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name.c_str());
         return false;
     }
     (*arg_buf).clear();
     return true;
 };
+*/
 
+
+
+
+/*
 bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) {
 
     if (nargs == 0){
         return argumentless_option_check(nargs, argv);
     }
 
-
     vector<string> args_vec;
     args_vec.insert(args_vec.end(), argv, argv + nargs);
+
+    queue <string> ls_argumens_queue;
+
 
 
     //==========CHECK of vector insertion performed =========
@@ -155,10 +164,7 @@ bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) {
 
     else    return false;
 };
-
-
-
-
+*/
 
 //prototype for unspecified option
 LS_simple_opt::LS_simple_opt(string name,
@@ -177,7 +183,7 @@ LS_simple_opt::LS_simple_opt(string name,
             return true;
         }
         else {
-            printf("Unexpected argument for %s  /n", this->name.c_str());
+            printf("Unexpected argument for %s  /n", this->option_name.c_str());
             return false;
         }
     }
@@ -215,7 +221,6 @@ LS_simple_opt::LS_simple_opt(string name,
         cout << "ENTERED SORT_OPTIONS" <<endl;
         cout << nargs << " Args number" << endl;
 
-
         if (nargs == 0){
             // setting defaul sorting scheme
             *this->sorts = SIZE;
@@ -229,10 +234,8 @@ LS_simple_opt::LS_simple_opt(string name,
 
                 string argument = string(argv[0]);
 
-
-
                 if (this->sort_opts_map->find(argument) == this->sort_opts_map->end()) {
-                    printf("ERROR argument %s is not defined for %s\n", argument.c_str(), this->name.c_str());
+                    printf("ERROR argument %s is not defined for %s\n", argument.c_str(), this->option_name.c_str());
                     return false;
                 } else {
 
@@ -241,13 +244,13 @@ LS_simple_opt::LS_simple_opt(string name,
                     cout << "TEEEEST" << endl;
                     auto p = dynamic_cast<Ls_sort_opt*>(extern_ls_obj->ls_opts->opts_map->at("--sort"));
                     if(p!=0)
-                        cout << p->name <<endl;
+                        cout << p->option_name <<endl;
 
 
-                    * (( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sorts)  =
-                            ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sort_opts_map->at(argument) ;
+                    //* (( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sorts)  =
+                     //       ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sort_opts_map->at(argument) ;
 
-                  // *this->sorts = this->sort_opts_map->at(argument);
+                    *this->sorts = this->sort_opts_map->at(argument);
                     return true;
                 }
             }
@@ -278,7 +281,7 @@ Extern_LS::Extern_LS(const string &name,
                       funct_to_assign,
                       help_msg)
 {
-    cout << "S: " << name << endl;
+    //cout << "S: " << option_name << endl;
 
     //TODO make this vector static ptr
     this->passes_to_apply = new vector<fs::path>;
@@ -428,8 +431,7 @@ int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_
 //show current directory
 int Extern_LS::my_ls_inner(size_t nargs, char **argv){
 
-    cout << "from bottom_layer MY_LS_INNER" <<endl;
-
+    //cout << "from bottom_layer MY_LS_INNER" <<endl;
 
     for (fs::path p : (*this->passes_to_apply)){
         //passes are there from argument line
@@ -437,7 +439,6 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
     }
 
     this->process_passes_from_saved(this->passes_to_apply);
-
 
     clean_up_after_execution();
 
@@ -458,7 +459,6 @@ int Extern_LS::call(size_t nargs, char **argv) {
         set_default_directory_as_pass_to_apply();
     }
 
-
     args_start_position_shift += this->passes_to_apply->size();
 
     //shifting pointer to actual arguments position start
@@ -473,7 +473,6 @@ int Extern_LS::call(size_t nargs, char **argv) {
         cout << "Recursive output flag " << ls_opts->LS_flags.recursive << endl;
         cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output << endl;
         cout << "Sorting type " << ls_opts->LS_flags.sort_type << endl;
-
 
         return External_func::call(nargs, argv);
     }

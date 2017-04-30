@@ -6,12 +6,13 @@
 //
 
 
+#include <queue>
 #include "External_func.h"
 #include "Extern_LS.h"
 
 
 Options::Options( string name_){
-    name=name_;
+    option_name=name_;
 }
 
 Options::~Options() {
@@ -49,85 +50,106 @@ bool Options::argumentless_option_check(size_t nargs, char **argv) {
 }
 
 //default validator for suboptions and it's flags
-bool Options::are_suboptions_valid(size_t nargs, char **argv){
+bool Options::are_suboptions_valid(size_t nargs, char **argv) {
 
-    if (nargs == 0){
+    if (nargs == 0) {
         return argumentless_option_check(nargs, argv);
     }
 
+  //  vector<string> args_vec;
+   // args_vec.insert(args_vec.end(), argv, argv + nargs);
 
-    vector<string> args_vec;
-    args_vec.insert(args_vec.end(), &argv[0], &argv[nargs]);
+    queue<string> ls_argumens_queue;
+    for (size_t i = 0; i < nargs; ++i) {
+        ls_argumens_queue.push( string (argv[i]) );
+    }
 
+
+/*
 
     //==========CHECK of vector insertion performed =========
-    for (int i = 0; i < nargs; ++i){
+
+    for (int i = 0; i < nargs; ++i) {
         printf("function get  ===>%s<===  \n", argv[i]);
     }
-    for(auto i: args_vec)
-        cout<< "vector inserted word ===>" << i <<"<===" << endl;
+    for (auto i: args_vec)
+        cout << "vector inserted word ===>" << i << "<===" << endl;
+
+    while (!ls_argumens_queue.empty()) {
+        //auto buf = ls_argumens_queue.front();
+        cout << "queue inserted word ===>" << ls_argumens_queue.front() << "<===" << endl;
+        ls_argumens_queue.pop();
+    }
+    for (auto i : args_vec) {
+        ls_argumens_queue.push(i);
+    }
+
+    int i = 0;
+    while (!ls_argumens_queue.empty()) {
+        //auto buf = ls_argumens_queue.front();
+
+
+        cout << "queue inserted word ===>" << ls_argumens_queue.front() <<
+             "equality to " << args_vec[i] << strcmp(args_vec[i].c_str(), ls_argumens_queue.front().c_str())<< endl;
+        ls_argumens_queue.pop();
+        i++;
+    }
+    for (auto i : args_vec) {
+        ls_argumens_queue.push(i);
+    }
+
+
     //==========CHECK =========
 
 
-    Options *prev_founded_option = nullptr;
-    Options *new_founded_option = nullptr;
+    */
 
+
+    Options *option_to_check = nullptr;
 
     vector<string> arg_buf;
 
     string iter_arg_name;
 
-    for(int i = 0; i<args_vec.size(); ++i ){
+    while(!ls_argumens_queue.empty()){
 
-        iter_arg_name = args_vec[i];
+        if ( this->map_contains(ls_argumens_queue.front().c_str() ) ) {
+            //very first argument found case
+            if (option_to_check != nullptr){
 
-        if (new_founded_option != nullptr) { //case when it is not first iteration
-            prev_founded_option = new_founded_option;
-        }
-
-        //new_founded_option =
-        if (this->opts_map->find(iter_arg_name)
-                                ==
-                                this->opts_map->end())
-            new_founded_option = nullptr;
-        else
-            new_founded_option = this->opts_map->at(iter_arg_name);
-               // get_option(iter_arg_name);
-
-
-        if (new_founded_option == nullptr) {
-            if (prev_founded_option == nullptr) {
-                printf("EROR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
-                return false;
-            } else {
-                arg_buf.push_back(iter_arg_name);
-
-                cout << "arg added to arg buffer vector "<< iter_arg_name << endl;
-                cout << "new size of arg vector " << arg_buf.size() << endl;
-
-            }
-        }
-
-
-        else {
-            if (prev_founded_option == nullptr) {
-                prev_founded_option = new_founded_option;
-            } else {
-
-                if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
+                if ( !suboptionS_arguments_validation(option_to_check, &arg_buf) ){
+                    cout << "check_failed on option " << option_to_check->option_name << endl;
                     return false;
+                }
+                arg_buf.clear();
+
             }
 
+            option_to_check = opts_map->at(ls_argumens_queue.front().c_str());
 
         }
-            //LAST option check
-        if ( i == nargs - 1){
 
-            if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
-                return false;
+        else{
+
+            if (option_to_check== nullptr){
+                cout << "ERROR:" << ls_argumens_queue.front().c_str() <<" is unextpected start of arguments sequence for " << option_name <<endl;
+                return  false;
+            }
+
+            arg_buf.push_back(ls_argumens_queue.front().c_str());
+
         }
 
+        ls_argumens_queue.pop();
     }
+
+    if (option_to_check!= nullptr){
+        if ( !suboptionS_arguments_validation(option_to_check, &arg_buf) ){
+            cout << "check_failed on option " << option_to_check->option_name << endl;
+            return false;
+        }
+    }
+
 
 
     cout << "CROSS_VALIDATION" << endl;
@@ -137,18 +159,25 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv){
     }
 
     else    return false;
+};
 
+
+inline void clear_temp_array_of_pointers(size_t arr_size, char** arr_ptr){
+    for(size_t i = 0; i < arr_size ; ++i)
+        delete  arr_ptr[i];
 }
-
 
 bool Options::suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) {
     char* temp_buf[(*arg_buf).size()];
     str_vec_to_char_arr((*arg_buf), temp_buf);
-    if (! (opt_to_check->are_suboptions_valid((*arg_buf).size(), temp_buf) ) ){
-        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->name.c_str());
+
+    if (! (opt_to_check->are_suboptions_valid( arg_buf->size(), temp_buf) ) ){
+        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name.c_str());
         return false;
     }
-    (*arg_buf).clear();
+
+    clear_temp_array_of_pointers(arg_buf->size(), temp_buf);
+    //arg_buf->clear();
     return true;
 }
 
@@ -156,10 +185,16 @@ bool Options::suboptionS_arguments_validation(Options* opt_to_check, vector<stri
 
 void Options::str_vec_to_char_arr(vector<string> vec, char**arr){
     for (int i =0; i < vec.size(); ++i){
-        //TODO HANDLE THIS MEM LEACK !!!
         arr[i] = new char[vec[i].size()+1];
         strcpy(arr[i], vec[i].c_str());
     }
+}
+
+
+bool Options::map_contains(string seek_this_key) {
+    return  !( opts_map->find(seek_this_key)
+            ==
+            opts_map->end() ) ;
 }
 
 

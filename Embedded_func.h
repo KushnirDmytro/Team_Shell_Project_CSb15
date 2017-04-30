@@ -30,7 +30,7 @@ protected:
     char** vargs;
     size_t nargs;
     string help_info;
-    bool initialized;
+    //bool initialized;
     callable_function func;
 public:
     Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg);

@@ -47,7 +47,7 @@ class Options{
     //TODO MAKE PROTECTED WHEN SOLVE INIT PROBLEM
 public:
 
-    string name;
+    string option_name;
 
     map <string,  Options*> *opts_map;
 
@@ -74,7 +74,7 @@ public:
 
     virtual bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf);
 
-
+    bool map_contains(string seek_this);
 };
 
 

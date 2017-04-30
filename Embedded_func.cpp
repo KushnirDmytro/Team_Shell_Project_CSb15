@@ -34,10 +34,10 @@ map <string, Embedded_func*> embedded_lib;
 
 
 
-Embedded_func::Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg){
-    this->name=name;
-    this->func = funct_to_assign;
-    this->help_info = help_msg;
+Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){
+    name=name_;
+    func = funct_to_assign_;
+    help_info = help_msg_;
 }
 
 
@@ -51,19 +51,19 @@ int Embedded_func::search_for_help(size_t nargs, char** &argvector){
 }
 
 void Embedded_func::output_help(string &helpMsg){
-    printf("%s\n", this->help_info.c_str());
+    printf("%s\n", help_info.c_str());
 }
 
 
-int Embedded_func::call(size_t nargs, char **args){
-    this->nargs = nargs;
-    this->vargs = args;
-    this->initialized = true;
-    if (this->search_for_help(this->nargs, this->vargs)){
-        this->output_help(this->help_info);
+int Embedded_func::call(size_t nargs_, char **args_){
+    nargs = nargs_;
+    vargs = args_;
+//    this->initialized = true;
+    if (search_for_help(nargs, vargs)){
+        output_help(help_info);
         return 1;
     }
-    return func (this->nargs, this->vargs);
+    return func (nargs, vargs);
     //     return 1;
 }
 
@@ -115,13 +115,13 @@ int my_help(size_t nargs, char **args)
 {
 
     printf("Write command and arguments, if needed, then press 'Enter'\n");
-    printf("To get detailed information, write <command name> --help or <command name> -h:\n");
+    printf("To get detailed information, write <command option_name> --help or <command option_name> -h:\n");
     printf("List of Commands:\n");
     printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
     printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
     printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
 
-    printf(" In case of external function name inputed (some Shell extentions) it will be executed if founded\n");
+    printf(" In case of external function option_name inputed (some Shell extentions) it will be executed if founded\n");
 
     printf(" 'exit' terminates executions of Shell program\n");
 

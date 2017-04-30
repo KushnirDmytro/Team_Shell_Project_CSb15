@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 {
 
     //===================DYNAMIC INITIALISATION ======================
-    string cd_help_msg = "to change directory type in: cd <directory name> \n<~> = 'HOME' dirrectory if one defined \n<.> = current dirrectory  \n<..> = 'parrent directory'  ";
+    string cd_help_msg = "to change directory type in: cd <directory option_name> \n<~> = 'HOME' dirrectory if one defined \n<.> = current dirrectory  \n<..> = 'parrent directory'  ";
     string pwd_help_msg = "displays fullname of current execution directory";
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";

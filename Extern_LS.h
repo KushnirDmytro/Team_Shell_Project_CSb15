@@ -41,14 +41,11 @@ public:
 
     void clear_flags();
 
+    //bool are_suboptions_valid(size_t nargs, char **argv) override;
 
-    bool are_suboptions_valid(size_t nargs, char **argv) override;
-
-    bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) override;
+//    bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) override;
 
 };
-
-
 
 
 
