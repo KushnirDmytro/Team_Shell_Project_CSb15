@@ -34,7 +34,6 @@
 using namespace std;
 
 
-namespace fs = boost::filesystem;
 
 class Options;
 

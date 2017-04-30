@@ -9,9 +9,11 @@
 
 using namespace std;
 
-Line_splitter::Line_splitter(){
+Line_splitter::Line_splitter(){}
 
-}
+
+Line_splitter::~Line_splitter(){}
+
 
 // left it here = line delimiters " \t\r\n\a"
 vector<string> Line_splitter::my_split_line(string input_str)
@@ -55,7 +57,3 @@ int Line_splitter::str_vector_to_chars(vector<string> *args, char** cargs){
 
 
 
-
-Line_splitter::~Line_splitter(){
-
-}

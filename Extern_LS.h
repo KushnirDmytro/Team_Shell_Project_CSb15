@@ -12,6 +12,8 @@
 #include "External_func.h"
 #include "ctime"
 
+namespace fs = boost::filesystem;
+
 //==================DECLARATIONS of defaults ==============
 enum ls_sorts{NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION };
 
@@ -19,7 +21,7 @@ struct ls_option_flags{
     bool detailed_listing = false;
     bool recursive = false;
     bool reverse_output = false;
-    ls_sorts sort_type;
+    ls_sorts sort_type = NAME;
 };
 
 

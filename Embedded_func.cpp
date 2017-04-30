@@ -17,7 +17,6 @@ using namespace std;
 
 
 
-
 User * default_user;
 
 Directory *current_directory;
@@ -161,27 +160,29 @@ int my_sh(size_t nargs, char **args)
                     continue;
                 status = default_interpreter->proceed_sting(&st);
                 if (!status){
+                    delete iter;
                     return 0;
                 };
 
             }
+            delete iter;
         }
         else if (boost::filesystem::is_regular_file(file_path) ){
             FileLaneIterator *iter = new FileLaneIterator(file_path);
             string st;
             cout << "------------FILE READING IN PROCESS------------------" << endl;
-            while(iter->fileIsReady()){
+            if(iter->fileIsReady()){
                 iter->getNextString(&st);
                 cout << st << endl;
-                return default_interpreter->proceed_sting(&st);
+                delete iter;
+                return  default_interpreter->proceed_sting(&st);
             }
+            delete iter;
         }
         else{
             perror(args[1]);
             perror(file_path.c_str());
         }
-
-
     }
     return 1;
 }

@@ -194,9 +194,7 @@ bool External_func::validate_is_directory(size_t nargs, char** vargs){
 //Overriding
 int External_func::call(size_t nargs, char **args){
 
-
-    string hello =  "HelloWorld";
-/*(
+    /*
     if (this->func_opts->are_suboptions_valid(nargs, args)){
         cout << "problem checking" << endl;
 
@@ -205,7 +203,8 @@ int External_func::call(size_t nargs, char **args){
         cout<< "Recursive output flag "<<( (LS_opts*)this->func_opts)->LS_flags.recursive  <<endl;
         cout<< "Reverted output flag "<<( (LS_opts*)this->func_opts)->LS_flags.reverse_output  <<endl;
         cout<< "Sorting type "<<  ( (LS_opts*)this->func_opts)->LS_flags.sort_type <<endl;
-*/
+
+       */
         return Embedded_func::call(nargs, args);
 
 };
