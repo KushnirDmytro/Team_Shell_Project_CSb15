@@ -8,7 +8,9 @@
 #define LAB_2_SHELL_EXTERN_LS_H
 
 
+#include <sys/stat.h>
 
+#include <sys/types.h>
 #include "External_func.h"
 #include "ctime"
 
@@ -151,6 +153,11 @@ public:
     void print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth);
 
     void clear_flags();
+
+    stringstream * form_permission_report_for_file(fs::path *f, struct stat *stat_struct);
+
+
+    stringstream * form_timereport_for_file(fs::path *f);
 
     void clean_up_after_execution();
 //show current directory

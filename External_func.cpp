@@ -6,7 +6,6 @@
 //
 
 
-#include <queue>
 #include "External_func.h"
 #include "Extern_LS.h"
 
@@ -16,17 +15,16 @@ Options::Options( string name_){
 }
 
 Options::~Options() {
-    //delete this->options_flags;
-    delete this->opts_map;
+    delete opts_map;
 }
 
 inline Options* Options::get_option(string potential_arg) {
-    if (this->opts_map->find(potential_arg)
+    if (opts_map->find(potential_arg)
         ==
-        this->opts_map->end())
+        opts_map->end())
         return nullptr;
     else
-        return this->opts_map->at(potential_arg);
+        return opts_map->at(potential_arg);
 }
 
 
@@ -38,7 +36,7 @@ bool Options::are_options_cross_valid(){
 
 bool Options::argumentless_option_check(size_t nargs, char **argv) {
     if (nargs == 0){
-        if (this->noargs_allowed)
+        if (noargs_allowed)
             return true;
         else{
             printf("FOUNDED NO ARGUMENTS\n");
@@ -107,13 +105,15 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
 
     Options *option_to_check = nullptr;
 
-    vector<string> arg_buf;
+    queue<string> arg_buf;
 
-    string iter_arg_name;
+    string current_arg_name;
 
     while(!ls_argumens_queue.empty()){
 
-        if ( this->map_contains(ls_argumens_queue.front().c_str() ) ) {
+        current_arg_name = ls_argumens_queue.front().c_str();
+
+        if ( map_contains(current_arg_name) ) {
             //very first argument found case
             if (option_to_check != nullptr){
 
@@ -121,22 +121,23 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
                     cout << "check_failed on option " << option_to_check->option_name << endl;
                     return false;
                 }
-                arg_buf.clear();
+                while (!arg_buf.empty())
+                    arg_buf.pop();
 
             }
 
-            option_to_check = opts_map->at(ls_argumens_queue.front().c_str());
+            option_to_check = get_option( current_arg_name);
 
         }
 
         else{
 
             if (option_to_check== nullptr){
-                cout << "ERROR:" << ls_argumens_queue.front().c_str() <<" is unextpected start of arguments sequence for " << option_name <<endl;
+                cout << "ERROR:" << current_arg_name <<" is unextpected start of arguments sequence for " << option_name <<endl;
                 return  false;
             }
 
-            arg_buf.push_back(ls_argumens_queue.front().c_str());
+            arg_buf.push(current_arg_name);
 
         }
 
@@ -149,8 +150,6 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
             return false;
         }
     }
-
-
 
     cout << "CROSS_VALIDATION" << endl;
     if (this->are_options_cross_valid()){
@@ -167,9 +166,9 @@ inline void clear_temp_array_of_pointers(size_t arr_size, char** arr_ptr){
         delete  arr_ptr[i];
 }
 
-bool Options::suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) {
+bool Options::suboptionS_arguments_validation(Options* opt_to_check, queue<string>* arg_buf) {
     char* temp_buf[(*arg_buf).size()];
-    str_vec_to_char_arr((*arg_buf), temp_buf);
+    str_queue_to_char_arr((*arg_buf), temp_buf);
 
     if (! (opt_to_check->are_suboptions_valid( arg_buf->size(), temp_buf) ) ){
         printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name.c_str());
@@ -183,10 +182,12 @@ bool Options::suboptionS_arguments_validation(Options* opt_to_check, vector<stri
 
 
 
-void Options::str_vec_to_char_arr(vector<string> vec, char**arr){
-    for (int i =0; i < vec.size(); ++i){
-        arr[i] = new char[vec[i].size()+1];
-        strcpy(arr[i], vec[i].c_str());
+void Options::str_queue_to_char_arr(queue<string> queue, char **arr){
+    size_t i = 0;
+    while (!queue.empty()){
+        arr[i] = new char[queue.front().size()+1];
+        strcpy(arr[i], queue.front().c_str());
+        queue.pop();
     }
 }
 

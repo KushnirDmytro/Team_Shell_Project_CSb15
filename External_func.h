@@ -13,6 +13,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/range/iterator_range.hpp>
 
+#include <queue>
+
 #include "User.h"
 #include "Directory.h"
 #include "Line_splitter.h"
@@ -68,11 +70,11 @@ public:
 
     virtual bool are_options_cross_valid();
 
-    void str_vec_to_char_arr(vector<string> vec, char**arr);
+    void str_queue_to_char_arr(queue<string> queue, char **arr);
 
     bool argumentless_option_check(size_t nargs, char **argv);
 
-    virtual bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf);
+    virtual bool suboptionS_arguments_validation(Options* opt_to_check, queue<string>* arg_buf);
 
     bool map_contains(string seek_this);
 };

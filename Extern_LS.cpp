@@ -7,8 +7,13 @@
 
 #include "Extern_LS.h"
 #include <boost/lexical_cast.hpp>
-#include <queue>
 
+#include <sys/types.h>
+#include <sys/xattr.h>
+
+
+#include <sys/stat.h>
+#include <sys/types.h>
 
 //just activator-function
 extern int my_ls(size_t nargs, char **argv)
@@ -56,124 +61,15 @@ void LS_opts::clear_flags(){
     this->LS_flags.sort_type=NAME;
 };
 
-/*
-bool LS_opts::suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf){
-    char* temp_buf[(*arg_buf).size()];
-    str_vec_to_char_arr((*arg_buf), temp_buf);
-    if (! (opt_to_check->are_suboptions_valid((*arg_buf).size(), temp_buf) ) ){
-        printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name.c_str());
-        return false;
-    }
-    (*arg_buf).clear();
-    return true;
-};
-*/
-
-
-
-
-/*
-bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) {
-
-    if (nargs == 0){
-        return argumentless_option_check(nargs, argv);
-    }
-
-    vector<string> args_vec;
-    args_vec.insert(args_vec.end(), argv, argv + nargs);
-
-    queue <string> ls_argumens_queue;
-
-
-
-    //==========CHECK of vector insertion performed =========
-    for (int i = 0; i < nargs; ++i){
-        printf("function get  ===>%s<===  \n", argv[i]);
-    }
-    for(auto i: args_vec)
-        cout<< "vector inserted word ===>" << i <<"<===" << endl;
-    //==========CHECK =========
-
-
-    Options *prev_founded_option = nullptr;
-    Options *new_founded_option = nullptr;
-
-
-    vector<string> arg_buf;
-
-    string iter_arg_name;
-
-    for(int i = 0; i<args_vec.size(); ++i ){
-
-        iter_arg_name = args_vec[i];
-
-        if (new_founded_option != nullptr) { //case when it is not first iteration
-            prev_founded_option = new_founded_option;
-        }
-
-        //new_founded_option =
-        if (this->opts_map->find(iter_arg_name)
-            ==
-            this->opts_map->end())
-            new_founded_option = nullptr;
-        else
-            new_founded_option = this->opts_map->at(iter_arg_name);
-        // get_option(iter_arg_name);
-
-
-        if (new_founded_option == nullptr) {
-            if (prev_founded_option == nullptr) {
-                printf("EROR, FIRST ARGUMENT ===>%s<=== IS NOT OPTION\n", iter_arg_name.c_str());
-                return false;
-            } else {
-                arg_buf.push_back(iter_arg_name);
-
-                cout << "arg added to arg buffer vector "<< iter_arg_name << endl;
-                cout << "new size of arg vector " << arg_buf.size() << endl;
-
-            }
-        }
-
-
-        else {
-            if (prev_founded_option == nullptr) {
-                prev_founded_option = new_founded_option;
-            } else {
-
-                if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
-                    return false;
-            }
-
-
-        }
-        //LAST option check
-        if ( i == nargs - 1){
-
-            if (!suboptionS_arguments_validation(prev_founded_option, &arg_buf))
-                return false;
-        }
-
-    }
-
-
-    cout << "CROSS_VALIDATION" << endl;
-    if (this->are_options_cross_valid()){
-        printf("ARGUMENT CHECK DONE \n");
-        return true;
-    }
-
-    else    return false;
-};
-*/
 
 //prototype for unspecified option
 LS_simple_opt::LS_simple_opt(string name,
                              bool* host_flag,
-                             bool noargs_allowed)
+                             bool noargs_allowed_)
         : Options(name){
-    this->opts_map = nullptr;
-    this->noargs_allowed = noargs_allowed;
-    this->flag_to_write = host_flag;
+    opts_map = nullptr;
+    noargs_allowed = noargs_allowed_;
+    flag_to_write = host_flag;
     }
 
 //checker for received suboptions
@@ -223,7 +119,7 @@ LS_simple_opt::LS_simple_opt(string name,
 
         if (nargs == 0){
             // setting defaul sorting scheme
-            *this->sorts = SIZE;
+            *this->sorts = NAME;
             return true;
         }
         else{
@@ -241,16 +137,15 @@ LS_simple_opt::LS_simple_opt(string name,
 
                     printf("found option %d\n ",this->sort_opts_map->at(argument) );
 
+                    /*
                     cout << "TEEEEST" << endl;
                     auto p = dynamic_cast<Ls_sort_opt*>(extern_ls_obj->ls_opts->opts_map->at("--sort"));
                     if(p!=0)
                         cout << p->option_name <<endl;
+                    */
 
 
-                    //* (( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sorts)  =
-                     //       ( (Ls_sort_opt*)extern_ls_obj->ls_opts->opts_map->at("--sort") )->sort_opts_map->at(argument) ;
-
-                    *this->sorts = this->sort_opts_map->at(argument);
+                    *sorts = sort_opts_map->at(argument);
                     return true;
                 }
             }
@@ -357,6 +252,11 @@ int Extern_LS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> 
 }
 
 
+inline void time_correction(){
+    struct tm time_struct;
+    const std::time_t raw_time =  timezone;
+    gmtime_r(&raw_time, &time_struct);
+}
 
 int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth){
 
@@ -366,6 +266,11 @@ int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_
     // ===============INIT===========
     using vect = vector<fs::path> ;
     // ===============INIT END===========
+
+
+    if (this->ls_opts->LS_flags.detailed_listing){
+        time_correction();
+    }
 
 
     //iterate list of arguments get
@@ -476,6 +381,8 @@ int Extern_LS::call(size_t nargs, char **argv) {
 
         return External_func::call(nargs, argv);
     }
+
+
     else {
         this->clean_up_after_execution();
         return 1;
@@ -488,37 +395,92 @@ void inline Extern_LS::clear_flags(){
 };
 
 
+stringstream * Extern_LS::form_permission_report_for_file(fs::path *path_to_print, struct stat *fileStat) {
+
+    stat(path_to_print->c_str(), fileStat );
+
+    stringstream* result = new stringstream;
+
+    *result << " Usr:"
+            << ( getpwuid(fileStat->st_uid)->pw_name)
+            << " Gr:"
+            << ( getpwuid(fileStat->st_gid)->pw_name)
+            << " "
+            << ( (fileStat->st_mode & S_IRUSR) ? "r" : "-")
+            << ( (fileStat->st_mode & S_IWUSR) ? "w" : "-")
+            << ( (fileStat->st_mode & S_IXUSR) ? "x" : "-")
+            << ( (fileStat->st_mode & S_IRGRP) ? "r" : "-")
+            << ( (fileStat->st_mode & S_IWGRP) ? "w" : "-")
+            << ( (fileStat->st_mode & S_IXGRP) ? "x" : "-")
+            << ( (fileStat->st_mode & S_IROTH) ? "r" : "-")
+            << ( (fileStat->st_mode & S_IWOTH) ? "w" : "-")
+            << ( (fileStat->st_mode & S_IXOTH) ? "x" : "-")
+            << " ";
+
+    return result;
+}
+
+stringstream * Extern_LS::form_timereport_for_file(fs::path *path_to_print){
+
+    struct tm time_struct;
+
+    const std::time_t raw_time = fs::last_write_time(*path_to_print) - timezone;
+
+    /*
+    cout << "TIME ZONE "<<timezone << endl;
+
+    cout << "RAW TIME "<<raw_time << endl;
+
+    cout << "TIME ZONE "  <<__timezone<< endl;
+*/
+    gmtime_r(&raw_time, &time_struct);
+
+
+    stringstream *ss = new stringstream;
+
+    *ss <<"" << 1900 + time_struct.tm_year
+       << "-" <<1 + time_struct.tm_mon
+       << "-" << time_struct.tm_mday
+       <<"  " << time_struct.tm_hour + time_struct.tm_isdst + 1
+       << ":" << time_struct.tm_min
+       << ":" << time_struct.tm_sec
+       << time_struct.tm_zone
+       << " (dst " << time_struct.tm_isdst << ')'
+       << " correction " << 1 << "H"
+       << endl;
+
+    return ss;
+}
+
+
+
+
+
+
 void Extern_LS::print_file_about(fs::path *path_to_print, int depth){
     for (int i=0; i<=depth; ++i)
-        printf("    ");
+       printf("    ");
     printf("%s \n", path_to_print->filename().c_str() );
 
-
-/*
- *
     //TODO add falg-check and additional info listing
 
-    if ( ( (ls_option_flags*)this->func_opts->options_flags)->detailed_listing ){
+    if ( ls_opts->LS_flags.detailed_listing){
 
+        struct stat fileStat;
 
+        stringstream*  time_stream = form_timereport_for_file(path_to_print);
+        stringstream*  permissions_stream = form_permission_report_for_file(path_to_print, &fileStat);
 
-        std::time_t raw_time = fs::last_write_time(*path_to_print);
-
-        gmtime_r(&raw_time, time_struct_ptr);
-        // = boost::lexical_cast<std::string>(time_changed);
-
-        char time_buffer[32];
-        //std::strftime(time_buffer, 32, "%a, %d.%m.%Y %H:%M:%S", time_struct_ptr);
-
-        string str(time_buffer);
-
-        printf(" Ext: %s size%lu  time_written  %s\n",
+        printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
+               permissions_stream->str().c_str(),
                path_to_print->extension().c_str() ,
-               fs::file_size(*path_to_print),
-               time_buffer);
-
+               fileStat.st_size,
+        time_stream->str().c_str() );
+        delete permissions_stream;
+        delete time_stream;
     }
-*/
+
+
 }
 
 
