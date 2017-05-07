@@ -176,7 +176,6 @@ Extern_LS::Extern_LS(const string &name,
                       funct_to_assign,
                       help_msg)
 {
-    //cout << "S: " << option_name << endl;
 
     //TODO make this vector static ptr
     passes_to_apply = new vector<fs::path>;
@@ -262,12 +261,18 @@ inline void time_correction(){
 inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
 
 
+
+    /*
+    bidirectional_iterator_tag<fs::path>  v_start;
+    bidirectional_iterator_tag<fs::path> v_finish;
     if (this->ls_opts->LS_flags.reverse_output){
-        auto v_start = vec_to_sort->rbegin();
-        auto v_finish = vec_to_sort->rend();
+         v_start = vec_to_sort->rbegin();
+         v_finish = vec_to_sort->rend();
+    } else{
+        v_start = vec_to_sort->begin();
+        v_finish = vec_to_sort->end();
     }
-
-
+*/
     switch (this->ls_opts->LS_flags.sort_type){
         case NAME: {
             sort(vec_to_sort->begin(),
@@ -307,7 +312,7 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
         {
             //splitting non-files (directories)
             vector<fs::path>::iterator seek_first_file =  partition(vec_to_sort->begin(),
-                 vec_to_sort->end(),
+                                                                    vec_to_sort->end(),
                  [](fs::path elem)-> bool { return ! fs::is_regular_file(elem);}
             );
 
@@ -328,6 +333,11 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
                               bool { return first.filename() < secod.filename();});
             break;}
     }
+
+    if (this->ls_opts->LS_flags.reverse_output){
+        reverse(vec_to_sort->begin(), vec_to_sort->end() );
+    }
+
 
 };
 
