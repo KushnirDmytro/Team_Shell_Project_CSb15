@@ -144,7 +144,7 @@ public:
 
     void set_default_directory_as_pass_to_apply();
 
-    int process_passes_from_saved(vector<fs::path> *p_form_args,const int rec_depth = 0);
+    int do_LS_job_with_vector(vector<fs::path> *p_from_args, const int rec_depth = 0);
 
     void print_file_about(const fs::path *path_to_print,const int depth);
 

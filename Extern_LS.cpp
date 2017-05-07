@@ -260,6 +260,14 @@ inline void time_correction(){
 
 
 inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
+
+
+    if (this->ls_opts->LS_flags.reverse_output){
+        auto v_start = vec_to_sort->rbegin();
+        auto v_finish = vec_to_sort->rend();
+    }
+
+
     switch (this->ls_opts->LS_flags.sort_type){
         case NAME: {
             sort(vec_to_sort->begin(),
@@ -297,19 +305,12 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
 
         case SIZE: //FUNPART....
         {
-            //sort out all non-files (directories)
-            sort(vec_to_sort->begin(),
+            //splitting non-files (directories)
+            vector<fs::path>::iterator seek_first_file =  partition(vec_to_sort->begin(),
                  vec_to_sort->end(),
-                 [](fs::path first, fs::path second)->
-                         bool {
-                     return fs::is_regular_file(first) < fs::is_regular_file(second);}
+                 [](fs::path elem)-> bool { return ! fs::is_regular_file(elem);}
             );
 
-            vector<fs::path>::iterator seek_first_file = vec_to_sort->begin();
-
-            while( (seek_first_file != vec_to_sort->end()) &&
-                    (!fs::is_regular_file( *seek_first_file)) )
-                seek_first_file++;
 
             //sorting directories only
             sort(seek_first_file,
@@ -328,20 +329,15 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
             break;}
     }
 
-    if (this->ls_opts->LS_flags.sort_type == NAME){
-        sort(vec_to_sort->begin(), vec_to_sort->end(),
-             [](fs::path first, fs::path secod)->
-                     bool { return first.filename() < secod.filename();}
-        );
-    }
 };
 
 
-int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vector<fs::path> *p_form_args,const int rec_depth){
+int Extern_LS::do_LS_job_with_vector( /*not const, to be sotred inside*/vector<fs::path> *p_from_args,
+                                                                        const int rec_depth){
 
     //TODO INCLUDE OPTIONS FOR REVERSING OUTPUT IN FUTURE
 
-    apply_sorting(p_form_args);
+    apply_sorting(p_from_args);
     // ===============INIT===========
     using vect = vector<fs::path> ;
     // ===============INIT END===========
@@ -353,7 +349,7 @@ int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vect
 
 
     //iterate list of arguments get
-    for(fs::path p:*p_form_args){
+    for(fs::path p:*p_from_args){
 
         try
         {
@@ -364,7 +360,6 @@ int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vect
                 if (fs::is_regular_file(p)) {
                     print_file_about(&p, rec_depth);
                 }
-
 
                     //need to fill buffer before processing
                 else if (is_directory(p))
@@ -379,16 +374,14 @@ int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vect
                         for(int i= 0; i < rec_depth; ++i)
                             printf("   ");
                         cout << p << " is a directory containing:\n";
-                        process_passes_from_saved(&subdir_contain, rec_depth + 1);
+                        do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
                     }
 
                         //linear exec branch
                     else
                     {
-
                         apply_sorting(&subdir_contain);
 
-                        //sort(subdir_contain.begin(), subdir_contain.end());
                         print_dir_contain(&p, &subdir_contain, rec_depth);
                     }
 
@@ -424,7 +417,7 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
        cout << "FOUND PATH TO APPLY" << p << endl;
     }
 
-    this->process_passes_from_saved(passes_to_apply);
+    this->do_LS_job_with_vector(passes_to_apply);
 
     clean_up_after_execution();
 
