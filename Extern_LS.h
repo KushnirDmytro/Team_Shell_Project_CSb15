@@ -156,8 +156,10 @@ public:
 
     const stringstream * form_permission_report_for_file(const fs::path *f, struct stat *stat_struct);
 
-
     const stringstream * form_timereport_for_file(const fs::path *f);
+
+    void apply_sorting(vector<fs::path> *vec_to_sort);
+
 
     void clean_up_after_execution();
 //show current directory

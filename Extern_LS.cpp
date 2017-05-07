@@ -119,7 +119,7 @@ LS_simple_opt::LS_simple_opt(string name,
 
         if (nargs == 0){
             // setting defaul sorting scheme
-            *this->sorts = NAME;
+            *sorts = NAME;
             return true;
         }
         else{
@@ -130,12 +130,12 @@ LS_simple_opt::LS_simple_opt(string name,
 
                 string argument = string(argv[0]);
 
-                if (this->sort_opts_map->find(argument) == this->sort_opts_map->end()) {
-                    printf("ERROR argument %s is not defined for %s\n", argument.c_str(), this->option_name.c_str());
+                if (sort_opts_map->find(argument) == sort_opts_map->end()) {
+                    printf("ERROR argument %s is not defined for %s\n", argument.c_str(), option_name.c_str());
                     return false;
                 } else {
 
-                    printf("found option %d\n ",this->sort_opts_map->at(argument) );
+                    printf("found option %d\n ",sort_opts_map->at(argument) );
 
                     /*
                     cout << "TEEEEST" << endl;
@@ -164,8 +164,8 @@ LS_simple_opt::LS_simple_opt(string name,
 
 
 Extern_LS::~Extern_LS(){
-    delete this->passes_to_apply;
-    delete this->ls_opts;
+    delete passes_to_apply;
+    delete ls_opts;
 }
 
 
@@ -179,9 +179,9 @@ Extern_LS::Extern_LS(const string &name,
     //cout << "S: " << option_name << endl;
 
     //TODO make this vector static ptr
-    this->passes_to_apply = new vector<fs::path>;
+    passes_to_apply = new vector<fs::path>;
     //TODO GEI IT OUT WHEN PROBLEM SOLVED
-    this->ls_opts =  new LS_opts("LS_opts_object");
+    ls_opts =  new LS_opts("LS_opts_object");
 
 
 };
@@ -258,11 +258,90 @@ inline void time_correction(){
     gmtime_r(&raw_time, &time_struct);
 }
 
+
+inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
+    switch (this->ls_opts->LS_flags.sort_type){
+        case NAME: {
+            sort(vec_to_sort->begin(),
+                 vec_to_sort->end(),
+                 [](fs::path first, fs::path second)->
+                               bool {
+                           return first.filename() < second.filename();}
+            );
+            break;}
+
+        case TIME_MODIFIED:{
+            sort(vec_to_sort->begin(),
+                 vec_to_sort->end(),
+                 [](fs::path first, fs::path second)->
+                                         bool {
+                                     return fs::last_write_time(first) < fs::last_write_time(second);}
+            );
+            break;}
+        case UNSORT:{
+            sort(vec_to_sort->begin(),
+                 vec_to_sort->end(),
+                 [](fs::path first, fs::path second)->
+                         bool {
+                     return false;}
+            );
+            break;}
+        case EXTENTION:{
+            sort(vec_to_sort->begin(),
+                 vec_to_sort->end(),
+                 [](fs::path first, fs::path second)->
+                         bool {
+                     return first.extension() < second.extension();}
+            );
+            break;}
+
+        case SIZE: //FUNPART....
+        {
+            //sort out all non-files (directories)
+            sort(vec_to_sort->begin(),
+                 vec_to_sort->end(),
+                 [](fs::path first, fs::path second)->
+                         bool {
+                     return fs::is_regular_file(first) < fs::is_regular_file(second);}
+            );
+
+            vector<fs::path>::iterator seek_first_file = vec_to_sort->begin();
+
+            while( (seek_first_file != vec_to_sort->end()) &&
+                    (!fs::is_regular_file( *seek_first_file)) )
+                seek_first_file++;
+
+            //sorting directories only
+            sort(seek_first_file,
+                 vec_to_sort->end(),
+                 [](fs::path first, fs::path second)->
+                         bool {
+                     return fs::file_size(first) < fs::file_size(second);}
+            );
+
+            break;}
+
+            //default sorting by name for safety
+        default: {sort(vec_to_sort->begin(), vec_to_sort->end(),
+                      [](fs::path first, fs::path secod)->
+                              bool { return first.filename() < secod.filename();});
+            break;}
+    }
+
+    if (this->ls_opts->LS_flags.sort_type == NAME){
+        sort(vec_to_sort->begin(), vec_to_sort->end(),
+             [](fs::path first, fs::path secod)->
+                     bool { return first.filename() < secod.filename();}
+        );
+    }
+};
+
+
 int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vector<fs::path> *p_form_args,const int rec_depth){
 
-    //TODO sort vector here
     //TODO INCLUDE OPTIONS FOR REVERSING OUTPUT IN FUTURE
-    sort( (*p_form_args).begin() , (*p_form_args).end() );
+
+    apply_sorting(p_form_args);
     // ===============INIT===========
     using vect = vector<fs::path> ;
     // ===============INIT END===========
@@ -306,8 +385,10 @@ int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vect
                         //linear exec branch
                     else
                     {
-                        //TODO special sorting
-                        sort(subdir_contain.begin(), subdir_contain.end());
+
+                        apply_sorting(&subdir_contain);
+
+                        //sort(subdir_contain.begin(), subdir_contain.end());
                         print_dir_contain(&p, &subdir_contain, rec_depth);
                     }
 
@@ -451,10 +532,6 @@ inline const stringstream * Extern_LS::form_timereport_for_file(const fs::path *
 
     return ss;
 }
-
-
-
-
 
 
 inline void Extern_LS::print_file_about(const fs::path *path_to_print,const int depth){
