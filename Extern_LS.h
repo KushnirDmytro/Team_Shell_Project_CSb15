@@ -14,6 +14,9 @@
 #include "External_func.h"
 #include "ctime"
 
+//#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string.hpp>
+
 namespace fs = boost::filesystem;
 
 //==================DECLARATIONS of defaults ==============
@@ -23,6 +26,7 @@ struct ls_option_flags{
     bool detailed_listing = false;
     bool recursive = false;
     bool reverse_output = false;
+    bool file_props = false;
     ls_sorts sort_type = NAME;
 };
 
@@ -51,12 +55,12 @@ public:
 
 
 
-class LS_simple_opt : public Options {
+class LS_no_subopt_opt : public Options {
 public:
 
     bool* flag_to_write;
 
-    LS_simple_opt(string name,
+    LS_no_subopt_opt(string name,
                   bool* host_flag_to_write,
                   bool noargs_allowed = true);
     bool are_suboptions_valid(size_t nargs, char **argv) override;
@@ -146,9 +150,7 @@ public:
 
     int do_LS_job_with_vector(vector<fs::path> *p_from_args, const int rec_depth = 0);
 
-    void print_file_about(const fs::path *path_to_print,const int depth);
-
-    void print_dir_about(const fs::path *path_to_print,const int depth);
+    void print_file_about(const fs::path *path_to_print,const int depth, struct stat *fileStat);
 
     void print_dir_contain(const fs::path *dir,const vector<fs::path> *dir_contain,const int rec_depth);
 
@@ -160,6 +162,7 @@ public:
 
     void apply_sorting(vector<fs::path> *vec_to_sort);
 
+    void print_filedata(const fs::path *path_to_print, const int depth);
 
     void clean_up_after_execution();
 //show current directory

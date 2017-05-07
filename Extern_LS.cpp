@@ -7,7 +7,6 @@
 
 #include "Extern_LS.h"
 #include <boost/lexical_cast.hpp>
-
 #include <sys/types.h>
 #include <sys/xattr.h>
 
@@ -34,13 +33,15 @@ LS_opts::LS_opts (string name,
 
     this->opts_map = new map<string, Options*>{
             {"-l",
-                    new LS_simple_opt( "-l", &this->LS_flags.detailed_listing) },
+                    new LS_no_subopt_opt( "-l", &this->LS_flags.detailed_listing) },
             {"-r",
-                    new LS_simple_opt( "-r", &this->LS_flags.reverse_output)},
+                    new LS_no_subopt_opt( "-r", &this->LS_flags.reverse_output)},
             {"-R",
-                    new LS_simple_opt( "-R", &this->LS_flags.recursive)},
+                    new LS_no_subopt_opt( "-R", &this->LS_flags.recursive)},
             {"--sort",
-                    new Ls_sort_opt( "--sort", &this->LS_flags.sort_type)}
+                    new Ls_sort_opt( "--sort", &this->LS_flags.sort_type)},
+            {"-F",
+                    new LS_no_subopt_opt( "-F", &this->LS_flags.file_props)}
     };
 };
 
@@ -63,7 +64,7 @@ void LS_opts::clear_flags(){
 
 
 //prototype for unspecified option
-LS_simple_opt::LS_simple_opt(string name,
+LS_no_subopt_opt::LS_no_subopt_opt(string name,
                              bool* host_flag,
                              bool noargs_allowed_)
         : Options(name){
@@ -73,7 +74,7 @@ LS_simple_opt::LS_simple_opt(string name,
     }
 
 //checker for received suboptions
-    bool LS_simple_opt::are_suboptions_valid(size_t nargs, char **argv) {
+    bool LS_no_subopt_opt::are_suboptions_valid(size_t nargs, char **argv) {
         if (noargs_allowed && nargs == 0) {
             (*this->flag_to_write) = true;
             return true;
@@ -136,14 +137,6 @@ LS_simple_opt::LS_simple_opt(string name,
                 } else {
 
                     printf("found option %d\n ",sort_opts_map->at(argument) );
-
-                    /*
-                    cout << "TEEEEST" << endl;
-                    auto p = dynamic_cast<Ls_sort_opt*>(extern_ls_obj->ls_opts->opts_map->at("--sort"));
-                    if(p!=0)
-                        cout << p->option_name <<endl;
-                    */
-
 
                     *sorts = sort_opts_map->at(argument);
                     return true;
@@ -211,9 +204,7 @@ void inline Extern_LS::set_default_directory_as_pass_to_apply() {
 // 3.6 -- sorted vector allready can be printed with additional info
 // 3.6 -- else just outputting
 int Extern_LS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args){
-
     int i = 1; //argv index
-
     char *arg_buf_ptr = argv[i];
 
     fs::path p; //path to directory (buffer)args_start_position_shift
@@ -227,22 +218,16 @@ int Extern_LS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> 
         {
             if (fs::exists(p))    // does p actually exist?
             {
-
-                if (fs::is_directory(p) || fs::is_regular_file(p)) {
-                    p_form_args->push_back(p);
-                }
-                else
-                    cout << p << " exists, but is neither a regular file nor a directory\n";
+                p_form_args->push_back(p);
             }
             else
-                cout << p << " does not exist\n";
+                cout <<  p << endl <<" does not exist\n";
         }
 
         catch (const fs::filesystem_error& ex)
         {
             cout << ex.what() << '\n';
         }
-
         ++i;
         arg_buf_ptr = argv[i];
     }
@@ -259,10 +244,8 @@ inline void time_correction(){
 
 
 inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
-
-
-
     /*
+    // знаю що написана дурня і тег взагалі не про те
     bidirectional_iterator_tag<fs::path>  v_start;
     bidirectional_iterator_tag<fs::path> v_finish;
     if (this->ls_opts->LS_flags.reverse_output){
@@ -279,7 +262,13 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
                  vec_to_sort->end(),
                  [](fs::path first, fs::path second)->
                                bool {
-                           return first.filename() < second.filename();}
+                     string st1 = first.filename().string();
+                     string st2 = second.filename().string();
+                     std::transform(st1.begin(), st1.end(), st1.begin(),
+                                    [](unsigned char c) { return std::tolower(c); });
+                     std::transform(st2.begin(), st2.end(), st2.begin(),
+                                    [](unsigned char c) { return std::tolower(c); });
+                     return  st1 < st2; }
             );
             break;}
 
@@ -316,8 +305,7 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
                  [](fs::path elem)-> bool { return ! fs::is_regular_file(elem);}
             );
 
-
-            //sorting directories only
+            //sorting files only
             sort(seek_first_file,
                  vec_to_sort->end(),
                  [](fs::path first, fs::path second)->
@@ -342,21 +330,16 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
 };
 
 
-int Extern_LS::do_LS_job_with_vector( /*not const, to be sotred inside*/vector<fs::path> *p_from_args,
+int Extern_LS::do_LS_job_with_vector( /*not const, to be sorted inside*/vector<fs::path> *p_from_args,
                                                                         const int rec_depth){
-
-    //TODO INCLUDE OPTIONS FOR REVERSING OUTPUT IN FUTURE
-
     apply_sorting(p_from_args);
     // ===============INIT===========
     using vect = vector<fs::path> ;
     // ===============INIT END===========
 
-
     if (ls_opts->LS_flags.detailed_listing){
         time_correction();
     }
-
 
     //iterate list of arguments get
     for(fs::path p:*p_from_args){
@@ -365,53 +348,37 @@ int Extern_LS::do_LS_job_with_vector( /*not const, to be sotred inside*/vector<f
         {
             if (fs::exists(p))    // does p actually exist?
             {
+                if (is_directory(p)) {
 
-
-                if (fs::is_regular_file(p)) {
-                    print_file_about(&p, rec_depth);
-                }
-
-                    //need to fill buffer before processing
-                else if (is_directory(p))
-                {
-                    vect subdir_contain;
-
-                    copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
-
-                    //RECURSIVE EXEC BRANCH
-                    if ( ls_opts->LS_flags.recursive ) {
-
-                        for(int i= 0; i < rec_depth; ++i)
+                    if (!ls_opts->LS_flags.recursive && rec_depth != 0) {
+                        print_filedata(&p, rec_depth); // if we should not look into directory
+                    }
+                    else{
+                        vect subdir_contain;
+                        copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
+                        apply_sorting(&subdir_contain);
+                        for (int i = 0; i < rec_depth; ++i)
                             printf("   ");
                         cout << p << " is a directory containing:\n";
-                        do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
+                        if (ls_opts->LS_flags.recursive)//recursive dive into directory
+                            do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
+                        else
+                            print_dir_contain(&p, &subdir_contain, rec_depth);
                     }
-
-                        //linear exec branch
-                    else
-                    {
-                        apply_sorting(&subdir_contain);
-
-                        print_dir_contain(&p, &subdir_contain, rec_depth);
-                    }
-
                 }
-
                 else
-                    cout << p << " exists, but is neither a regular file nor a directory\n";
+                    print_filedata(&p, rec_depth);
             }
             else
-                cout << p << " does not exist\n";
+                cout << p << endl << " does not exist\n"; //yes doublecheck
         }
 
-        catch (const fs::filesystem_error& ex)
+        catch (fs::filesystem_error &ex)
         {
             cout << ex.what() << '\n';
         }
-
     }
-
-    return 0; //number of OK pathes
+    return 0;
 }
 
 
@@ -419,9 +386,6 @@ int Extern_LS::do_LS_job_with_vector( /*not const, to be sotred inside*/vector<f
 
 //show current directory
 int Extern_LS::my_ls_inner(size_t nargs, char **argv){
-
-    //cout << "from bottom_layer MY_LS_INNER" <<endl;
-
     for (fs::path p : (*passes_to_apply)){
         //passes are there from argument line
        cout << "FOUND PATH TO APPLY" << p << endl;
@@ -537,38 +501,52 @@ inline const stringstream * Extern_LS::form_timereport_for_file(const fs::path *
 }
 
 
-inline void Extern_LS::print_file_about(const fs::path *path_to_print,const int depth){
+inline void Extern_LS::print_filedata(const fs::path *path_to_print, const int depth){
     for (int i=0; i<=depth; ++i)
-       printf("    ");
-    printf("%s \n", path_to_print->filename().c_str() );
+        printf("    ");
+    char filemark = ' ';
 
-    //TODO add falg-check and additional info listing
+    struct stat fileStat;
 
-    if ( ls_opts->LS_flags.detailed_listing){
+    stat(path_to_print->c_str(), &fileStat);
 
-        struct stat fileStat;
+    if (fileStat.st_mode & S_IFDIR){// is directory
+        filemark = '\\';
+        printf("%c%s \n", filemark,  path_to_print->filename().c_str() );
+        return;
+    }
 
-        const stringstream*  time_stream = form_timereport_for_file(path_to_print);
-        const stringstream*  permissions_stream = form_permission_report_for_file(path_to_print, &fileStat);
+    if (ls_opts->LS_flags.file_props){
+        if (S_ISLNK(fileStat.st_mode)) filemark = '@'; //symbolic link
+        if (S_ISSOCK(fileStat.st_mode)) filemark = '='; // socket
+        if (S_ISFIFO(fileStat.st_mode)) filemark = '|'; // pipe (named channel)
+        if ( (fileStat.st_mode & S_IXUSR) || (fileStat.st_mode & S_IXGRP) || (fileStat.st_mode & S_IXOTH) ) filemark = '*'; //executable
+    }
+
+    printf("%c%s \n", filemark,  path_to_print->filename().c_str() );
+
+    if (ls_opts->LS_flags.detailed_listing)
+        print_file_about(path_to_print, depth, &fileStat);
+
+}
+
+
+inline void Extern_LS::print_file_about(const fs::path *path_to_print,const int depth, struct stat *fileStat){
+
+        const stringstream *time_stream = form_timereport_for_file(path_to_print);
+        const stringstream *permissions_stream = form_permission_report_for_file(path_to_print, fileStat);
 
         printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
                permissions_stream->str().c_str(),
                path_to_print->extension().c_str() ,
-               fileStat.st_size,
+               fileStat->st_size,
         time_stream->str().c_str() );
+
         delete permissions_stream;
         delete time_stream;
-    }
-
-
 }
 
 
-inline void Extern_LS::print_dir_about(const fs::path *path_to_print,const int depth){
-    for (int i=0; i<=depth; ++i)
-        printf("    ");
-    printf("/%s  \n", path_to_print->filename().c_str() );
-}
 
 
 inline void Extern_LS::print_dir_contain(const fs::path *dir,const vector<fs::path> *dir_contain,const int rec_depth) {
@@ -577,11 +555,7 @@ inline void Extern_LS::print_dir_contain(const fs::path *dir,const vector<fs::pa
         printf("   ");
     cout << (*dir) << " CONTAINS:\n";
 
-    for (const fs::path subpath: (*dir_contain) ) {
-        if (fs::is_directory(subpath)) {
-            print_dir_about(&subpath, rec_depth + 1);
-        } else if (fs::is_regular_file(subpath)) {
-            print_file_about(&subpath, rec_depth + 1);
-        }
-    }
+    for (const fs::path subpath: (*dir_contain) )
+        print_filedata(&subpath, rec_depth + 1);
+
 }
