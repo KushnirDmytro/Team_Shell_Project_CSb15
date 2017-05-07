@@ -144,20 +144,20 @@ public:
 
     void set_default_directory_as_pass_to_apply();
 
-    int process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth = 0);
+    int process_passes_from_saved(vector<fs::path> *p_form_args,const int rec_depth = 0);
 
-    void print_file_about(fs::path *path_to_print, int depth);
+    void print_file_about(const fs::path *path_to_print,const int depth);
 
-    void print_dir_about(fs::path *path_to_print, int depth);
+    void print_dir_about(const fs::path *path_to_print,const int depth);
 
-    void print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth);
+    void print_dir_contain(const fs::path *dir,const vector<fs::path> *dir_contain,const int rec_depth);
 
     void clear_flags();
 
-    stringstream * form_permission_report_for_file(fs::path *f, struct stat *stat_struct);
+    const stringstream * form_permission_report_for_file(const fs::path *f, struct stat *stat_struct);
 
 
-    stringstream * form_timereport_for_file(fs::path *f);
+    const stringstream * form_timereport_for_file(const fs::path *f);
 
     void clean_up_after_execution();
 //show current directory

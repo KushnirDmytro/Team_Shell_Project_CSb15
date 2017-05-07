@@ -191,8 +191,8 @@ Extern_LS::Extern_LS(const string &name,
 
 void inline Extern_LS::clean_up_after_execution() {
     clear_flags();
-    this->passes_to_apply->clear();
-    this->args_start_position_shift = 1;
+    passes_to_apply->clear();
+    args_start_position_shift = 1;
 }
 
 void inline Extern_LS::set_default_directory_as_pass_to_apply() {
@@ -258,7 +258,7 @@ inline void time_correction(){
     gmtime_r(&raw_time, &time_struct);
 }
 
-int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_depth){
+int Extern_LS::process_passes_from_saved( /*not const, to be sotred inside*/vector<fs::path> *p_form_args,const int rec_depth){
 
     //TODO sort vector here
     //TODO INCLUDE OPTIONS FOR REVERSING OUTPUT IN FUTURE
@@ -268,7 +268,7 @@ int Extern_LS::process_passes_from_saved(vector<fs::path> *p_form_args, int rec_
     // ===============INIT END===========
 
 
-    if (this->ls_opts->LS_flags.detailed_listing){
+    if (ls_opts->LS_flags.detailed_listing){
         time_correction();
     }
 
@@ -338,12 +338,12 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
 
     //cout << "from bottom_layer MY_LS_INNER" <<endl;
 
-    for (fs::path p : (*this->passes_to_apply)){
+    for (fs::path p : (*passes_to_apply)){
         //passes are there from argument line
        cout << "FOUND PATH TO APPLY" << p << endl;
     }
 
-    this->process_passes_from_saved(this->passes_to_apply);
+    this->process_passes_from_saved(passes_to_apply);
 
     clean_up_after_execution();
 
@@ -353,18 +353,18 @@ int Extern_LS::my_ls_inner(size_t nargs, char **argv){
 //Overriding
 int Extern_LS::call(size_t nargs, char **argv) {
 
-    if (this->search_for_help(nargs, argv)) {
-        this->output_help(this->help_info);
+    if (search_for_help(nargs, argv)) {
+        output_help(help_info);
         return 1;
     }
 
-    get_passes_from_args(nargs, argv, this->passes_to_apply);
+    get_passes_from_args(nargs, argv, passes_to_apply);
 
     if (passes_to_apply->size() == 0) {
         set_default_directory_as_pass_to_apply();
     }
 
-    args_start_position_shift += this->passes_to_apply->size();
+    args_start_position_shift += passes_to_apply->size();
 
     //shifting pointer to actual arguments position start
     argv += args_start_position_shift;
@@ -384,7 +384,7 @@ int Extern_LS::call(size_t nargs, char **argv) {
 
 
     else {
-        this->clean_up_after_execution();
+        clean_up_after_execution();
         return 1;
     }
 };
@@ -395,7 +395,7 @@ void inline Extern_LS::clear_flags(){
 };
 
 
-stringstream * Extern_LS::form_permission_report_for_file(fs::path *path_to_print, struct stat *fileStat) {
+inline const stringstream * Extern_LS::form_permission_report_for_file(const fs::path *path_to_print, struct stat *fileStat) {
 
     stat(path_to_print->c_str(), fileStat );
 
@@ -420,7 +420,7 @@ stringstream * Extern_LS::form_permission_report_for_file(fs::path *path_to_prin
     return result;
 }
 
-stringstream * Extern_LS::form_timereport_for_file(fs::path *path_to_print){
+inline const stringstream * Extern_LS::form_timereport_for_file(const fs::path *path_to_print){
 
     struct tm time_struct;
 
@@ -457,7 +457,7 @@ stringstream * Extern_LS::form_timereport_for_file(fs::path *path_to_print){
 
 
 
-void Extern_LS::print_file_about(fs::path *path_to_print, int depth){
+inline void Extern_LS::print_file_about(const fs::path *path_to_print,const int depth){
     for (int i=0; i<=depth; ++i)
        printf("    ");
     printf("%s \n", path_to_print->filename().c_str() );
@@ -468,8 +468,8 @@ void Extern_LS::print_file_about(fs::path *path_to_print, int depth){
 
         struct stat fileStat;
 
-        stringstream*  time_stream = form_timereport_for_file(path_to_print);
-        stringstream*  permissions_stream = form_permission_report_for_file(path_to_print, &fileStat);
+        const stringstream*  time_stream = form_timereport_for_file(path_to_print);
+        const stringstream*  permissions_stream = form_permission_report_for_file(path_to_print, &fileStat);
 
         printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
                permissions_stream->str().c_str(),
@@ -484,20 +484,20 @@ void Extern_LS::print_file_about(fs::path *path_to_print, int depth){
 }
 
 
-void Extern_LS::print_dir_about(fs::path *path_to_print, int depth){
+inline void Extern_LS::print_dir_about(const fs::path *path_to_print,const int depth){
     for (int i=0; i<=depth; ++i)
         printf("    ");
     printf("/%s  \n", path_to_print->filename().c_str() );
 }
 
 
-void Extern_LS::print_dir_contain(fs::path *dir, vector<fs::path> *dir_contain, int rec_depth) {
+inline void Extern_LS::print_dir_contain(const fs::path *dir,const vector<fs::path> *dir_contain,const int rec_depth) {
 
     for(int i= 0; i < rec_depth; ++i)
         printf("   ");
     cout << (*dir) << " CONTAINS:\n";
 
-    for (fs::path subpath: (*dir_contain) ) {
+    for (const fs::path subpath: (*dir_contain) ) {
         if (fs::is_directory(subpath)) {
             print_dir_about(&subpath, rec_depth + 1);
         } else if (fs::is_regular_file(subpath)) {
