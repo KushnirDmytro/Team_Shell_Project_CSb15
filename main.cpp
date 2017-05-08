@@ -76,20 +76,12 @@ int my_help(size_t nargs, char **args);
 int my_exit(size_t nargs, char **args);
 int my_sh(size_t nargs, char **args);
 
-callable_function my_cd_addr = my_cd;
-callable_function my_pwd_addr = my_pwd;
-callable_function my_help_addr = my_help;
-callable_function my_exit_addr = my_exit;
-callable_function my_sh_addr = my_sh;
-callable_function my_ls_addr = my_ls;
-
 
 Embedded_func *my_shell_fileinterpreter;
 Embedded_func *my_pwd_obj;
 Embedded_func *my_cd_obj;
 Embedded_func *my_help_obj;
 Embedded_func *my_exit_obj;
-Embedded_func *my_ls_obj;
 Extern_LS *extern_ls_obj;
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
