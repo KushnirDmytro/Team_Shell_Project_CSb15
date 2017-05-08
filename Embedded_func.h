@@ -5,7 +5,6 @@
 #ifndef LAB_2_SHELL_EMBEDDEDFUNC_H
 #define LAB_2_SHELL_EMBEDDEDFUNC_H
 
-using namespace std;
 
 //namespace fs = boost::filesystem;
 
@@ -15,6 +14,16 @@ using namespace std;
 //#include "default_definitions.h"
 
 
+#include <boost/filesystem/operations.hpp>
+
+#include "Directory.h"
+#include "ConsoleView.h"
+#include "Line_splitter.h"
+#include "FileLaneIterator.h"
+#include "Interpreter.h"
+#include "Environment_objects.cpp"
+
+using namespace std;
 using  callable_function =  int (*)(size_t, char **);
 
 
@@ -45,11 +54,5 @@ public:
 
 
 extern map <string, Embedded_func*> embedded_lib;
-
-
-
-
-
-
 
 #endif //LAB_2_SHELL_EMBEDDEDFUNC_H

@@ -19,7 +19,7 @@
 //========================CLASSES IMPORT==================
 
 #include "ConsoleView.h"
-//#include "User.h"
+#include "User.h"
 #include "Directory.h"
 #include "Embedded_func.h"
 #include "Line_splitter.h"

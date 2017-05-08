@@ -5,17 +5,11 @@
 // Created by d1md1m on 27.03.17.
 //
 
-#include <boost/filesystem/operations.hpp>
+
 #include "Embedded_func.h"
-#include "Directory.h"
-#include "ConsoleView.h"
-#include "Line_splitter.h"
-#include "Interpreter.h"
-#include "FileLaneIterator.h"
+
 
 using namespace std;
-
-
 
 User * default_user;
 
@@ -28,10 +22,6 @@ Interpreter* default_interpreter;
 ConsoleView *console;
 
 map <string, Embedded_func*> embedded_lib;
-
-
-
-
 
 
 Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){

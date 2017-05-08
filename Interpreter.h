@@ -14,9 +14,6 @@
 using namespace std;
 
 
-extern map <string, Embedded_func*> embedded_lib;
-
-
 
 class Interpreter{
 private:
