@@ -69,11 +69,11 @@ ConsoleView::ConsoleView(Directory *directory_adr){
         string postf = "$";
         string temp_buf = "";
         size_t was_trimmed = 0;
-        if (this->current_directoryPtr->isPath_was_changed()){
+        if (current_directoryPtr->isPath_was_changed()){
             temp_buf = boost::filesystem::current_path().string();
         }
         else{
-            printf("%s", this->getPath_buffer().c_str());
+            printf("%s", getPath_buffer().c_str());
             return;
         }
 
@@ -81,20 +81,20 @@ ConsoleView::ConsoleView(Directory *directory_adr){
         //    return;
        // }
 
-        if ( this->current_directoryPtr->contains_home() ) {
+        if ( current_directoryPtr->contains_home() ) {
             pref.append("~");
         }
 
-        if ((temp_buf.length() > this->getMax_path_length()) || this->current_directoryPtr->contains_home() ){
-            was_trimmed = trim_path_to_size( &(temp_buf) , this->getMax_path_length());
+        if ((temp_buf.length() > getMax_path_length()) || current_directoryPtr->contains_home() ){
+            was_trimmed = trim_path_to_size( &(temp_buf) , getMax_path_length());
         }
         if (was_trimmed){
             pref.append("...");
         }
-        this->setPath_buffer(pref.append(temp_buf).append(postf));
+        setPath_buffer(pref.append(temp_buf).append(postf));
 
-        printf("%s", this->getPath_buffer().c_str());
-        this->current_directoryPtr->setPath_was_changed(false);
+        printf("%s", getPath_buffer().c_str());
+        current_directoryPtr->setPath_was_changed(false);
 
     }
 
@@ -105,7 +105,7 @@ ConsoleView::ConsoleView(Directory *directory_adr){
         size_t was_trimmed = 0;
         boost::filesystem::path path_buf = *path;
 
-        if (this->current_directoryPtr->contains_home(this_user)){
+        if (current_directoryPtr->contains_home(this_user)){
             *path = path->substr(this_user->getHome_dirrectory().string().length());
             //cout << "TEST>>>>>>>>>>?????????????" <<endl;
             //cout << *path << endl;
