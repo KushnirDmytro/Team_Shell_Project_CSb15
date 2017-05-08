@@ -208,14 +208,10 @@ int main(int argc, char **argv)
 
     //===================DYNAMIC INITIALISATION END======================
 
-
-
     // Run command loop.
     my_loop();
 
-
     // Perform any shutdown/cleanup.
-
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
     delete default_user;
