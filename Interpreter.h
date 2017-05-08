@@ -17,7 +17,7 @@ using namespace std;
 
 class Interpreter{
 private:
-    Line_splitter *splitter;
+    Line_splitter splitter;
 public:
     Interpreter();
 

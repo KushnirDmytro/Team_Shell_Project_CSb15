@@ -9,7 +9,7 @@
 
 
 Interpreter::Interpreter(){
-    this->splitter = new Line_splitter();
+
 }
 
 
@@ -62,7 +62,7 @@ int Interpreter::my_execute(vector<string> args)
 
 
     cout << "NUMBER OF ARGS FOUND: " <<args_number << endl;
-    splitter->str_vector_to_chars(&args , cargs);
+    splitter.str_vector_to_chars(&args , cargs);
 
     //cout<< "builtIns #" << num_my_builtins() << endl;
 
@@ -84,13 +84,12 @@ int Interpreter::my_execute(vector<string> args)
 
 int Interpreter::proceed_sting(string* values){
 
-    vector<string> args = splitter->my_split_line(*values);
+    vector<string> args = splitter.my_split_line(*values);
 
 
     return my_execute(args);
 }
 
 Interpreter::~Interpreter(){
-    delete this->splitter;
 }
 //TODO filemasks

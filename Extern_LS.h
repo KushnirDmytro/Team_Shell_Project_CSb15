@@ -123,20 +123,6 @@ public:
     ~Extern_LS();
 
 
-
-//TODO replace by function-comparator
-    int sort_vect(vector<fs::path> *vec_of_args, bool comparator){
-        return 0;
-    }
-
-
-//TODO create structure for args and info
-// TODO specify falgs
-    int collect_additional_info(vector<fs::path> *vec_of_args, vector<string> *infos, char* flags){
-        return 0;
-    }
-
-
     // 1--getting pathes from args
     // 2--verifying options and setting flags
     // 3--sorting directories according to flags
@@ -167,22 +153,6 @@ public:
     void clean_up_after_execution();
 //show current directory
     int my_ls_inner(size_t nargs, char **argv);
-
-/*
-
- //NOT FAIL
- ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort -l -R
-
-
- ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort -l -R
-
-
- //FAIL
-ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
-
-
-  */
-
 
 //Overriding
     int call(size_t nargs, char **argv) override ;

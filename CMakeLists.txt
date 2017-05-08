@@ -10,7 +10,7 @@ set(SOURCE_FILES main.cpp Embedded_func.cpp Embedded_func.h
         FileLaneIterator.cpp FileLaneIterator.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h
-        Environment_objects.cpp)
+        lib_emb.cpp lib_emb.h)
 add_executable(Lab_2_shell ${SOURCE_FILES})
 
 
@@ -22,7 +22,7 @@ set(SOURCE_FILES main_ls.cpp Embedded_func.cpp Embedded_func.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h)
 
-add_executable(my_ls ${SOURCE_FILES})
+add_executable(ls ${SOURCE_FILES})
 
 
 set(SOURCE_FILES remove_main.cpp deleter.cpp deleter.h)
@@ -35,7 +35,7 @@ FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 target_link_libraries( Lab_2_shell  ${Boost_LIBRARIES} )
-target_link_libraries( my_ls ${Boost_LIBRARIES} )
+target_link_libraries( ls ${Boost_LIBRARIES} )
 target_link_libraries( rm ${Boost_LIBRARIES} )
 
 

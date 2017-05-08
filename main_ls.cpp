@@ -7,18 +7,12 @@
 
 
 #include <sys/wait.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+
 #include <vector>
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <pwd.h>
 #include <map>
-#include <fstream>
-#include <cstring>
 
 #include "ConsoleView.h"
 #include "User.h"
@@ -67,31 +61,19 @@ vector<boost::filesystem::path> regex_match_directories(string regex){
 }
 
 
+User * default_user;
 
-//=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
+Directory *current_directory;
 
-int my_ls(size_t nargs, char **args);
-int my_cd(size_t nargs, char **args);
-int my_pwd(size_t nargs, char **args);
-int my_help(size_t nargs, char **args);
-int my_exit(size_t nargs, char **args);
-int my_sh(size_t nargs, char **args);
+Line_splitter* def_line_split;
 
-callable_function my_cd_addr = my_cd;
-callable_function my_pwd_addr = my_pwd;
-callable_function my_help_addr = my_help;
-callable_function my_exit_addr = my_exit;
-callable_function my_sh_addr = my_sh;
-callable_function my_ls_addr = my_ls;
+Interpreter* default_interpreter;
+
+ConsoleView *console;
+
+map <string, Embedded_func*> embedded_lib;
 
 
-Embedded_func *my_shell_fileinterpreter;
-Embedded_func *my_pwd_obj;
-Embedded_func *my_cd_obj;
-Embedded_func *my_help_obj;
-Embedded_func *my_exit_obj;
-Embedded_func *my_ls_obj;
-Extern_LS *extern_ls_obj;
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
@@ -110,9 +92,17 @@ string my_read_line(void)
     return buffer;
 }
 
+Extern_LS *extern_ls_obj;
+int my_ls(size_t nargs, char **argv)
+{
+    return extern_ls_obj->my_ls_inner(nargs, argv);
+    //my_ls_inner(nargs, argv);
+}
 
 
 int main(int argc, char **argv){
+
+
     string my_ls_msg = "this is ls help msg";
 
 

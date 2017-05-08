@@ -12,21 +12,18 @@
 #include <boost/filesystem/fstream.hpp>
 #include <pwd.h>
 #include <map>
-#include <fstream>
-#include <cstring>
 
 
 //========================CLASSES IMPORT==================
 
 #include "ConsoleView.h"
-#include "User.h"
-#include "Directory.h"
 #include "Embedded_func.h"
 #include "Line_splitter.h"
 #include "Interpreter.h"
 #include "FileLaneIterator.h"
 #include "External_func.h"
 #include "Extern_LS.h"
+#include "lib_emb.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -42,8 +39,6 @@ using namespace std;
 using  callable_function =  int (*)(size_t, char **);
 
 //============================DEFINITIONS END======================
-
-
 
 
 
@@ -65,26 +60,6 @@ vector<boost::filesystem::path> regex_match_directories(string regex){
     return directories;
 }
 
-
-
-//=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
-
-int my_ls(size_t nargs, char **args);
-int my_cd(size_t nargs, char **args);
-int my_pwd(size_t nargs, char **args);
-int my_help(size_t nargs, char **args);
-int my_exit(size_t nargs, char **args);
-int my_sh(size_t nargs, char **args);
-
-
-Embedded_func *my_shell_fileinterpreter;
-Embedded_func *my_pwd_obj;
-Embedded_func *my_cd_obj;
-Embedded_func *my_help_obj;
-Embedded_func *my_exit_obj;
-Extern_LS *extern_ls_obj;
-
-//=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
 
 
@@ -130,71 +105,27 @@ void my_loop(void)
 
 
 
-
-
-
-
-
-
-
 int main(int argc, char **argv)
 {
-
     //===================DYNAMIC INITIALISATION ======================
     string cd_help_msg = "to change directory type in: cd <directory option_name> \n<~> = 'HOME' dirrectory if one defined \n<.> = current dirrectory  \n<..> = 'parrent directory'  ";
     string pwd_help_msg = "displays fullname of current execution directory";
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
     string shell_script_interpreter_help_msg = "file interpreter to execute shell scripts \n 'mysh' <filename> to execurte script file";
-    my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
-    my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, pwd_help_msg );
-    my_help_obj = new Embedded_func("MY_HELP", my_help, help_help_msg );
-    my_exit_obj = new Embedded_func("MY_EXIT", my_exit, exit_help_msg );
-    my_shell_fileinterpreter =  new Embedded_func("MY_shell_script_interpreter", my_sh, shell_script_interpreter_help_msg );
- //   my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
 
 
-
-
-
-//TODO ASK HOW IT WORKS
-    //Function_options *ls_func_opts = new Function_options(ls_func_opts_map_ptr);
-
-
-
-
-
-
-    //=========================ATTENTION!!!==========++++++!!!!!
-
-    //Options *ls_func_opts = new Options("LS_options");
-
-    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls , cd_help_msg);
-
-    //=========================ATTENTION!!!==========++++++!!!!!
-
-
-
-
-
-
-
-
-    embedded_lib= {
-            {"cd",   my_cd_obj},
-            {"pwd",  my_pwd_obj},
-            {"help", my_help_obj},
-            {"exit", my_exit_obj},
-            {"mysh", my_shell_fileinterpreter},
-            {"ls", extern_ls_obj}
-
+    embedded_lib = {
+            {"cd",  new Embedded_func("MY_CD", my_cd, cd_help_msg )},
+            {"pwd",  new Embedded_func("MY_PWD", my_pwd, pwd_help_msg )},
+            {"help", new Embedded_func("MY_HELP", my_help, help_help_msg )},
+            {"exit", new Embedded_func("MY_EXIT", my_exit, exit_help_msg )},
+            {"mysh", new Embedded_func("MY_shell_script_interpreter", my_sh, shell_script_interpreter_help_msg )}
     };
-
 
     default_user = new User();
     default_interpreter = new Interpreter();
     def_line_split = new Line_splitter();
-    //init_user(&this_user);
     current_directory = new Directory();
     console = new ConsoleView(current_directory);
 
@@ -204,11 +135,15 @@ int main(int argc, char **argv)
     my_loop();
 
     // Perform any shutdown/cleanup.
-
     //=====================MEMORY CLEAN / SHUTDOWN==========================
     delete default_user;
     delete current_directory;
     delete console;
+    delete def_line_split;
+    delete default_interpreter;
+    for(auto i:embedded_lib){
+        delete i.second;
+    }
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 
     return EXIT_SUCCESS;

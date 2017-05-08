@@ -15,11 +15,7 @@
 #include <sys/types.h>
 
 //just activator-function
-extern int my_ls(size_t nargs, char **argv)
-{
-    return extern_ls_obj->my_ls_inner(nargs, argv);
-    //my_ls_inner(nargs, argv);
-}
+
 
 
 extern Extern_LS *extern_ls_obj;
@@ -29,37 +25,36 @@ LS_opts::LS_opts (string name,
              bool noargs_allowed ) :
         Options(name){
 
-    this->noargs_allowed = noargs_allowed;
+    noargs_allowed = noargs_allowed;
 
-    this->opts_map = new map<string, Options*>{
+    opts_map = new map<string, Options*>{
             {"-l",
-                    new LS_no_subopt_opt( "-l", &this->LS_flags.detailed_listing) },
+                    new LS_no_subopt_opt( "-l", &LS_flags.detailed_listing) },
             {"-r",
-                    new LS_no_subopt_opt( "-r", &this->LS_flags.reverse_output)},
+                    new LS_no_subopt_opt( "-r", &LS_flags.reverse_output)},
             {"-R",
-                    new LS_no_subopt_opt( "-R", &this->LS_flags.recursive)},
+                    new LS_no_subopt_opt( "-R", &LS_flags.recursive)},
             {"--sort",
-                    new Ls_sort_opt( "--sort", &this->LS_flags.sort_type)},
+                    new Ls_sort_opt( "--sort", &LS_flags.sort_type)},
             {"-F",
-                    new LS_no_subopt_opt( "-F", &this->LS_flags.file_props)}
+                    new LS_no_subopt_opt( "-F", &LS_flags.file_props)}
     };
 };
 
 
 LS_opts::~LS_opts(){
-    delete this->opts_map->at("-l");
-    delete this->opts_map->at("-r");
-    delete this->opts_map->at("-R");
-    delete this->opts_map->at("--sort");
-}
+    for(auto item: *opts_map)
+        delete item.second;
+    delete opts_map;
+   }
    // bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) override;
 
 
 void LS_opts::clear_flags(){
-    this->LS_flags.recursive = false;
-    this->LS_flags.detailed_listing=false;
-    this->LS_flags.reverse_output=false;
-    this->LS_flags.sort_type=NAME;
+    LS_flags.recursive = false;
+    LS_flags.detailed_listing=false;
+    LS_flags.reverse_output=false;
+    LS_flags.sort_type=NAME;
 };
 
 
@@ -76,11 +71,11 @@ LS_no_subopt_opt::LS_no_subopt_opt(string name,
 //checker for received suboptions
     bool LS_no_subopt_opt::are_suboptions_valid(size_t nargs, char **argv) {
         if (noargs_allowed && nargs == 0) {
-            (*this->flag_to_write) = true;
+            (*flag_to_write) = true;
             return true;
         }
         else {
-            printf("Unexpected argument for %s  /n", this->option_name.c_str());
+            printf("Unexpected argument for %s  /n", option_name.c_str());
             return false;
         }
     }
@@ -93,20 +88,20 @@ LS_no_subopt_opt::LS_no_subopt_opt(string name,
 // option block for sorting
     Ls_sort_opt::Ls_sort_opt( string name, ls_sorts *sorts)
             : Options( name){
-        this->noargs_allowed = false;
-        this->sort_opts_map = new map<string, ls_sorts>{
+        noargs_allowed = false;
+        sort_opts_map = new map<string, ls_sorts>{
                 {"U", UNSORT},
                 {"S", SIZE},
                 {"N", NAME},
                 {"X", EXTENTION},
                 {"t", TIME_MODIFIED}
         };
-        this->sorts = sorts;
+        sorts = sorts;
 
     };
 
     Ls_sort_opt::~Ls_sort_opt() {
-        delete this->sort_opts_map;
+        delete sort_opts_map;
     }
 
 
