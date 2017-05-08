@@ -32,7 +32,7 @@ int Interpreter::my_extern_launcher(char **args)
     } else {
         // Parent process
         do {
-            wpid = waitpid(pid, &status, WUNTRACED);
+            wpid = waitpid(0 /*pid*/, &status, WUNTRACED);
             /*
              * WUNTRACED
              * also return if a child has stopped (but not traced via ptrace(2)).
@@ -60,14 +60,11 @@ int Interpreter::my_execute(vector<string> args)
     char** cargs = new char*[args.size() + 1];
     unsigned int args_number = (int) args.size();
 
-
     cout << "NUMBER OF ARGS FOUND: " <<args_number << endl;
     splitter.str_vector_to_chars(&args , cargs);
 
-    //cout<< "builtIns #" << num_my_builtins() << endl;
 
     for (int i = 0; i < num_my_builtins(); i++) {
-//        cout<< "builtIn #" << i << " = "<< my_builtin_str[i] <<endl;
         auto search_iter = embedded_lib.find(cargs[0]);
         if (search_iter != embedded_lib.end() ) // case when we have such a func in our lib
         {
@@ -85,7 +82,6 @@ int Interpreter::my_execute(vector<string> args)
 int Interpreter::proceed_sting(string* values){
 
     vector<string> args = splitter.my_split_line(*values);
-
 
     return my_execute(args);
 }

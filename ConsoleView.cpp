@@ -77,10 +77,6 @@ ConsoleView::ConsoleView(Directory *directory_adr){
             return;
         }
 
-       // else{
-        //    return;
-       // }
-
         if ( current_directoryPtr->contains_home() ) {
             pref.append("~");
         }
@@ -107,16 +103,13 @@ ConsoleView::ConsoleView(Directory *directory_adr){
 
         if (current_directoryPtr->contains_home(this_user)){
             *path = path->substr(this_user->getHome_dirrectory().string().length());
-            //cout << "TEST>>>>>>>>>>?????????????" <<endl;
-            //cout << *path << endl;
-        }
+            }
         string path_delimiter = "/";
         while (path->length() > size){
             position = path->find(path_delimiter);
             if (position != string::npos){
                 *path = path->substr(position+1);
                 was_trimmed += position+1;
-               // cout << "path_trimmed ___" << *path << "Trimmed "<< was_trimmed << endl;
             }
         }
         return was_trimmed;

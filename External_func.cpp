@@ -9,7 +9,6 @@
 #include "External_func.h"
 #include "Extern_LS.h"
 
-
 Options::Options( string name_){
     option_name=name_;
 }
@@ -59,8 +58,6 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
         ls_argumens_queue.push( string (argv[i]) );
     }
 
-
-
     Options *option_to_check = nullptr;
 
     queue<string> arg_buf;
@@ -83,7 +80,6 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
                     arg_buf.pop();
 
             }
-
             option_to_check = get_option( current_arg_name);
 
         }
@@ -156,14 +152,7 @@ bool Options::map_contains(string seek_this_key) {
 }
 
 
-
-
-
-
 //=============================CLASSED BORDER==============================
-
-
-
 
 
 bool External_func::validate_is_directory(size_t nargs, char** vargs){

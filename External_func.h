@@ -88,14 +88,11 @@ public:
 
 class External_func : public Embedded_func{
 
-private:
+
 protected:
 
-
-
-
-
     bool validate_is_directory(size_t nargs, char** vargs);
+
 
 public:
     External_func (const string &name,
@@ -128,7 +125,6 @@ extern Interpreter* default_interpreter;
 extern ConsoleView *console;
 
 extern map <string, Embedded_func*> embedded_lib;
-
 
 
 //=================DEFAULT OBJECTS DECLARATIONS END================

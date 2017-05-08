@@ -13,8 +13,6 @@
 #include <sys/types.h>
 #include "External_func.h"
 #include "ctime"
-
-//#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace fs = boost::filesystem;
@@ -46,16 +44,16 @@ public:
     ~LS_opts();
 
     void clear_flags();
-
 };
 
 
 
 class LS_no_subopt_opt : public Options {
-public:
 
+private:
     bool* flag_to_write;
 
+public:
     LS_no_subopt_opt(string name,
                   bool* host_flag_to_write,
                   bool noargs_allowed = true);
@@ -69,17 +67,15 @@ class Ls_sort_opt : public Options {
 private:
 
 
+    map<string, ls_sorts> *sort_opts_map;
+    ls_sorts *sorts;
 
 public:
 
-
-    map<string, ls_sorts> *sort_opts_map;
-    ls_sorts *sorts;
     Ls_sort_opt( string name, ls_sorts* host_sorts);
-
+    bool are_suboptions_valid(size_t nargs, char **argv) override;
     ~Ls_sort_opt();
 
-    bool are_suboptions_valid(size_t nargs, char **argv) override;
 
 
 

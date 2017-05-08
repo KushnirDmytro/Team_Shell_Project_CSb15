@@ -6,12 +6,9 @@
 #define LAB_2_SHELL_EMBEDDEDFUNC_H
 
 
-//namespace fs = boost::filesystem;
-
 #include  <string>
 #include <map>
 #include <cstring>
-//#include "default_definitions.h"
 
 
 #include <boost/filesystem/operations.hpp>
@@ -26,10 +23,7 @@ using namespace std;
 using  callable_function =  int (*)(size_t, char **);
 
 
-
 #define  home_dir_call  "~"
-
-
 
 
 class Embedded_func{
@@ -38,7 +32,6 @@ protected:
     char** vargs;
     size_t nargs;
     string help_info;
-    //bool initialized;
     callable_function func;
 public:
     Embedded_func(const string &name, const callable_function funct_to_assign, const string &help_msg);

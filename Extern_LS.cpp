@@ -47,7 +47,6 @@ LS_opts::~LS_opts(){
         delete item.second;
     delete opts_map;
    }
-   // bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) override;
 
 
 void LS_opts::clear_flags(){
@@ -313,7 +312,7 @@ inline void Extern_LS::apply_sorting(vector<fs::path> *vec_to_sort){
             break;}
     }
 
-    if (this->ls_opts->LS_flags.reverse_output){
+    if (ls_opts->LS_flags.reverse_output){
         reverse(vec_to_sort->begin(), vec_to_sort->end() );
     }
 
@@ -430,7 +429,7 @@ int Extern_LS::call(size_t nargs, char **argv) {
 
 
 void inline Extern_LS::clear_flags(){
-    this->ls_opts->clear_flags();
+    ls_opts->clear_flags();
 };
 
 

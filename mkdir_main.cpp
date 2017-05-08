@@ -9,9 +9,6 @@
 
 #include <vector>
 #include <iostream>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <map>
 
 #include "ConsoleView.h"
 #include "User.h"
@@ -41,7 +38,6 @@ int main(int nargs, char **vargs ){
     default_user = new User();
     default_interpreter = new Interpreter();
     def_line_split = new Line_splitter();
-    //init_user(&this_user);
     current_directory = new Directory();
     console = new ConsoleView(current_directory);
 
