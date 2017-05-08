@@ -10,7 +10,7 @@ set(SOURCE_FILES main.cpp Embedded_func.cpp Embedded_func.h
         FileLaneIterator.cpp FileLaneIterator.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h
-        lib_emb.cpp lib_emb.h)
+        lib_emb.cpp lib_emb.h mkdir_main.cpp)
 add_executable(Lab_2_shell ${SOURCE_FILES})
 
 

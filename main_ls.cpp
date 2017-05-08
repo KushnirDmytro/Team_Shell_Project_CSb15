@@ -40,27 +40,6 @@ using  callable_function =  int (*)(size_t, char **);
 
 
 
-
-
-// HOW TO CURE SPACED FILENAMES???
-void cure_spaced_filenemas(size_t nargs,char* vargs[]){
-    for (size_t i = 0; i < nargs; ++i){
-        //TODO
-        //USE BOOST::FILESYSTEM::PATH to recognise start, mid, end of directory
-    }
-}
-
-
-
-vector<boost::filesystem::path> regex_match_directories(string regex){
-    //TODO
-    //process via iterators all possible pathes that match such expression
-    vector<boost::filesystem::path> proceed_buffer;
-    vector<boost::filesystem::path> directories;
-    return directories;
-}
-
-
 User * default_user;
 
 Directory *current_directory;
@@ -84,17 +63,11 @@ map <string, Embedded_func*> embedded_lib;
 //=============ASSIST FUNCTIONS============
 
 
-string my_read_line(void)
-{
-    string buffer;
-    getline(cin,buffer);
-    //buffer+=" ";
-    return buffer;
-}
 
 Extern_LS *extern_ls_obj;
 int my_ls(size_t nargs, char **argv)
 {
+
     return extern_ls_obj->my_ls_inner(nargs, argv);
     //my_ls_inner(nargs, argv);
 }
@@ -115,7 +88,6 @@ int main(int argc, char **argv){
 
 
     extern_ls_obj  = new Extern_LS("MY_EXT_LS", my_ls , my_ls_msg);
-
 
 
     extern_ls_obj->call(argc, argv);

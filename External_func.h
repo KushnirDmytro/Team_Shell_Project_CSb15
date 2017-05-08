@@ -91,20 +91,18 @@ class External_func : public Embedded_func{
 private:
 protected:
 
-    //Options *func_opts;
 
-    External_func (const string &name,
-                   callable_function funct_to_assign,
-                   //Options *options_ptr,
-                   string &help_msg):
-            Embedded_func(name, funct_to_assign,  help_msg){
-        //this->func_opts = options_ptr;
-    }
+
 
 
     bool validate_is_directory(size_t nargs, char** vargs);
 
 public:
+    External_func (const string &name,
+                   callable_function funct_to_assign,
+                   string &help_msg):
+            Embedded_func(name, funct_to_assign,  help_msg){
+    }
 //Overriding
     int call(size_t nargs, char **args) override;
 

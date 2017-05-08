@@ -37,13 +37,11 @@ void Embedded_func::output_help(const string &helpMsg){
 int Embedded_func::call(size_t nargs_, char **args_){
     nargs = nargs_;
     vargs = args_;
-//    this->initialized = true;
     if (search_for_help(nargs, vargs)){
         output_help(help_info);
         return 1;
     }
     return func (nargs, vargs);
-    //     return 1;
 }
 
 

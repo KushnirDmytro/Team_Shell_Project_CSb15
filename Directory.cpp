@@ -7,13 +7,13 @@
 
 #include "Directory.h"
 
+namespace fs = boost::filesystem ;
 
-
-    const boost::filesystem::path &Directory::getActual_path() const {
+    const fs::path &Directory::getActual_path() const {
         return actual_path;
     }
 
-    void Directory::setActual_path(const boost::filesystem::path &actual_path) {
+    void Directory::setActual_path(const fs::path &actual_path) {
         Directory::actual_path = actual_path;
     }
 
@@ -27,16 +27,16 @@
 
 
 Directory::Directory(){
-        this->refresh_path();
-        this->setPath_was_changed(true);
+        refresh_path();
+        setPath_was_changed(true);
     }
 
     int Directory::refresh_path(){
         try
         {
-            this->setActual_path(boost::filesystem::current_path());
+            setActual_path(fs::current_path());
         }
-        catch (boost::filesystem::filesystem_error &e)
+        catch (fs::filesystem_error &e)
         {
             std::cerr << e.what() << '\n';
         }
@@ -46,12 +46,8 @@ Directory::Directory(){
     //by default shows info about this object, but can do for any
     bool Directory::contains_home(User *this_user ){
         if (this_user->getHome_dirrectory() != ""){
-
-            if ( this->getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos){
-                //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
+            if ( getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos)
                 return true;
-            }
-            //printf ("TEST>>>>>>>>>>>>>CONTAINS NO!!!  HOME<<<<<<<<<<<< \n");
         }
         return false;
     }

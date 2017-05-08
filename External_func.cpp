@@ -54,53 +54,11 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
         return argumentless_option_check(nargs, argv);
     }
 
-  //  vector<string> args_vec;
-   // args_vec.insert(args_vec.end(), argv, argv + nargs);
-
     queue<string> ls_argumens_queue;
     for (size_t i = 0; i < nargs; ++i) {
         ls_argumens_queue.push( string (argv[i]) );
     }
 
-
-/*
-
-    //==========CHECK of vector insertion performed =========
-
-    for (int i = 0; i < nargs; ++i) {
-        printf("function get  ===>%s<===  \n", argv[i]);
-    }
-    for (auto i: args_vec)
-        cout << "vector inserted word ===>" << i << "<===" << endl;
-
-    while (!ls_argumens_queue.empty()) {
-        //auto buf = ls_argumens_queue.front();
-        cout << "queue inserted word ===>" << ls_argumens_queue.front() << "<===" << endl;
-        ls_argumens_queue.pop();
-    }
-    for (auto i : args_vec) {
-        ls_argumens_queue.push(i);
-    }
-
-    int i = 0;
-    while (!ls_argumens_queue.empty()) {
-        //auto buf = ls_argumens_queue.front();
-
-
-        cout << "queue inserted word ===>" << ls_argumens_queue.front() <<
-             "equality to " << args_vec[i] << strcmp(args_vec[i].c_str(), ls_argumens_queue.front().c_str())<< endl;
-        ls_argumens_queue.pop();
-        i++;
-    }
-    for (auto i : args_vec) {
-        ls_argumens_queue.push(i);
-    }
-
-
-    //==========CHECK =========
-
-
-    */
 
 
     Options *option_to_check = nullptr;
@@ -176,7 +134,6 @@ bool Options::suboptionS_arguments_validation(Options* opt_to_check, queue<strin
     }
 
     clear_temp_array_of_pointers(arg_buf->size(), temp_buf);
-    //arg_buf->clear();
     return true;
 }
 
@@ -230,17 +187,11 @@ bool External_func::validate_is_directory(size_t nargs, char** vargs){
 //Overriding
 int External_func::call(size_t nargs, char **args){
 
-    /*
-    if (this->func_opts->are_suboptions_valid(nargs, args)){
+/*
+    if (are_suboptions_valid(nargs, args)){
         cout << "problem checking" << endl;
+  */
 
-
-        cout<< "Detailed listing flag "<<  ( (LS_opts*)this->func_opts)->LS_flags.detailed_listing  <<endl;
-        cout<< "Recursive output flag "<<( (LS_opts*)this->func_opts)->LS_flags.recursive  <<endl;
-        cout<< "Reverted output flag "<<( (LS_opts*)this->func_opts)->LS_flags.reverse_output  <<endl;
-        cout<< "Sorting type "<<  ( (LS_opts*)this->func_opts)->LS_flags.sort_type <<endl;
-
-       */
         return Embedded_func::call(nargs, args);
 
 };

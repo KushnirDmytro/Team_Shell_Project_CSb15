@@ -418,7 +418,7 @@ int Extern_LS::call(size_t nargs, char **argv) {
         cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output << endl;
         cout << "Sorting type " << ls_opts->LS_flags.sort_type << endl;
 
-        return External_func::call(nargs, argv);
+        return Embedded_func::call(nargs, argv);
     }
 
 
