@@ -152,7 +152,6 @@ LS_no_subopt_opt::LS_no_subopt_opt(string name,
 
 
 Extern_LS::~Extern_LS(){
-    delete passes_to_apply;
     delete ls_opts;
 }
 
@@ -164,9 +163,6 @@ Extern_LS::Extern_LS(const string &name,
                       funct_to_assign,
                       help_msg)
 {
-
-    //TODO make this vector static ptr
-    passes_to_apply = new vector<fs::path>;
     //TODO GEI IT OUT WHEN PROBLEM SOLVED
     ls_opts =  new LS_opts("LS_opts_object");
 
@@ -178,13 +174,13 @@ Extern_LS::Extern_LS(const string &name,
 
 void inline Extern_LS::clean_up_after_execution() {
     clear_flags();
-    passes_to_apply->clear();
+    passes_to_apply.clear();
     args_start_position_shift = 1;
 }
 
 void inline Extern_LS::set_default_directory_as_pass_to_apply() {
     current_directory->refresh_path();
-    passes_to_apply->push_back(current_directory->getActual_path());
+    passes_to_apply.push_back(current_directory->getActual_path());
     cout << "set path to apply as  ==>" << current_directory->getActual_path()<< endl;
     args_start_position_shift-=1; //counting this data modification
 }
@@ -381,12 +377,12 @@ int Extern_LS::do_LS_job_with_vector( /*not const, to be sorted inside*/vector<f
 
 //show current directory
 int Extern_LS::my_ls_inner(size_t nargs, char **argv){
-    for (fs::path p : (*passes_to_apply)){
+    for (fs::path p : (passes_to_apply)){
         //passes are there from argument line
        cout << "FOUND PATH TO APPLY" << p << endl;
     }
 
-    this->do_LS_job_with_vector(passes_to_apply);
+    this->do_LS_job_with_vector(&passes_to_apply);
 
     clean_up_after_execution();
 
@@ -401,13 +397,13 @@ int Extern_LS::call(size_t nargs, char **argv) {
         return 1;
     }
 
-    get_passes_from_args(nargs, argv, passes_to_apply);
+    get_passes_from_args(nargs, argv, &passes_to_apply);
 
-    if (passes_to_apply->size() == 0) {
+    if (passes_to_apply.size() == 0) {
         set_default_directory_as_pass_to_apply();
     }
 
-    args_start_position_shift += passes_to_apply->size();
+    args_start_position_shift += passes_to_apply.size();
 
     //shifting pointer to actual arguments position start
     argv += args_start_position_shift;

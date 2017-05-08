@@ -34,13 +34,13 @@ ConsoleView::ConsoleView(Directory *directory_adr){
         return path_buffer;
     }
 
-    void ConsoleView::setPath_buffer(const string &path_buffer) {
-        this->path_buffer = path_buffer;
+    void ConsoleView::setPath_buffer(const string &path_buffer_) {
+        path_buffer = path_buffer_;
     }
 
 
     void ConsoleView::refresh_path_buffer(){
-        this->setPath_buffer(this->current_directoryPtr->getActual_path().c_str());
+        setPath_buffer(current_directoryPtr->getActual_path().c_str());
     }
 
     void ConsoleView::display_host(){

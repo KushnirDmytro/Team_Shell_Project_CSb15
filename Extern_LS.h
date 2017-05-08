@@ -47,10 +47,6 @@ public:
 
     void clear_flags();
 
-    //bool are_suboptions_valid(size_t nargs, char **argv) override;
-
-//    bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) override;
-
 };
 
 
@@ -102,7 +98,7 @@ class Extern_LS : public External_func{
 private:
 
     size_t args_start_position_shift = 1;
-    vector<fs::path> *passes_to_apply;
+    vector<fs::path> passes_to_apply;
 
 public:
 

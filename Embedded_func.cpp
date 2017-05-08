@@ -13,7 +13,7 @@ using namespace std;
 
 
 
-Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){
+Embedded_func::Embedded_func(const string &name_, const callable_function funct_to_assign_, const string &help_msg_){
     name=name_;
     func = funct_to_assign_;
     help_info = help_msg_;
@@ -29,7 +29,7 @@ int Embedded_func::search_for_help(size_t nargs, char** &argvector){
     return 0;
 }
 
-void Embedded_func::output_help(string &helpMsg){
+void Embedded_func::output_help(const string &helpMsg){
     printf("%s\n", help_info.c_str());
 }
 

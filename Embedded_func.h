@@ -41,11 +41,11 @@ protected:
     //bool initialized;
     callable_function func;
 public:
-    Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg);
+    Embedded_func(const string &name, const callable_function funct_to_assign, const string &help_msg);
 
     int search_for_help(size_t nargs, char** &argvector);
 
-    void output_help(string &helpMsg);
+    void output_help(const string &helpMsg);
 
     virtual int call(size_t nargs, char **args);
 

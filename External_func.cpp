@@ -152,7 +152,7 @@ bool Options::are_suboptions_valid(size_t nargs, char **argv) {
     }
 
     cout << "CROSS_VALIDATION" << endl;
-    if (this->are_options_cross_valid()){
+    if (are_options_cross_valid()){
         printf("ARGUMENT CHECK DONE \n");
         return true;
     }
