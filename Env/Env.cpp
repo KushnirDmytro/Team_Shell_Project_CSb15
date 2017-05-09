@@ -5,16 +5,20 @@
 #include "Env.h"
 
 
+using namespace shell;
+
 Env::Env(){
     dir = new Directory();
     usr = new User() ;
     interp =  new Interpreter();
-    cons = new ConsoleView(dir);
+  //  cons = new ConsoleView(dir);
 }
 
 Env::~Env() {
     delete dir;
     delete usr;
     delete interp;
-    delete cons;
+  //  delete cons;
 }
+
+Env *env;

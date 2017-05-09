@@ -8,6 +8,7 @@
 #include "ConsoleView.h"
 
 
+using namespace std;
 
 
 ConsoleView::ConsoleView(Directory *directory_adr){
@@ -30,17 +31,17 @@ ConsoleView::ConsoleView(Directory *directory_adr){
 
 
 
-    const string &ConsoleView::getPath_buffer() const {
+    const std::string &ConsoleView::getPath_buffer() const {
         return path_buffer;
     }
 
-    void ConsoleView::setPath_buffer(const string &path_buffer) {
+    void ConsoleView::setPath_buffer(const std::string &path_buffer) {
         this->path_buffer = path_buffer;
     }
 
 
     void ConsoleView::refresh_path_buffer(){
-        this->setPath_buffer(this->current_directoryPtr->getActual_path().c_str());
+        setPath_buffer(current_directoryPtr->getActual_path().c_str());
     }
 
     void ConsoleView::display_host(){

@@ -7,13 +7,14 @@
 
 #include "Directory.h"
 
+//using namespace std;
 
 
-    const boost::filesystem::path &Directory::getActual_path() const {
+    const fs::path &Directory::getActual_path() const {
         return actual_path;
     }
 
-    void Directory::setActual_path(const boost::filesystem::path &actual_path) {
+    void Directory::setActual_path(const fs::path &actual_path) {
         Directory::actual_path = actual_path;
     }
 
@@ -27,16 +28,16 @@
 
 
 Directory::Directory(){
-        this->refresh_path();
-        this->setPath_was_changed(true);
+        refresh_path();
+        setPath_was_changed(true);
     }
 
     int Directory::refresh_path(){
         try
         {
-            this->setActual_path(boost::filesystem::current_path());
+            setActual_path(fs::current_path());
         }
-        catch (boost::filesystem::filesystem_error &e)
+        catch (fs::filesystem_error &e)
         {
             std::cerr << e.what() << '\n';
         }

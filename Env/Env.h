@@ -5,14 +5,14 @@
 #ifndef LAB_2_SHELL_ENV_H
 #define LAB_2_SHELL_ENV_H
 
-#include "ConsoleView.h"
-#include "Directory.h"
-#include "User.h"
+//#include "ConsoleView.h"
 #include "Interpreter.h"
+
+namespace shell{}
 
 class Env {
 public:
-    ConsoleView *cons;
+//    ConsoleView *cons;
     Directory* dir;
     User* usr;
     Interpreter* interp;
@@ -22,6 +22,5 @@ public:
     ~Env();
 
 };
-
 
 #endif //LAB_2_SHELL_ENV_H

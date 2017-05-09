@@ -7,8 +7,10 @@
 //
 
 #include "User.h"
+#include "Env.h"
 
-using namespace std;
+
+using namespace shell;
 
 User::User() {
     /* REFACTOR IF NEEDDED
@@ -55,28 +57,28 @@ User::User() {
 
 
 
-void User::setHome_dirrectory(const boost::filesystem::path &home_dirrectory) {
-    this->home_dirrectory = home_dirrectory;
+void User::setHome_dirrectory(const fs::path &home_dirrectory_) {
+    home_dirrectory = home_dirrectory_;
 }
 
-void User::setName(const string &name) {
-    this->name = name;
+void User::setName(const string &name_) {
+    name = name_;
 }
 
-void User::setPass(const string &pass) {
-    this->pass = pass;
+void User::setPass(const string &pass_) {
+    pass = pass_;
 }
 
-void User::setUser_rights(const rights &user_rights) {
-    this->user_rights = user_rights;
+void User::setUser_rights(const rights &user_rights_) {
+    user_rights = user_rights_;
 }
 
 const string &User::getHostname() const {
     return hostname;
 }
 
-void User::setHostname(const string &hostname) {
-    User::hostname = hostname;
+void User::setHostname(const string &hostname_) {
+    hostname = hostname_;
 }
 
 

@@ -5,7 +5,6 @@
 #ifndef LAB_2_SHELL_USER_H
 #define LAB_2_SHELL_USER_H
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
@@ -13,22 +12,19 @@
 #include <climits>
 #include <pwd.h>
 
-
-
+using std::string;
 namespace fs = boost::filesystem;
 
 struct rights{
     //prototype
 };
 
-
-
 class User{
 private:
     fs::path home_dirrectory;
-    std::string name;
-    std::string pass;
-    std::string hostname;
+    string name;
+    string pass;
+    string hostname;
 public:
     const std::string &getHostname() const;
 

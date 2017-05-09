@@ -7,21 +7,26 @@
 
 #include <boost/filesystem/path.hpp>
 #include <iostream>
+#include <string>
+
+
 #include "User.h"
+//#include "Env.h"
 
 
+namespace fs = boost::filesystem;
 
-using namespace std;
 
+//extern Env *env;
 
 extern User* default_user;
 
 class Directory{
 public:
 
-    const boost::filesystem::path &getActual_path() const;
+    const fs::path &getActual_path() const;
 
-    void setActual_path(const boost::filesystem::path &actual_path); ;
+    void setActual_path(const fs::path &actual_path); ;
 
     bool isPath_was_changed() const ;;
 
@@ -29,7 +34,7 @@ public:
 
 private:
 
-    boost::filesystem::path actual_path;
+    fs::path actual_path;
 
     bool path_was_changed;
 

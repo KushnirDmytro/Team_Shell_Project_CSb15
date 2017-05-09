@@ -19,11 +19,13 @@
 //#include "default_definitions.h"
 
 
+extern User *default_user;
+
 class ConsoleView{
 private:
     Directory *current_directoryPtr;
 
-    string path_buffer;
+    std::string path_buffer;
     const u_int16_t max_path_length = 30; //yes, it is "Magic"
 
 public:
@@ -38,9 +40,9 @@ public:
 
 
 
-    const string &getPath_buffer() const ;
+    const std::string &getPath_buffer() const ;
 
-    void setPath_buffer(const string &path_buffer) ;
+    void setPath_buffer(const std::string &path_buffer) ;
 
     void refresh_path_buffer();
 
@@ -51,7 +53,7 @@ public:
     void display_path();
 
 
-    size_t trim_path_to_size(string *path, unsigned int size, User *this_user = default_user);
+    size_t trim_path_to_size(std::string *path, unsigned int size, User *this_user = default_user);
 
 
 };

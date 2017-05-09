@@ -9,7 +9,7 @@
 
 
 Interpreter::Interpreter(){
-    this->splitter = new Line_splitter();
+    splitter = new Line_splitter();
 }
 
 
