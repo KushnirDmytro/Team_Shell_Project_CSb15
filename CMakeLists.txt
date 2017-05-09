@@ -14,7 +14,7 @@ set(SOURCE_FILES main.cpp Embedded_func.cpp Embedded_func.h
 add_executable(Lab_2_shell ${SOURCE_FILES})
 
 
-set(SOURCE_FILES main_ls.cpp Embedded_func.cpp Embedded_func.h
+set(SOURCE_FILES Embedded_func.cpp Embedded_func.h
         ConsoleView.cpp ConsoleView.h User.cpp User.h
         Directory.cpp Directory.h Line_splitter.cpp
         Line_splitter.h Interpreter.cpp Interpreter.h
