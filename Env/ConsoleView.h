@@ -7,58 +7,42 @@
 
 
 #include <boost/filesystem/path.hpp>
+#include <string>
 
 #include "User.h"
 #include "Directory.h"
 
 
-
-//User * default_user;
-
-
-//#include "default_definitions.h"
-
-
-extern User *default_user;
-
 class ConsoleView{
 private:
-    Directory *current_directoryPtr;
+    Directory *current_directory_;
+    User* current_user_;
+    std::string path_buffer_ = "";
 
-    std::string path_buffer;
-    const u_int16_t max_path_length = 30; //yes, it is "Magic"
+    const u_int16_t max_path_length_ = 30; //yes, it is "Magic"
+
+    size_t trimPathToSize() const;
 
 public:
+    // TODO refactor in private
 
-    ConsoleView(Directory *directory_adr);
+    ConsoleView(Directory *directory_adr, User* current_user);
 
-    const u_int16_t getMax_path_length() const ;
-    Directory *getCurrent_directoryPtr() const ;
+    const u_int16_t getMaxPathLength() const ;
+    void setCurrentDirectory(Directory *dir);
+    Directory *getCurrentDirectory() const ;
+    void setCurrentUser(User *user);
+    User* getCurrentUser() const;
 
-    void setCurrent_directoryPtr(Directory *current_directoryPtr) ;
+    const std::string &getPathBuffer() const ;
+    void setPathBuffer(const std::string &path_buffer) ;
 
+    void refreshPathBuffer();
 
-
-
-    const std::string &getPath_buffer() const ;
-
-    void setPath_buffer(const std::string &path_buffer) ;
-
-    void refresh_path_buffer();
-
-    void display_host();
-    void display_all();
-
-
-    void display_path();
-
-
-    size_t trim_path_to_size(std::string *path, unsigned int size, User *this_user = default_user);
-
-
+    void displayHost() const;
+    void displayPromptMsg();
+    void displayPath();
 };
-
-
 
 
 #endif //LAB_2_SHELL_PROMPTCONSOLEINTERFACE_H

@@ -7,121 +7,123 @@
 
 #include "ConsoleView.h"
 
+namespace shell {
 
-using namespace std;
-
-
-ConsoleView::ConsoleView(Directory *directory_adr){
-        this->setCurrent_directoryPtr(directory_adr);
-    }
-
-    const u_int16_t ConsoleView::getMax_path_length() const {
-        return max_path_length;
+    ConsoleView::ConsoleView(Directory *directory_adr, User *user) {
+        setCurrentDirectory(directory_adr);
+        setCurrentUser(user);
     }
 
 
-    Directory *ConsoleView::getCurrent_directoryPtr() const {
-        return current_directoryPtr;
-    }
-
-    void ConsoleView::setCurrent_directoryPtr(Directory *current_directoryPtr) {
-        this->current_directoryPtr = current_directoryPtr;
+    void ConsoleView::setCurrentUser(User *user) {
+        current_user_ = user;
     }
 
 
-
-
-    const std::string &ConsoleView::getPath_buffer() const {
-        return path_buffer;
-    }
-
-    void ConsoleView::setPath_buffer(const std::string &path_buffer) {
-        this->path_buffer = path_buffer;
+    const u_int16_t ConsoleView::getMaxPathLength() const {
+        return max_path_length_;
     }
 
 
-    void ConsoleView::refresh_path_buffer(){
-        setPath_buffer(current_directoryPtr->getActual_path().c_str());
+    User *ConsoleView::getCurrentUser() const {
+        return current_user_;
     }
 
-    void ConsoleView::display_host(){
+    Directory *ConsoleView::getCurrentDirectory() const {
+        return current_directory_;
+    }
+
+    void ConsoleView::setCurrentDirectory(Directory *current_directory) {
+        current_directory_ = current_directory;
+    }
+
+    const std::string &ConsoleView::getPathBuffer() const {
+        return path_buffer_;
+    }
+
+    void ConsoleView::setPathBuffer(const std::string &path_buffer) {
+        path_buffer_ = path_buffer;
+    }
+
+    void ConsoleView::refreshPathBuffer() {
+        setPathBuffer(current_directory_->getActualPath().c_str());
+    }
+
+    inline void ConsoleView::displayHost() const {
         printf("\n");
-        if (default_user->getName().length() > 0 || default_user->getHostname().length() > 0){
-            if (default_user->getName().length() > 0 ){
-                printf("%s",default_user->getName().c_str());
+        if (current_user_->getName().length() > 0 || current_user_->getHostname().length() > 0) {
+            //TODO refactor to stringbuilder
+            if (current_user_->getName().length() > 0) {
+                printf("%s", current_user_->getName().c_str());
             }
-            if (default_user->getHostname().length() > 0){
-                printf("@%s", default_user->getHostname().c_str());
+
+            if (current_user_->getHostname().length() > 0) {
+                printf("@%s", current_user_->getHostname().c_str());
             }
+
             printf(": ");
         }
     };
 
 
-    void ConsoleView::display_all(){
-        display_host();
-        display_path();
+    void ConsoleView::displayPromptMsg(){
+        displayHost();
+        displayPath();
     }
 
 
-    void ConsoleView::display_path(){
+    void ConsoleView::displayPath(){
 
-        string pref = "";
+        string prefix = "";
         string postf = "$";
-        string temp_buf = "";
-        size_t was_trimmed = 0;
-        if (this->current_directoryPtr->isPath_was_changed()){
-            temp_buf = boost::filesystem::current_path().string();
+        string temp_console_disp_buf;
+        size_t n_chars_trimmed = 0;
+
+        if (current_directory_->doesPathWasChanged()) {
+            temp_console_disp_buf = fs::current_path().string();
         }
-        else{
-            printf("%s", this->getPath_buffer().c_str());
+        else {
+            printf("%s", getPathBuffer().c_str());
             return;
         }
 
-       // else{
-        //    return;
-       // }
-
-        if (this->current_directoryPtr->contains_his_home(default_user) ) {
-            pref.append("~");
+        if (current_directory_->containsHisHome(current_user_)) {
+            prefix.append("~");
         }
 
-        if ((temp_buf.length() > this->getMax_path_length()) || this->current_directoryPtr->contains_his_home(default_user) ){
-            was_trimmed = trim_path_to_size( &(temp_buf) , this->getMax_path_length());
+        if ((temp_console_disp_buf.length() > getMaxPathLength()) || current_directory_->containsHisHome(current_user_)) {
+            n_chars_trimmed = trimPathToSize( &temp_console_disp_buf, getMaxPathLength());
         }
-        if (was_trimmed){
-            pref.append("...");
+
+        if (n_chars_trimmed) {
+            prefix.append("...");
         }
-        this->setPath_buffer(pref.append(temp_buf).append(postf));
 
-        printf("%s", this->getPath_buffer().c_str());
-        this->current_directoryPtr->setPath_was_changed(false);
+        setPathBuffer(prefix.append(temp_console_disp_buf).append(postf));
 
+        printf("%s", getPathBuffer().c_str());
+        current_directory_->setPathWasChanged(false);
     }
 
 
-
-    size_t ConsoleView::trim_path_to_size(string *path, unsigned int size, User *this_user){
+    size_t ConsoleView::trimPathToSize() const{
         size_t position;
         size_t was_trimmed = 0;
-        boost::filesystem::path path_buf = *path;
+        string path_buf = current_directory_->getActualPath().string();
 
-        if (this->current_directoryPtr->contains_his_home(this_user)){
-            *path = path->substr(this_user->getHome_dirrectory().string().length());
-            //cout << "TEST>>>>>>>>>>?????????????" <<endl;
-            //cout << *path << endl;
+        if (current_directory_->containsHisHome(current_user_)) {
+            path_buf = path_buf.substr(current_user_->getHome_dirrectory().string().length());
         }
         string path_delimiter = "/";
-        while (path->length() > size){
-            position = path->find(path_delimiter);
-            if (position != string::npos){
-                *path = path->substr(position+1);
-                was_trimmed += position+1;
-               // cout << "path_trimmed ___" << *path << "Trimmed "<< was_trimmed << endl;
+        while (path_buf.length() > max_path_length_) {
+            position = path_buf.find(path_delimiter);
+            if (position != string::npos) {
+                path_buf = path_buf.substr(position + 1);
+                was_trimmed += position + 1;
             }
         }
         return was_trimmed;
     }
 
-
+}
 

@@ -188,7 +188,7 @@ void inline Extern_LS::clean_up_after_execution() {
 }
 
 void inline Extern_LS::set_default_directory_as_pass_to_apply() {
-    current_directory->refresh_path();
+    current_directory->refreshPath();
     passes_to_apply->push_back(current_directory->getActual_path());
     cout << "set path to apply as  ==>" << current_directory->getActual_path()<< endl;
     args_start_position_shift-=1; //counting this data modification

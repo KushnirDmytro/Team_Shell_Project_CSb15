@@ -7,51 +7,47 @@
 
 #include "Directory.h"
 
-
-
-    const fs::path &Directory::getActual_path() const {
-        return actual_path;
-    }
-
-    void Directory::setActual_path(const fs::path &actual_path) {
-        Directory::actual_path = actual_path;
-    }
-
-    bool Directory::isPath_was_changed() const {
-        return path_was_changed;
-    }
-
-    void Directory::setPath_was_changed(bool path_was_changed) {
-        Directory::path_was_changed = path_was_changed;
-    }
-
+using namespace shell;
 
 Directory::Directory(){
-        refresh_path();
-        setPath_was_changed(true);
-    }
+    refreshPath();
+    setPathWasChanged(true);
+}
 
-    int Directory::refresh_path(){
-        try
-        {
-            this->setActual_path(fs::current_path());
-        }
-        catch (fs::filesystem_error &e)
-        {
-            std::cerr << e.what() << '\n';
-        }
-        return EXIT_SUCCESS;
+const fs::path &Directory::getActualPath() const {
+    return actual_path_;
+}
+
+void Directory::setActualPath(const fs::path &actual_path) {
+    Directory::actual_path_ = actual_path;
+}
+
+bool Directory::doesPathWasChanged() const {
+    return path_was_changed_;
+}
+
+void Directory::setPathWasChanged(bool path_was_changed) {
+    Directory::path_was_changed_ = path_was_changed;
+}
+
+int Directory::refreshPath(){
+    try
+    {
+        setActualPath(fs::current_path());
     }
+    catch (fs::filesystem_error &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    return EXIT_SUCCESS;
+}
 
     //by default shows info about this object, but can do for any
-    bool Directory::contains_his_home(User *this_user){
+bool Directory::containsHisHome(const User *this_user) const{
         if (this_user->getHome_dirrectory() != ""){
-
-            if ( getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos){
-                //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
+            if ( getActualPath().string().find(this_user->getHome_dirrectory().string()) != string::npos){
                 return true;
             }
-            //printf ("TEST>>>>>>>>>>>>>CONTAINS NO!!!  HOME<<<<<<<<<<<< \n");
         }
         return false;
     }

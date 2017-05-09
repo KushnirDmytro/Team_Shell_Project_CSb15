@@ -68,8 +68,8 @@ int Embedded_func::call(size_t nargs_, char **args_){
 //show current directory
 int my_pwd(size_t nargs, char **args)
 {
-    current_directory->refresh_path();
-    printf("%s", current_directory->getActual_path().c_str());
+    current_directory->refreshPath();
+    printf("%s", current_directory->getActualPath().c_str());
     return 1;
 }
 
@@ -91,12 +91,12 @@ int my_cd(size_t nargs, char **args)
         else{
             //TODO filesystem errors
             //boost::filesystem::filesystem_error()
-            perror("\n my_Shell failed to change dir \t");
+            perror("\n my_Shell failed to change dir_ \t");
         }
 
     }
-    current_directory->setActual_path(boost::filesystem::current_path());
-    current_directory->setPath_was_changed(true);
+    current_directory->setActualPath(boost::filesystem::current_path());
+    current_directory->setPathWasChanged(true);
     return 1;
 }
 
@@ -132,7 +132,7 @@ int my_sh(size_t nargs, char **args)
 {
     if (nargs > 1){
         string file_path;
-        file_path = current_directory->getActual_path().string();
+        file_path = current_directory->getActualPath().string();
         file_path.append("/");
         file_path.append(args[1]);
         if (boost::filesystem::is_regular_file(args[1]) ){
