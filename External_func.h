@@ -17,10 +17,10 @@
 
 #include "Env/User.h"
 #include "Env/Directory.h"
-#include "Env/Line_splitter.h"
+#include "Env/Utils/Line_splitter.h"
 #include "Env/Interpreter.h"
 #include "Env/ConsoleView.h"
-#include "Env/FileLaneIterator.h"
+#include "Env/Utils/FileLaneIterator.h"
 
 #include "Embedded_func.h"
 
