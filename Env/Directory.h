@@ -10,8 +10,11 @@
 #include "User.h"
 
 
+
 using namespace std;
 
+
+extern User* default_user;
 
 class Directory{
 public:

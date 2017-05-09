@@ -6,7 +6,6 @@
 // Created by d1md1m on 26.03.17.
 //
 
-#include <climits>
 #include "User.h"
 
 using namespace std;
@@ -20,23 +19,23 @@ User::User() {
 
     if ((nameBuf = getenv("HOME")) != NULL) {
         nameBuf = getpwuid(getuid())->pw_dir;
-        this->home_dirrectory = nameBuf;
+        home_dirrectory = nameBuf;
         //this.home_dirrectory = nameBuf;
         //cout << *nameBuf <<endl;
     }
     else {
         printf("Homedirectory is undedfined \n");
-        this->home_dirrectory = "";
+        home_dirrectory = "";
     }
     if ((nameBuf = getenv("USER")) != NULL) {
         nameBuf = getpwuid(getuid())->pw_name;
-        this->name = nameBuf;
+        name = nameBuf;
         //cout << *nameBuf <<endl;
         printf("HELLO %s ! My_Shell is glad to see You ;0) \n", nameBuf);
     }
     else{
         printf("Username is undedfined \n");
-        this->setName("");
+        setName("");
     }
 
 
@@ -45,10 +44,10 @@ User::User() {
     if (gethostname(hostname, HOST_NAME_MAX))
     {
         perror("Hostname is Unknown");
-        this->setHostname("");
+        setHostname("");
     }
     else{
-        this->setHostname(hostname);
+        setHostname(hostname);
     }
 
 

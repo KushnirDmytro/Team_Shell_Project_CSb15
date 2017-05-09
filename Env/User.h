@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <string>
 #include <boost/filesystem.hpp>
-
+#include <climits>
 #include <pwd.h>
 
 
@@ -64,13 +64,12 @@ public:
     }
 
 
-
 public:
     User();
 
 };
 
 
-extern User * default_user;
+//extern User * default_user;
 
 #endif //LAB_2_SHELL_USER_H
