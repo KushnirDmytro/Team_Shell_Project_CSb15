@@ -23,11 +23,11 @@ extern Extern_LS *extern_ls_obj;
 
 LS_opts::LS_opts (string name,
              bool noargs_allowed ) :
-        Options(name){
+        Defaul_options_manager(name){
 
     noargs_allowed = noargs_allowed;
 
-    opts_map = new map<string, Options*>{
+    opts_map = new map<string, Defaul_options_manager*>{
             {"-l",
                     new LS_no_subopt_opt( "-l", &LS_flags.detailed_listing) },
             {"-r",
@@ -61,7 +61,7 @@ void LS_opts::clear_flags(){
 LS_no_subopt_opt::LS_no_subopt_opt(string name,
                              bool* host_flag,
                              bool noargs_allowed_)
-        : Options(name){
+        : Defaul_options_manager(name){
     opts_map = nullptr;
     noargs_allowed = noargs_allowed_;
     flag_to_write = host_flag;
@@ -85,8 +85,8 @@ LS_no_subopt_opt::LS_no_subopt_opt(string name,
 
 
 // option block for sorting
-    Ls_sort_opt::Ls_sort_opt( string name, ls_sorts *sorts)
-            : Options( name){
+    Ls_sort_opt::Ls_sort_opt( string name, ls_sorts *sorts_)
+            : Defaul_options_manager( name){
         noargs_allowed = false;
         sort_opts_map = new map<string, ls_sorts>{
                 {"U", UNSORT},
@@ -95,7 +95,7 @@ LS_no_subopt_opt::LS_no_subopt_opt(string name,
                 {"X", EXTENTION},
                 {"t", TIME_MODIFIED}
         };
-        sorts = sorts;
+        sorts = sorts_;
 
     };
 

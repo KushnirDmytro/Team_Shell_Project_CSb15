@@ -17,6 +17,9 @@ Embedded_func::Embedded_func(const string &name_, const callable_function funct_
     name=name_;
     func = funct_to_assign_;
     help_info = help_msg_;
+    //to demolish PVS errors
+    nargs = 0;
+    vargs = nullptr;
 }
 
 
@@ -34,6 +37,7 @@ void Embedded_func::output_help(const string &helpMsg){
 }
 
 
+//object fields being initialized when info occures
 int Embedded_func::call(size_t nargs_, char **args_){
     nargs = nargs_;
     vargs = args_;

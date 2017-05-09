@@ -37,21 +37,21 @@ using namespace std;
 
 
 
-class Options;
+class Defaul_options_manager;
 
 //takes some arguments and checks are they in valid list (or of valid kind)
 
-using options_validator = bool (*) (size_t, char**, Options* ref_to_owner_object);
+using options_validator = bool (*) (size_t, char**, Defaul_options_manager* ref_to_owner_object);
 
 
-class Options{
+class Defaul_options_manager{
 
-    //TODO MAKE PROTECTED WHEN SOLVE INIT PROBLEM
+protected:
+    map <string,  Defaul_options_manager*> *opts_map;
+
 public:
 
     string option_name;
-
-    map <string,  Options*> *opts_map;
 
     //default value definition
     bool noargs_allowed = true;
@@ -60,11 +60,13 @@ public:
     //field for classes to initialize
     //options_validator opt_cross_valid = nullptr;
 
-    Options(string name);
+    Defaul_options_manager(string name,
+                           map <string,  Defaul_options_manager*> *opts_map
+                           = new map <string,  Defaul_options_manager*>{});
 
-    ~Options();
+    ~Defaul_options_manager();
 
-    Options* get_option(string potential_arg);
+    Defaul_options_manager* get_option(string potential_arg);
 
     virtual bool are_suboptions_valid(size_t nargs, char **argv);
 
@@ -74,7 +76,8 @@ public:
 
     bool argumentless_option_check(size_t nargs, char **argv);
 
-    virtual bool suboptionS_arguments_validation(Options* opt_to_check, queue<string>* arg_buf);
+    virtual bool suboptionS_arguments_validation(Defaul_options_manager* opt_to_check,
+                                                 queue<string>* arg_buf);
 
     bool map_contains(string seek_this);
 };
@@ -97,9 +100,7 @@ protected:
 public:
     External_func (const string &name,
                    callable_function funct_to_assign,
-                   string &help_msg):
-            Embedded_func(name, funct_to_assign,  help_msg){
-    }
+                   string &help_msg);
 //Overriding
     int call(size_t nargs, char **args) override;
 

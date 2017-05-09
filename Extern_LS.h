@@ -33,7 +33,7 @@ struct ls_option_flags{
 //==================DECLARATIONS of defaults ==============
 
 //general options class for LS
-class LS_opts : public Options{
+class LS_opts : public Defaul_options_manager{
 public:
     ls_option_flags LS_flags;
 
@@ -48,7 +48,7 @@ public:
 
 
 
-class LS_no_subopt_opt : public Options {
+class LS_no_subopt_opt : public Defaul_options_manager {
 
 private:
     bool* flag_to_write;
@@ -63,7 +63,7 @@ public:
 
 
 
-class Ls_sort_opt : public Options {
+class Ls_sort_opt : public Defaul_options_manager {
 private:
 
 
@@ -107,7 +107,7 @@ public:
 
     Extern_LS(const string &name,
              callable_function funct_to_assign,
-             //Options *options,
+             //Defaul_options_manager *options,
              string &help_msg);
 
 
