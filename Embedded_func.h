@@ -16,11 +16,11 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include "Directory.h"
-#include "ConsoleView.h"
-#include "Line_splitter.h"
-#include "FileLaneIterator.h"
-#include "Interpreter.h"
+#include "Env/Directory.h"
+#include "Env/ConsoleView.h"
+#include "Env/Line_splitter.h"
+#include "Env/FileLaneIterator.h"
+#include "Env/Interpreter.h"
 #include "Environment_objects.cpp"
 
 using namespace std;

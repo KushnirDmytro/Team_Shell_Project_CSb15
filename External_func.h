@@ -15,12 +15,12 @@
 
 #include <queue>
 
-#include "User.h"
-#include "Directory.h"
-#include "Line_splitter.h"
-#include "Interpreter.h"
-#include "ConsoleView.h"
-#include "FileLaneIterator.h"
+#include "Env/User.h"
+#include "Env/Directory.h"
+#include "Env/Line_splitter.h"
+#include "Env/Interpreter.h"
+#include "Env/ConsoleView.h"
+#include "Env/FileLaneIterator.h"
 
 #include "Embedded_func.h"
 

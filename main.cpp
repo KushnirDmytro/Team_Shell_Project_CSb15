@@ -18,13 +18,13 @@
 
 //========================CLASSES IMPORT==================
 
-#include "ConsoleView.h"
-#include "User.h"
-#include "Directory.h"
+#include "Env/ConsoleView.h"
+#include "Env/User.h"
+#include "Env/Directory.h"
 #include "Embedded_func.h"
-#include "Line_splitter.h"
-#include "Interpreter.h"
-#include "FileLaneIterator.h"
+#include "Env/Line_splitter.h"
+#include "Env/Interpreter.h"
+#include "Env/FileLaneIterator.h"
 #include "External_func.h"
 #include "Extern_LS.h"
 //====================CLASSES IMPORT END=====================

@@ -4,17 +4,17 @@ project(Lab_2_shell)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES main.cpp Embedded_func.cpp Embedded_func.h
-        ConsoleView.cpp ConsoleView.h User.cpp User.h
-        Directory.cpp Directory.h Line_splitter.cpp
-        Line_splitter.h Interpreter.cpp Interpreter.h
-        FileLaneIterator.cpp FileLaneIterator.h
+        Env/ConsoleView.cpp Env/ConsoleView.h Env/User.cpp Env/User.h
+        Env/Directory.cpp Env/Directory.h Env/Line_splitter.cpp
+        Env/Line_splitter.h Env/Interpreter.cpp Env/Interpreter.h
+        Env/FileLaneIterator.cpp Env/FileLaneIterator.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h
         Environment_objects.cpp)
 add_executable(Lab_2_shell ${SOURCE_FILES})
 
 
-set(SOURCE_FILES remove_main.cpp deleter.cpp deleter.h)
+set(SOURCE_FILES my_rm/remove_main.cpp my_rm/deleter.cpp my_rm/deleter.h)
 
 add_executable(rm ${SOURCE_FILES})
 
