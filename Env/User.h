@@ -12,6 +12,9 @@
 #include <climits>
 #include <pwd.h>
 
+
+#include "shell_environment.h"
+
 using std::string;
 namespace fs = boost::filesystem;
 

@@ -56,7 +56,6 @@ User::User() {
 }
 
 
-
 void User::setHome_dirrectory(const fs::path &home_dirrectory_) {
     home_dirrectory = home_dirrectory_;
 }

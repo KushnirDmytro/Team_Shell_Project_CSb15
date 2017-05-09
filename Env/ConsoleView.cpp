@@ -82,11 +82,11 @@ ConsoleView::ConsoleView(Directory *directory_adr){
         //    return;
        // }
 
-        if ( this->current_directoryPtr->contains_home() ) {
+        if (this->current_directoryPtr->contains_his_home(default_user) ) {
             pref.append("~");
         }
 
-        if ((temp_buf.length() > this->getMax_path_length()) || this->current_directoryPtr->contains_home() ){
+        if ((temp_buf.length() > this->getMax_path_length()) || this->current_directoryPtr->contains_his_home(default_user) ){
             was_trimmed = trim_path_to_size( &(temp_buf) , this->getMax_path_length());
         }
         if (was_trimmed){
@@ -106,7 +106,7 @@ ConsoleView::ConsoleView(Directory *directory_adr){
         size_t was_trimmed = 0;
         boost::filesystem::path path_buf = *path;
 
-        if (this->current_directoryPtr->contains_home(this_user)){
+        if (this->current_directoryPtr->contains_his_home(this_user)){
             *path = path->substr(this_user->getHome_dirrectory().string().length());
             //cout << "TEST>>>>>>>>>>?????????????" <<endl;
             //cout << *path << endl;

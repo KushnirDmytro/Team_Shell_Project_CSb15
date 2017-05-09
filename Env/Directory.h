@@ -11,7 +11,6 @@
 
 
 #include "User.h"
-//#include "Env.h"
 
 
 namespace fs = boost::filesystem;
@@ -19,7 +18,7 @@ namespace fs = boost::filesystem;
 
 //extern Env *env;
 
-extern User* default_user;
+//extern User* default_user;
 
 class Directory{
 public:
@@ -44,7 +43,7 @@ public:
     int refresh_path();
 
     //by default shows info about this object, but can do for any
-    bool contains_home( /*boost::filesystem::path &dir = getActual_path() */  User *this_user = default_user);
+    bool contains_his_home( /*boost::filesystem::path &dir = getActual_path() */  User *this_user);
 };
 
 

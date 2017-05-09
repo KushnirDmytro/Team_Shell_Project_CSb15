@@ -7,7 +7,6 @@
 
 #include "Directory.h"
 
-//using namespace std;
 
 
     const fs::path &Directory::getActual_path() const {
@@ -35,7 +34,7 @@ Directory::Directory(){
     int Directory::refresh_path(){
         try
         {
-            setActual_path(fs::current_path());
+            this->setActual_path(fs::current_path());
         }
         catch (fs::filesystem_error &e)
         {
@@ -45,10 +44,10 @@ Directory::Directory(){
     }
 
     //by default shows info about this object, but can do for any
-    bool Directory::contains_home(User *this_user ){
+    bool Directory::contains_his_home(User *this_user){
         if (this_user->getHome_dirrectory() != ""){
 
-            if ( this->getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos){
+            if ( getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos){
                 //    printf ("TEST>>>>>>>>>>>>>CONTAINS HOME<<<<<<<<<<<< \n");
                 return true;
             }
