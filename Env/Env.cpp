@@ -3,3 +3,18 @@
 //
 
 #include "Env.h"
+
+
+Env::Env(){
+    dir = new Directory();
+    usr = new User() ;
+    interp =  new Interpreter();
+    cons = new ConsoleView(dir);
+}
+
+Env::~Env() {
+    delete dir;
+    delete usr;
+    delete interp;
+    delete cons;
+}

@@ -11,6 +11,15 @@
 #include "Interpreter.h"
 
 class Env {
+public:
+    ConsoleView *cons;
+    Directory* dir;
+    User* usr;
+    Interpreter* interp;
+
+
+    Env();
+    ~Env();
 
 };
 

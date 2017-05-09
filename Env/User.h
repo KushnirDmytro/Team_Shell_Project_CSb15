@@ -8,15 +8,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string>
 #include <boost/filesystem.hpp>
 
 #include <pwd.h>
 
 
-using namespace std;
 
-
+namespace fs = boost::filesystem;
 
 struct rights{
     //prototype
@@ -26,37 +25,37 @@ struct rights{
 
 class User{
 private:
-    boost::filesystem::path home_dirrectory;
-    string name;
-    string pass;
-    string hostname;
+    fs::path home_dirrectory;
+    std::string name;
+    std::string pass;
+    std::string hostname;
 public:
-    const string &getHostname() const;
+    const std::string &getHostname() const;
 
-    void setHostname(const string &hostname);
+    void setHostname(const std::string &hostname);
 
 private:
     rights user_rights;
     //bool is_defined = false;
 public:
-    void setHome_dirrectory(const boost::filesystem::path &);
+    void setHome_dirrectory(const fs::path &);
 
-    void setName(const string &name);
+    void setName(const std::string &name);
 
-    void setPass(const string &pass);
+    void setPass(const std::string &pass);
 
 
     void setUser_rights(const rights &user_rights);
 
-    const boost::filesystem::path &getHome_dirrectory() const {
+    const fs::path &getHome_dirrectory() const {
          return home_dirrectory;
     }
 
-    const string &getName() const {
+    const std::string &getName() const {
         return name;
     }
 
-    const string &getPass() const {
+    const std::string &getPass() const {
         return pass;
     }
 
