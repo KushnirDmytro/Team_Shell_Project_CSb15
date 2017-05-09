@@ -36,7 +36,7 @@ public:
     int refresh_path();
 
     //by default shows info about this object, but can do for any
-    bool contains_home( /*boost::filesystem::path &dir = getActual_path() */  User *this_user = default_user);
+    bool contains_home( /*boost::filesystem::path &dir = getActual_path() */ const User *this_user = default_user);
 };
 
 

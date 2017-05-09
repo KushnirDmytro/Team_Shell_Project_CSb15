@@ -13,7 +13,9 @@ using namespace std;
 
 
 
-Embedded_func::Embedded_func(const string &name_, const callable_function funct_to_assign_, const string &help_msg_){
+Embedded_func::Embedded_func(const string &name_,
+                             const callable_function funct_to_assign_,
+                             const string &help_msg_){
     name=name_;
     func = funct_to_assign_;
     help_info = help_msg_;

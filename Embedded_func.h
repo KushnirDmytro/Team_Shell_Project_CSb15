@@ -34,7 +34,9 @@ protected:
     string help_info;
     callable_function func;
 public:
-    Embedded_func(const string &name, const callable_function funct_to_assign, const string &help_msg);
+    Embedded_func(const string &name,
+                  const callable_function funct_to_assign,
+                  const string &help_msg);
 
     int search_for_help(size_t nargs, char** &argvector);
 

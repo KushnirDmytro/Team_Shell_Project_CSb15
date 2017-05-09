@@ -44,7 +44,7 @@ Directory::Directory(){
     }
 
     //by default shows info about this object, but can do for any
-    bool Directory::contains_home(User *this_user ){
+    bool Directory::contains_home(const User *this_user ){
         if (this_user->getHome_dirrectory() != ""){
             if ( getActual_path().string().find(this_user->getHome_dirrectory().string()) != string::npos)
                 return true;
