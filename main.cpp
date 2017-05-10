@@ -27,6 +27,7 @@
 #include "Env/Utils/FileLaneIterator.h"
 #include "External_func.h"
 #include "Extern_LS.h"
+#include "Env/Env.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -132,8 +133,8 @@ void my_loop(void)
 
 
 
-
-
+//TODO ask how to place it inside other namespace
+env::Env *environment;
 
 
 
@@ -188,7 +189,11 @@ int main(int argc, char **argv)
             {"mysh", my_shell_fileinterpreter},
             {"ls", extern_ls_obj}
 
-    };
+       };
+
+    //env = nullptr;
+
+    environment =  new env::Env();
 
 
     default_user = new env::User();
@@ -206,9 +211,12 @@ int main(int argc, char **argv)
     // Perform any shutdown/cleanup.
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
+   /*
     delete default_user;
     delete current_directory;
     delete console;
+    */
+    delete environment;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 
     return EXIT_SUCCESS;

@@ -8,7 +8,6 @@
 #include "ConsoleView.h"
 #include "Interpreter.h"
 
-
 namespace env {
 
     class Env {

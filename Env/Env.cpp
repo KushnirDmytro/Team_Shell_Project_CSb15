@@ -22,6 +22,6 @@ namespace env {
     }
 
     //global state inside this namespase
-    Env *env;
+    //Env *environment;
 
 }

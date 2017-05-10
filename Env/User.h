@@ -21,7 +21,7 @@ namespace fs = boost::filesystem;
 namespace env {
 
     struct rights {
-        //prototype
+        //markup
     };
 
     class User {
