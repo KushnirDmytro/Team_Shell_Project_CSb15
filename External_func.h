@@ -123,7 +123,7 @@ extern env::Directory *current_directory;
 
 extern env::utils::LineSplitter* def_line_split;
 
-extern env::Interpreter* default_interpreter;
+extern env::LineInterpreter* default_interpreter;
 
 extern env::ConsoleView *console;
 

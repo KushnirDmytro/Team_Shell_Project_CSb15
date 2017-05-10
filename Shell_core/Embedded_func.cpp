@@ -20,13 +20,13 @@ env::Directory *current_directory;
 
 env::utils::LineSplitter* def_line_split;
 
-env::Interpreter* default_interpreter;
+env::LineInterpreter* default_interpreter;
 
 env::ConsoleView *console;
 
 */
 
-map <string, Embedded_func*> embedded_lib;
+//map <string, Embedded_func*> embedded_lib;
 
 
 Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){
@@ -108,7 +108,6 @@ int my_cd(size_t nargs, char **args)
 //shows help info
 int my_help(size_t nargs, char **args)
 {
-
     printf("Write command and arguments, if needed, then press 'Enter'\n");
     printf("To get detailed information, write <command option_name> --help or <command option_name> -h:\n");
     printf("List of Commands:\n");

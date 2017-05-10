@@ -51,7 +51,7 @@ public:
 };
 
 
-extern map <string, Embedded_func*> embedded_lib;
+//extern map <string, Embedded_func*> embedded_lib;
 
 
 extern env::Env *environment;

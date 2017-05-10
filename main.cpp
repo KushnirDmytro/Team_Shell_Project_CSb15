@@ -23,19 +23,19 @@
 #include "Env/Directory.h"
 #include "Shell_core/Embedded_func.h"
 #include "Shell_core/Utils/LineSplitter.h"
-#include "Shell_core/Interpreter.h"
+#include "Shell_core/LineInterpreter.h"
 #include "Shell_core/Utils/FileLaneIterator.h"
 #include "External_func.h"
 #include "Extern_LS.h"
 #include "Env/Env.h"
-#include "Shell_core/Interpreter.h"
+#include "Shell_core/LineInterpreter.h"
 //====================CLASSES IMPORT END=====================
 
 
 
 //==============================DEFINITIONS====================
 
-using namespace std;
+using namespace sh_core;
 
 
 #define  home_dir_call  "~"
@@ -92,7 +92,7 @@ Extern_LS *extern_ls_obj;
 
 //TODO ask how to place it inside other namespace
 env::Env *environment;
-sh_core::Interpreter *interpreter;
+LineInterpreter *interpreter;
 
 
 
@@ -186,24 +186,14 @@ int main(int argc, char **argv)
 
 
 
-    embedded_lib= {
-            {"cd",   my_cd_obj},
-            {"pwd",  my_pwd_obj},
-            {"help", my_help_obj},
-            {"exit", my_exit_obj},
-            {"mysh", my_shell_fileinterpreter},
-            {"ls", extern_ls_obj}
-
-       };
-
     //env = nullptr;
 
     environment =  new env::Env();
-    interpreter = new sh_core::Interpreter();
+    interpreter = new sh_core::LineInterpreter();
 
 /*
     default_user = new env::User();
-    default_interpreter = new env::Interpreter();
+    default_interpreter = new env::LineInterpreter();
     def_line_split = new env::utils::LineSplitter();
     //init_user(&this_user);
     current_directory = new env::Directory();
