@@ -3,14 +3,14 @@ project(Lab_2_shell)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Embedded_func.cpp Embedded_func.h
+set(SOURCE_FILES main.cpp Shell_core/Embedded_func.cpp Shell_core/Embedded_func.h
         Env/ConsoleView.cpp Env/ConsoleView.h
         Env/User.cpp Env/User.h
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
-        Env/Utils/LineSplitter.cpp Env/Utils/LineSplitter.h
-        Env/Interpreter.cpp Env/Interpreter.h
-        Env/Utils/FileLaneIterator.cpp Env/Utils/FileLaneIterator.h
+        Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
+        Shell_core/Interpreter.cpp Shell_core/Interpreter.h
+        Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h
         Environment_objects.cpp Env/shell_environment.h)

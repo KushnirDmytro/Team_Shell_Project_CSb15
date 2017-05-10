@@ -6,7 +6,7 @@
 //
 
 #include "Interpreter.h"
-
+#include "Embedded_func.h"
 
 extern map <string, Embedded_func*> embedded_lib;
 

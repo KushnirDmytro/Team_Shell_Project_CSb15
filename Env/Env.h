@@ -6,7 +6,7 @@
 #define LAB_2_SHELL_ENV_H
 
 #include "ConsoleView.h"
-#include "Interpreter.h"
+//#include "../Shell_core/Interpreter.h"
 
 namespace env {
 
@@ -15,7 +15,7 @@ namespace env {
         ConsoleView *console_;
         Directory *dir_;
         User *user_;
-        Interpreter *interpreter_;
+        //Interpreter *interpreter_;
 
         Env();
 

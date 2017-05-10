@@ -7,7 +7,7 @@
 
 #include "Env/Directory.h"
 #include "Env/ConsoleView.h"
-#include "Env/Utils/LineSplitter.h"
-#include "Env/Utils/FileLaneIterator.h"
-#include "Env/Interpreter.h"
+#include "Shell_core/Utils/LineSplitter.h"
+#include "Shell_core/Utils/FileLaneIterator.h"
+#include "Shell_core/Interpreter.h"
 

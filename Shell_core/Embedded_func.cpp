@@ -11,7 +11,7 @@
 
 using namespace std;
 
-extern env::Env *environment;
+//extern env::Env *environment;
 
 /*
 env::User * default_user;
@@ -24,8 +24,10 @@ env::Interpreter* default_interpreter;
 
 env::ConsoleView *console;
 
-map <string, Embedded_func*> embedded_lib;
 */
+
+map <string, Embedded_func*> embedded_lib;
+
 
 Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){
     name=name_;

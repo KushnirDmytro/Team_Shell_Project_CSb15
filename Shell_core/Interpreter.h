@@ -18,6 +18,8 @@ namespace env {
     class Interpreter {
     private:
         utils::LineSplitter *splitter;
+
+
     public:
         Interpreter();
 
