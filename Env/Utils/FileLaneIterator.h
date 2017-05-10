@@ -9,22 +9,28 @@
 #include <fstream>
 #include <boost/filesystem/operations.hpp>
 
-using namespace std;
+using std::string;
 
-class FileLaneIterator{
-private:
-    ifstream infile;
-    bool isGood;
-public:
+namespace env {
 
-    FileLaneIterator(string filename);
+    namespace utils {
 
-    bool fileIsReady();
+        class FileLaneIterator {
+        private:
+            std::ifstream infile;
+            bool isGood;
 
-    void getNextString(string *buf);
+        public:
+            FileLaneIterator(const string filename);
 
-    ~FileLaneIterator();
-};
+            bool fileIsReady();
 
+            void getNextString(string *buf);
+
+            ~FileLaneIterator();
+        };
+    }
+
+}
 
 #endif //LAB_2_SHELL_FILEITERATOR_H

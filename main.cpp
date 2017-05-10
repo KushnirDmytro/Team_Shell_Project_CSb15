@@ -22,7 +22,7 @@
 #include "Env/User.h"
 #include "Env/Directory.h"
 #include "Embedded_func.h"
-#include "Env/Utils/Line_splitter.h"
+#include "Env/Utils/LineSplitter.h"
 #include "Env/Interpreter.h"
 #include "Env/Utils/FileLaneIterator.h"
 #include "External_func.h"
@@ -116,8 +116,8 @@ void my_loop(void)
         if (strlen(line.c_str()) == 0){
             continue;
         }
-        status = default_interpreter->proceed_sting(&line);
-        //args = my_split_line(line);
+        status = default_interpreter->processSting(&line);
+        //args = mySplitLine(line);
         //status = my_execute(args); //if 0 - finished, exited
 
     } while (status);
@@ -145,7 +145,7 @@ int main(int argc, char **argv)
     string pwd_help_msg = "displays fullname of current execution directory";
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
-    string shell_script_interpreter_help_msg = "file interpreter to execute shell scripts \n 'mysh' <filename> to execurte script file";
+    string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n 'mysh' <filename> to execurte script file";
     my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, pwd_help_msg );
     my_help_obj = new Embedded_func("MY_HELP", my_help, help_help_msg );
@@ -191,12 +191,12 @@ int main(int argc, char **argv)
     };
 
 
-    default_user = new shell::User();
-    default_interpreter = new Interpreter();
-    def_line_split = new Line_splitter();
+    default_user = new env::User();
+    default_interpreter = new env::Interpreter();
+    def_line_split = new env::utils::LineSplitter();
     //init_user(&this_user);
-    current_directory = new shell::Directory();
-    console = new shell::ConsoleView(current_directory, default_user);
+    current_directory = new env::Directory();
+    console = new env::ConsoleView(current_directory, default_user);
 
     //===================DYNAMIC INITIALISATION END======================
 

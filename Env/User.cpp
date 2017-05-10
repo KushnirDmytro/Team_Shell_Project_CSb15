@@ -10,7 +10,7 @@
 #include "Env.h"
 
 
-namespace shell {
+namespace env {
 
     User::User() {
         /* REFACTOR IF NEEDDED
@@ -22,22 +22,21 @@ namespace shell {
         if ((nameBuf = getenv("HOME")) != NULL) {
             nameBuf = getpwuid(getuid())->pw_dir;
             home_dirrectory = nameBuf;
-            //this.home_dirrectory = nameBuf;
-            //cout << *nameBuf <<endl;
-        } else {
+        }
+        else {
             printf("Homedirectory is undedfined \n");
             home_dirrectory = "";
         }
+
         if ((nameBuf = getenv("USER")) != NULL) {
             nameBuf = getpwuid(getuid())->pw_name;
             name = nameBuf;
-            //cout << *nameBuf <<endl;
             printf("HELLO %s ! My_Shell is glad to see You ;0) \n", nameBuf);
-        } else {
+        }
+        else {
             printf("Username is undedfined \n");
             setName("");
         }
-
 
         char hostname[HOST_NAME_MAX];
 

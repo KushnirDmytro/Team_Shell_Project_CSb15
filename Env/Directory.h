@@ -13,7 +13,7 @@
 
 namespace fs = boost::filesystem;
 
-namespace shell {
+namespace env {
 
     class Directory {
 
@@ -30,7 +30,6 @@ namespace shell {
 
         int refreshPath();
 
-        //by default shows info about this object, but can do for any
         bool suchDirectoryContainsHisHome(const std::string *directory_to_check, const User *this_user) const;
 
     private:
@@ -38,6 +37,7 @@ namespace shell {
 
         bool path_was_changed_;
 
+        //by default shows info about this object, but can do for any
     };
 
 }

@@ -7,33 +7,34 @@
 
 #include <zconf.h>
 #include <wait.h>
-#include "Utils/Line_splitter.h"
+#include "Utils/LineSplitter.h"
 #include "../Embedded_func.h"
 #include "iostream"
 
 using namespace std;
 
+namespace env {
+
+    class Interpreter {
+    private:
+        utils::LineSplitter *splitter;
+    public:
+        Interpreter();
 
 
-class Interpreter{
-private:
-    Line_splitter *splitter;
-public:
-    Interpreter();
+        // launcher for custom modules
+        int myExternLauncher(char **args) const;
 
+        int getNumOfMyBuiltins() const;
 
-    // launcher for custom modules
-    int my_extern_launcher(char **args);
+        int myExecute(const vector<string> *const args) const;
 
-    int num_my_builtins();
+        int processSting(string * values) const;
 
-    int my_execute(vector<string> args);
-
-    int proceed_sting(string* values);
-
-    ~Interpreter();
-    //TODO filemasks
-};
+        ~Interpreter();
+        //TODO filemasks
+    };
+}
 
 
 #endif //LAB_2_SHELL_INTERPRETER_H

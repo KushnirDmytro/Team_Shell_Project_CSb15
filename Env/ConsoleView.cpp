@@ -7,7 +7,7 @@
 
 #include "ConsoleView.h"
 
-namespace shell {
+namespace env {
 
     ConsoleView::ConsoleView(Directory *directory_adr, User *user) {
         setCurrentDirectory(directory_adr);

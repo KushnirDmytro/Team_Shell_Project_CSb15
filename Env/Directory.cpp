@@ -7,7 +7,7 @@
 
 #include "Directory.h"
 
-namespace shell {
+namespace env {
 
     Directory::Directory() {
         refreshPath();

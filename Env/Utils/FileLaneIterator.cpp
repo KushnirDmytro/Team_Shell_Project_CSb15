@@ -8,54 +8,52 @@
 #include "FileLaneIterator.h"
 
 
+namespace env {
 
-FileLaneIterator::FileLaneIterator(string filename){
-if (boost::filesystem::exists(filename)){
-infile.open(filename);
+    namespace utils {
 
-//cout << "ISOPEN:  " << infile.is_open() <<endl;
-if (infile.is_open()){
-isGood = true;
-printf("FILE {%s} IS OPENED\n", filename.c_str());
-}
-else{
-printf("%s Could not be open\n", filename.c_str());
-}
-}
-else{
-perror("Such a file does not found\n");
-isGood = false;
-}
+        FileLaneIterator::FileLaneIterator(string filename) {
 
-//cout << "ISOPEN" << infile.is_open() <<endl;
-//cout << "EOF:  "  << infile.eof() << endl;
-//cout << "GOOD:  "  << infile.good() << endl;
-//ifstream infile(filename);
-}; //initialize via passing filename to open
+            if (boost::filesystem::exists(filename)) {
+                infile.open(filename);
+
+                if (infile.is_open()) {
+                    isGood = true;
+                    printf("FILE {%s} IS OPENED\n", filename.c_str());
+                } else {
+                    printf("%s Could not be open\n", filename.c_str());
+                }
+
+            } else {
+                perror("Such a file does not found\n");
+                isGood = false;
+            }
+
+        }; //initialize via passing filename to open
 
 
-bool FileLaneIterator::fileIsReady(){
-    return (infile.good() && infile.is_open());
-}
+        bool FileLaneIterator::fileIsReady() {
 
-void FileLaneIterator::getNextString(string *buf){
+            return (infile.good() && infile.is_open());
 
-    //  cout << "ISOPEN" << infile.is_open() <<endl;
-    // cout << "EOF:  "  << infile.eof() << endl;
-    // cout << "GOOD:  "  << infile.good() << endl;
-    // getchar();
-    if (infile.is_open() && !infile.eof()){
+        }
 
-        std::getline(infile, *buf);
-        //infile.getline(buf, 512);
+        void FileLaneIterator::getNextString(string *buf) {
+
+            if (infile.is_open() && !infile.eof()) {
+                std::getline(infile, *buf);
+            } else {
+                isGood = false;
+            }
+        }
+
+        FileLaneIterator::~FileLaneIterator() {
+
+            if (infile.is_open()) {
+                infile.close();
+            }
+
+        }
     }
-    else {
-        isGood = false;
-    }
-}
 
-FileLaneIterator::~FileLaneIterator(){
-    if(infile.is_open()){
-        infile.close();
-    }
 }

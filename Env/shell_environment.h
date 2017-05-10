@@ -5,6 +5,6 @@
 #ifndef LAB_2_SHELL_SHELL_ENVIRONMENT_H
 #define LAB_2_SHELL_SHELL_ENVIRONMENT_H
 
-namespace shell{}
+namespace env{}
 
 #endif //LAB_2_SHELL_SHELL_ENVIRONMENT_H

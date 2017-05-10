@@ -5,7 +5,7 @@
 #include "Env.h"
 
 
-namespace shell {
+namespace env {
 
     Env::Env() {
         dir_ = new Directory();

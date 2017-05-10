@@ -17,7 +17,7 @@
 
 #include "Env/User.h"
 #include "Env/Directory.h"
-#include "Env/Utils/Line_splitter.h"
+#include "Env/Utils/LineSplitter.h"
 #include "Env/Interpreter.h"
 #include "Env/ConsoleView.h"
 #include "Env/Utils/FileLaneIterator.h"
@@ -119,15 +119,15 @@ public:
 
 //==================DEFAULT OBJECTS DECLARATIONS===================
 
-extern shell::User * default_user;
+extern env::User * default_user;
 
-extern shell::Directory *current_directory;
+extern env::Directory *current_directory;
 
-extern Line_splitter* def_line_split;
+extern env::utils::LineSplitter* def_line_split;
 
-extern Interpreter* default_interpreter;
+extern env::Interpreter* default_interpreter;
 
-extern shell::ConsoleView *console;
+extern env::ConsoleView *console;
 
 extern map <string, Embedded_func*> embedded_lib;
 

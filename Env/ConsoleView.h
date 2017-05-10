@@ -13,7 +13,7 @@
 #include "Directory.h"
 
 
-namespace shell {
+namespace env {
 
     class ConsoleView {
     private:
@@ -25,8 +25,11 @@ namespace shell {
 
         size_t trimPathToSize(std::string *path_buf) const;
 
+        void displayHost() const;
+
+        void displayPath();
+
     public:
-        // TODO refactor in private
 
         ConsoleView(Directory *directory_adr, User *current_user);
 
@@ -46,11 +49,7 @@ namespace shell {
 
         void refreshPathBuffer();
 
-        void displayHost() const;
-
         void displayPromptMsg();
-
-        void displayPath();
     };
 
 }

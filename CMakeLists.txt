@@ -8,7 +8,7 @@ set(SOURCE_FILES main.cpp Embedded_func.cpp Embedded_func.h
         Env/User.cpp Env/User.h
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
-        Env/Utils/Line_splitter.cpp Env/Utils/Line_splitter.h
+        Env/Utils/LineSplitter.cpp Env/Utils/LineSplitter.h
         Env/Interpreter.cpp Env/Interpreter.h
         Env/Utils/FileLaneIterator.cpp Env/Utils/FileLaneIterator.h
         External_func.cpp External_func.h

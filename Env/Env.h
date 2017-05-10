@@ -9,7 +9,7 @@
 #include "Interpreter.h"
 
 
-namespace shell {
+namespace env {
 
     class Env {
     public:

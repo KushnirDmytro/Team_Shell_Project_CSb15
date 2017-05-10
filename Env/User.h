@@ -18,7 +18,7 @@
 using std::string;
 namespace fs = boost::filesystem;
 
-namespace shell {
+namespace env {
 
     struct rights {
         //prototype

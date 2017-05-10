@@ -11,15 +11,15 @@
 
 using namespace std;
 
-shell::User * default_user;
+env::User * default_user;
 
-shell::Directory *current_directory;
+env::Directory *current_directory;
 
-Line_splitter* def_line_split;
+env::utils::LineSplitter* def_line_split;
 
-Interpreter* default_interpreter;
+env::Interpreter* default_interpreter;
 
-shell::ConsoleView *console;
+env::ConsoleView *console;
 
 map <string, Embedded_func*> embedded_lib;
 
@@ -127,7 +127,7 @@ int my_exit(size_t nargs, char **args)
     return 0;
 }
 
-//executes in this shell external ".msh" files
+//executes in this env external ".msh" files
 int my_sh(size_t nargs, char **args)
 {
     if (nargs > 1){
@@ -136,7 +136,7 @@ int my_sh(size_t nargs, char **args)
         file_path.append("/");
         file_path.append(args[1]);
         if (boost::filesystem::is_regular_file(args[1]) ){
-            FileLaneIterator *iter = new FileLaneIterator(args[1]);
+            env::utils::FileLaneIterator *iter = new env::utils::FileLaneIterator(args[1]);
             string st;
             cout << "------------FILE READING IN PROCESS------------------" << endl;
             int i =0;
@@ -148,7 +148,7 @@ int my_sh(size_t nargs, char **args)
                 // st.append(" ");
                 if (st.length() == 0)
                     continue;
-                status = default_interpreter->proceed_sting(&st);
+                status = default_interpreter->processSting(&st);
                 if (!status){
                     delete iter;
                     return 0;
@@ -158,14 +158,14 @@ int my_sh(size_t nargs, char **args)
             delete iter;
         }
         else if (boost::filesystem::is_regular_file(file_path) ){
-            FileLaneIterator *iter = new FileLaneIterator(file_path);
+            env::utils::FileLaneIterator *iter = new env::utils::FileLaneIterator(file_path);
             string st;
             cout << "------------FILE READING IN PROCESS------------------" << endl;
             if(iter->fileIsReady()){
                 iter->getNextString(&st);
                 cout << st << endl;
                 delete iter;
-                return  default_interpreter->proceed_sting(&st);
+                return  default_interpreter->processSting(&st);
             }
             delete iter;
         }
