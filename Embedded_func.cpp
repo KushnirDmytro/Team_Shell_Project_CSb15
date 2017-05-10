@@ -11,6 +11,9 @@
 
 using namespace std;
 
+extern env::Env *environment;
+
+/*
 env::User * default_user;
 
 env::Directory *current_directory;
@@ -22,7 +25,7 @@ env::Interpreter* default_interpreter;
 env::ConsoleView *console;
 
 map <string, Embedded_func*> embedded_lib;
-
+*/
 
 Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){
     name=name_;
@@ -68,8 +71,8 @@ int Embedded_func::call(size_t nargs_, char **args_){
 //show current directory
 int my_pwd(size_t nargs, char **args)
 {
-    current_directory->refreshPath();
-    printf("%s", current_directory->getActualPath().c_str());
+    environment->dir_->refreshPath();
+    printf("%s", environment->dir_->getActualPath().c_str());
     return 1;
 }
 
@@ -81,8 +84,8 @@ int my_cd(size_t nargs, char **args)
     } else {
         string str(args[1]);
         if (str == home_dir_call){
-            if ( boost::filesystem::is_directory( default_user->getHome_dirrectory() ) ){
-                boost::filesystem::current_path(default_user->getHome_dirrectory());
+            if ( boost::filesystem::is_directory( environment->user_->getHome_dirrectory() ) ){
+                boost::filesystem::current_path(environment->user_->getHome_dirrectory());
             }
         }
         else if (boost::filesystem::is_directory(args[1])){
@@ -95,8 +98,8 @@ int my_cd(size_t nargs, char **args)
         }
 
     }
-    current_directory->setActualPath(boost::filesystem::current_path());
-    current_directory->setPathWasChanged(true);
+    environment->dir_->setActualPath(boost::filesystem::current_path());
+    environment->dir_->setPathWasChanged(true);
     return 1;
 }
 
@@ -132,7 +135,7 @@ int my_sh(size_t nargs, char **args)
 {
     if (nargs > 1){
         string file_path;
-        file_path = current_directory->getActualPath().string();
+        file_path = environment->dir_->getActualPath().string();
         file_path.append("/");
         file_path.append(args[1]);
         if (boost::filesystem::is_regular_file(args[1]) ){
@@ -148,7 +151,7 @@ int my_sh(size_t nargs, char **args)
                 // st.append(" ");
                 if (st.length() == 0)
                     continue;
-                status = default_interpreter->processSting(&st);
+                status = environment->interpreter_->processSting(&st);
                 if (!status){
                     delete iter;
                     return 0;
@@ -165,7 +168,7 @@ int my_sh(size_t nargs, char **args)
                 iter->getNextString(&st);
                 cout << st << endl;
                 delete iter;
-                return  default_interpreter->processSting(&st);
+                return  environment->interpreter_->processSting(&st);
             }
             delete iter;
         }

@@ -16,12 +16,10 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include "Env/Directory.h"
-#include "Env/ConsoleView.h"
-#include "Env/Utils/LineSplitter.h"
+
+#include "Env/Env.h"
 #include "Env/Utils/FileLaneIterator.h"
-#include "Env/Interpreter.h"
-#include "Environment_objects.cpp"
+
 
 using namespace std;
 using  callable_function =  int (*)(size_t, char **);
@@ -54,5 +52,9 @@ public:
 
 
 extern map <string, Embedded_func*> embedded_lib;
+
+
+extern env::Env *environment;
+
 
 #endif //LAB_2_SHELL_EMBEDDEDFUNC_H

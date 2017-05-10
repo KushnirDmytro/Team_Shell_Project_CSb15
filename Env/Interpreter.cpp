@@ -7,6 +7,9 @@
 
 #include "Interpreter.h"
 
+
+extern map <string, Embedded_func*> embedded_lib;
+
 namespace env {
 
     Interpreter::Interpreter() {

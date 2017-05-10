@@ -89,6 +89,9 @@ Extern_LS *extern_ls_obj;
 
 
 
+//TODO ask how to place it inside other namespace
+env::Env *environment;
+
 
 
 //=============ASSIST FUNCTIONS============
@@ -112,12 +115,12 @@ void my_loop(void)
 
 
     do {
-        console->displayPromptMsg();
+        environment->console_->displayPromptMsg();
         line = my_read_line();
         if (strlen(line.c_str()) == 0){
             continue;
         }
-        status = default_interpreter->processSting(&line);
+        status = environment->interpreter_->processSting(&line);
         //args = mySplitLine(line);
         //status = my_execute(args); //if 0 - finished, exited
 
@@ -133,25 +136,28 @@ void my_loop(void)
 
 
 
-//TODO ask how to place it inside other namespace
-env::Env *environment;
-
 
 
 int main(int argc, char **argv)
 {
 
     //===================DYNAMIC INITIALISATION ======================
-    string cd_help_msg = "to change directory type in: cd <directory option_name> \n<~> = 'HOME' dirrectory if one defined \n<.> = current dirrectory  \n<..> = 'parrent directory'  ";
+    string cd_help_msg = "to change directory type in: cd <directory option_name> \n"
+            "<~> = 'HOME' dirrectory if one defined \n"
+            "<.> = current dirrectory  \n"
+            "<..> = 'parrent directory'  ";
     string pwd_help_msg = "displays fullname of current execution directory";
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
-    string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n 'mysh' <filename> to execurte script file";
+    string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
+            " 'mysh' <filename> to execurte script file";
     my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
     my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, pwd_help_msg );
     my_help_obj = new Embedded_func("MY_HELP", my_help, help_help_msg );
     my_exit_obj = new Embedded_func("MY_EXIT", my_exit, exit_help_msg );
-    my_shell_fileinterpreter =  new Embedded_func("MY_shell_script_interpreter", my_sh, shell_script_interpreter_help_msg );
+    my_shell_fileinterpreter =  new Embedded_func("MY_shell_script_interpreter",
+                                                  my_sh,
+                                                  shell_script_interpreter_help_msg );
  //   my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
 
 
@@ -178,9 +184,6 @@ int main(int argc, char **argv)
 
 
 
-
-
-
     embedded_lib= {
             {"cd",   my_cd_obj},
             {"pwd",  my_pwd_obj},
@@ -195,14 +198,14 @@ int main(int argc, char **argv)
 
     environment =  new env::Env();
 
-
+/*
     default_user = new env::User();
     default_interpreter = new env::Interpreter();
     def_line_split = new env::utils::LineSplitter();
     //init_user(&this_user);
     current_directory = new env::Directory();
     console = new env::ConsoleView(current_directory, default_user);
-
+*/
     //===================DYNAMIC INITIALISATION END======================
 
     // Run command loop.

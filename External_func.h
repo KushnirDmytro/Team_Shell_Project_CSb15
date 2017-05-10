@@ -15,12 +15,8 @@
 
 #include <queue>
 
-#include "Env/User.h"
-#include "Env/Directory.h"
-#include "Env/Utils/LineSplitter.h"
-#include "Env/Interpreter.h"
-#include "Env/ConsoleView.h"
-#include "Env/Utils/FileLaneIterator.h"
+#include "Env/Env.h"
+
 
 #include "Embedded_func.h"
 
@@ -119,6 +115,8 @@ public:
 
 //==================DEFAULT OBJECTS DECLARATIONS===================
 
+/*
+
 extern env::User * default_user;
 
 extern env::Directory *current_directory;
@@ -130,7 +128,7 @@ extern env::Interpreter* default_interpreter;
 extern env::ConsoleView *console;
 
 extern map <string, Embedded_func*> embedded_lib;
-
+*/
 
 
 //=================DEFAULT OBJECTS DECLARATIONS END================

@@ -8,7 +8,7 @@
 #include <zconf.h>
 #include <wait.h>
 #include "Utils/LineSplitter.h"
-#include "../Embedded_func.h"
+//#include "../Embedded_func.h"
 #include "iostream"
 
 using namespace std;
