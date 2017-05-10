@@ -11,15 +11,15 @@
 
 using namespace std;
 
-User * default_user;
+shell::User * default_user;
 
-Directory *current_directory;
+shell::Directory *current_directory;
 
 Line_splitter* def_line_split;
 
 Interpreter* default_interpreter;
 
-ConsoleView *console;
+shell::ConsoleView *console;
 
 map <string, Embedded_func*> embedded_lib;
 

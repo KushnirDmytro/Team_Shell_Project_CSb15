@@ -13,36 +13,45 @@
 #include "Directory.h"
 
 
-class ConsoleView{
-private:
-    Directory *current_directory_;
-    User* current_user_;
-    std::string path_buffer_ = "";
+namespace shell {
 
-    const u_int16_t max_path_length_ = 30; //yes, it is "Magic"
+    class ConsoleView {
+    private:
+        Directory *current_directory_;
+        User *current_user_;
+        std::string path_buffer_ = "";
 
-    size_t trimPathToSize() const;
+        const u_int16_t max_path_length_ = 30; //yes, it is "Magic"
 
-public:
-    // TODO refactor in private
+        size_t trimPathToSize(std::string *path_buf) const;
 
-    ConsoleView(Directory *directory_adr, User* current_user);
+    public:
+        // TODO refactor in private
 
-    const u_int16_t getMaxPathLength() const ;
-    void setCurrentDirectory(Directory *dir);
-    Directory *getCurrentDirectory() const ;
-    void setCurrentUser(User *user);
-    User* getCurrentUser() const;
+        ConsoleView(Directory *directory_adr, User *current_user);
 
-    const std::string &getPathBuffer() const ;
-    void setPathBuffer(const std::string &path_buffer) ;
+        const u_int16_t getMaxPathLength() const;
 
-    void refreshPathBuffer();
+        void setCurrentDirectory(Directory *dir);
 
-    void displayHost() const;
-    void displayPromptMsg();
-    void displayPath();
-};
+        Directory *getCurrentDirectory() const;
 
+        void setCurrentUser(User *user);
 
+        User *getCurrentUser() const;
+
+        const std::string &getPathBuffer() const;
+
+        void setPathBuffer(const std::string &path_buffer);
+
+        void refreshPathBuffer();
+
+        void displayHost() const;
+
+        void displayPromptMsg();
+
+        void displayPath();
+    };
+
+}
 #endif //LAB_2_SHELL_PROMPTCONSOLEINTERFACE_H

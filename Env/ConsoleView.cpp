@@ -84,15 +84,16 @@ namespace shell {
         }
         else {
             printf("%s", getPathBuffer().c_str());
-            return;
+            return; // shortcut for case when valid msg is already in buffer
         }
 
-        if (current_directory_->containsHisHome(current_user_)) {
+        if (current_directory_->suchDirectoryContainsHisHome(&temp_console_disp_buf, current_user_) ) {
             prefix.append("~");
         }
 
-        if ((temp_console_disp_buf.length() > getMaxPathLength()) || current_directory_->containsHisHome(current_user_)) {
-            n_chars_trimmed = trimPathToSize( &temp_console_disp_buf, getMaxPathLength());
+        if ((temp_console_disp_buf.length() > getMaxPathLength()) ||
+                current_directory_->suchDirectoryContainsHisHome(&temp_console_disp_buf, current_user_)) {
+            n_chars_trimmed = trimPathToSize( &temp_console_disp_buf );
         }
 
         if (n_chars_trimmed) {
@@ -106,19 +107,19 @@ namespace shell {
     }
 
 
-    size_t ConsoleView::trimPathToSize() const{
+    size_t ConsoleView::trimPathToSize(std::string *path_buf) const{
         size_t position;
         size_t was_trimmed = 0;
-        string path_buf = current_directory_->getActualPath().string();
+        //string path_buf = current_directory_->getActualPath().string();
 
-        if (current_directory_->containsHisHome(current_user_)) {
-            path_buf = path_buf.substr(current_user_->getHome_dirrectory().string().length());
+        if (current_directory_->suchDirectoryContainsHisHome(path_buf, current_user_)) {
+            *path_buf = path_buf->substr(current_user_->getHome_dirrectory().string().length());
         }
         string path_delimiter = "/";
-        while (path_buf.length() > max_path_length_) {
-            position = path_buf.find(path_delimiter);
+        while (path_buf->length() > max_path_length_) {
+            position = path_buf->find(path_delimiter);
             if (position != string::npos) {
-                path_buf = path_buf.substr(position + 1);
+                *path_buf = path_buf->substr(position + 1);
                 was_trimmed += position + 1;
             }
         }

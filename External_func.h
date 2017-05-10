@@ -119,15 +119,15 @@ public:
 
 //==================DEFAULT OBJECTS DECLARATIONS===================
 
-extern User * default_user;
+extern shell::User * default_user;
 
-extern Directory *current_directory;
+extern shell::Directory *current_directory;
 
 extern Line_splitter* def_line_split;
 
 extern Interpreter* default_interpreter;
 
-extern ConsoleView *console;
+extern shell::ConsoleView *console;
 
 extern map <string, Embedded_func*> embedded_lib;
 

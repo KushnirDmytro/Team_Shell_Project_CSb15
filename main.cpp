@@ -111,7 +111,7 @@ void my_loop(void)
 
 
     do {
-        console->display_all();
+        console->displayPromptMsg();
         line = my_read_line();
         if (strlen(line.c_str()) == 0){
             continue;
@@ -191,12 +191,12 @@ int main(int argc, char **argv)
     };
 
 
-    default_user = new User();
+    default_user = new shell::User();
     default_interpreter = new Interpreter();
     def_line_split = new Line_splitter();
     //init_user(&this_user);
-    current_directory = new Directory();
-    console = new ConsoleView(current_directory);
+    current_directory = new shell::Directory();
+    console = new shell::ConsoleView(current_directory, default_user);
 
     //===================DYNAMIC INITIALISATION END======================
 

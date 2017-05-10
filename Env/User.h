@@ -18,57 +18,59 @@
 using std::string;
 namespace fs = boost::filesystem;
 
-struct rights{
-    //prototype
-};
+namespace shell {
 
-class User{
-private:
-    fs::path home_dirrectory;
-    string name;
-    string pass;
-    string hostname;
-public:
-    const std::string &getHostname() const;
+    struct rights {
+        //prototype
+    };
 
-    void setHostname(const std::string &hostname);
+    class User {
+    private:
+        fs::path home_dirrectory;
+        string name;
+        string pass;
+        string hostname;
+    public:
+        const std::string &getHostname() const;
 
-private:
-    rights user_rights;
-    //bool is_defined = false;
-public:
-    void setHome_dirrectory(const fs::path &);
+        void setHostname(const std::string &hostname);
 
-    void setName(const std::string &name);
+    private:
+        rights user_rights;
+        //bool is_defined = false;
+    public:
+        void setHome_dirrectory(const fs::path &);
 
-    void setPass(const std::string &pass);
+        void setName(const std::string &name);
 
-
-    void setUser_rights(const rights &user_rights);
-
-    const fs::path &getHome_dirrectory() const {
-         return home_dirrectory;
-    }
-
-    const std::string &getName() const {
-        return name;
-    }
-
-    const std::string &getPass() const {
-        return pass;
-    }
-
-    const rights &getUser_rights() const {
-        return user_rights;
-    }
+        void setPass(const std::string &pass);
 
 
-public:
-    User();
+        void setUser_rights(const rights &user_rights);
 
-};
+        const fs::path &getHome_dirrectory() const {
+            return home_dirrectory;
+        }
+
+        const std::string &getName() const {
+            return name;
+        }
+
+        const std::string &getPass() const {
+            return pass;
+        }
+
+        const rights &getUser_rights() const {
+            return user_rights;
+        }
 
 
+    public:
+        User();
+
+    };
+
+}
 //extern User * default_user;
 
 #endif //LAB_2_SHELL_USER_H

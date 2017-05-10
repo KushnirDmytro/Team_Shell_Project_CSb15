@@ -13,31 +13,33 @@
 
 namespace fs = boost::filesystem;
 
-class Directory{
+namespace shell {
 
-public:
-    const fs::path &getActualPath() const;
+    class Directory {
 
-    void setActualPath(const fs::path &actual_path); ;
+    public:
+        const fs::path &getActualPath() const;
 
-    bool doesPathWasChanged() const ;;
+        void setActualPath(const fs::path &actual_path);;
 
-    void setPathWasChanged(const bool path_was_changed); ;
+        bool doesPathWasChanged() const;;
 
-    Directory();
+        void setPathWasChanged(const bool path_was_changed);;
 
-    int refreshPath();
+        Directory();
 
-    //by default shows info about this object, but can do for any
-    bool containsHisHome( const User *this_user) const;
+        int refreshPath();
 
-private:
-    fs::path actual_path_;
+        //by default shows info about this object, but can do for any
+        bool suchDirectoryContainsHisHome(const std::string *directory_to_check, const User *this_user) const;
 
-    bool path_was_changed_;
+    private:
+        fs::path actual_path_;
 
-};
+        bool path_was_changed_;
 
+    };
 
+}
 
 #endif //LAB_2_SHELL_DIRECTORY_H

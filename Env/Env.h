@@ -8,17 +8,20 @@
 #include "ConsoleView.h"
 #include "Interpreter.h"
 
-namespace shell{}
 
-class Env {
-public:
-    ConsoleView *console_;
-    Directory* dir_;
-    User* user_;
-    Interpreter* interpreter_;
+namespace shell {
 
-    Env();
-    ~Env();
-};
+    class Env {
+    public:
+        ConsoleView *console_;
+        Directory *dir_;
+        User *user_;
+        Interpreter *interpreter_;
+
+        Env();
+
+        ~Env();
+    };
+}
 
 #endif //LAB_2_SHELL_ENV_H
