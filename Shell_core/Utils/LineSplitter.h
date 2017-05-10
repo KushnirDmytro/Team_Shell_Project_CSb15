@@ -12,7 +12,7 @@
 using std::vector;
 using std::string;
 
-namespace env {
+namespace sh_core {
 
     namespace utils {
         class LineSplitter {

@@ -132,6 +132,16 @@ int my_exit(size_t nargs, char **args)
     return 0;
 }
 
+
+int my_sh(size_t nargs, char **args) {
+    cout << "HELLO, FIX ME, YOU DUMBASS!\n" ;
+    return 1;
+}
+
+
+//TODO solve hierarchy problem
+
+/*
 //executes in this env external ".msh" files
 int my_sh(size_t nargs, char **args)
 {
@@ -141,7 +151,7 @@ int my_sh(size_t nargs, char **args)
         file_path.append("/");
         file_path.append(args[1]);
         if (boost::filesystem::is_regular_file(args[1]) ){
-            env::utils::FileLaneIterator *iter = new env::utils::FileLaneIterator(args[1]);
+            sh_core::utils::FileLaneIterator *iter = new sh_core::utils::FileLaneIterator(args[1]);
             string st;
             cout << "------------FILE READING IN PROCESS------------------" << endl;
             int i =0;
@@ -153,7 +163,7 @@ int my_sh(size_t nargs, char **args)
                 // st.append(" ");
                 if (st.length() == 0)
                     continue;
-                status = environment->interpreter_->processSting(&st);
+                status = interpreter_->processSting(&st);
                 if (!status){
                     delete iter;
                     return 0;
@@ -182,5 +192,6 @@ int my_sh(size_t nargs, char **args)
     return 1;
 }
 
+*/
 //====================BUILT-IN COMMANDS END============
 

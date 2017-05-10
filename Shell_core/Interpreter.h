@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace env {
+namespace sh_core {
 
     class Interpreter {
     private:

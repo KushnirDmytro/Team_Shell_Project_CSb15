@@ -10,7 +10,7 @@
 
 extern map <string, Embedded_func*> embedded_lib;
 
-namespace env {
+namespace sh_core {
 
     Interpreter::Interpreter() {
         splitter = new utils::LineSplitter();

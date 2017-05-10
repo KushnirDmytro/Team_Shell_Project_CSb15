@@ -7,7 +7,7 @@
 
 #include "LineSplitter.h"
 
-namespace env {
+namespace sh_core {
 
     namespace utils {
         LineSplitter::LineSplitter() {}

@@ -28,6 +28,7 @@
 #include "External_func.h"
 #include "Extern_LS.h"
 #include "Env/Env.h"
+#include "Shell_core/Interpreter.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -91,6 +92,7 @@ Extern_LS *extern_ls_obj;
 
 //TODO ask how to place it inside other namespace
 env::Env *environment;
+sh_core::Interpreter *interpreter;
 
 
 
@@ -120,7 +122,7 @@ void my_loop()
         if (strlen(line.c_str()) == 0){
             continue;
         }
-        status = environment->interpreter_->processSting(&line);
+        status = interpreter->processSting(&line);
         //args = mySplitLine(line);
         //status = my_execute(args); //if 0 - finished, exited
 
@@ -197,6 +199,7 @@ int main(int argc, char **argv)
     //env = nullptr;
 
     environment =  new env::Env();
+    interpreter = new sh_core::Interpreter();
 
 /*
     default_user = new env::User();

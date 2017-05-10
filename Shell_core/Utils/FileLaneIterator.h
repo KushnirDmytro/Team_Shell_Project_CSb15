@@ -11,7 +11,7 @@
 
 using std::string;
 
-namespace env {
+namespace sh_core {
 
     namespace utils {
 
