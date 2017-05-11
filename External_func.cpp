@@ -241,7 +241,7 @@ int External_func::call(size_t nargs, char **args){
         cout<< "Sorting type "<<  ( (LS_opts*)this->func_opts)->LS_flags.sort_type <<endl;
 
        */
-        return Embedded_func::call(nargs, args);
+        return sh_core::Embedded_func::call(nargs, args);
 
 };
 

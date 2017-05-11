@@ -8,7 +8,7 @@
 #include "LaneInterpreter.h"
 #include "Embedded_func.h"
 
-extern map <string, Embedded_func*> embedded_lib;
+extern map <string, sh_core::Embedded_func*> embedded_lib;
 
 namespace sh_core {
 

@@ -21,40 +21,37 @@
 #include "Utils/FileLaneIterator.h"
 
 
-using namespace std;
-using  callable_function =  int (*)(size_t, char **);
-
+namespace sh_core {
+    using callable_function =  int (*)(size_t, char **);
 
 
 #define  home_dir_call  "~"
 
 
+    class Embedded_func {
+    protected:
+        string name;
+        char **vargs;
+        size_t nargs;
+        string help_info;
+        //bool initialized;
+        callable_function func;
+    public:
+        Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg);
+
+        int search_for_help(size_t nargs, char **&argvector);
+
+        void output_help(string &helpMsg);
+
+        virtual int call(size_t nargs, char **args);
+
+    };
 
 
-class Embedded_func{
-protected:
-    string name;
-    char** vargs;
-    size_t nargs;
-    string help_info;
-    //bool initialized;
-    callable_function func;
-public:
-    Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg);
-
-    int search_for_help(size_t nargs, char** &argvector);
-
-    void output_help(string &helpMsg);
-
-    virtual int call(size_t nargs, char **args);
-
-};
+    extern std::map<string, Embedded_func *> embedded_lib;
 
 
-extern map <string, Embedded_func*> embedded_lib;
+    extern env::Env *environment;
 
-
-extern env::Env *environment;
-
-
+}
 #endif //LAB_2_SHELL_EMBEDDEDFUNC_H
