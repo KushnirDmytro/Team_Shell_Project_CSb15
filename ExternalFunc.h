@@ -63,11 +63,13 @@ namespace ext {
 
         void convertStrQueueToCharArr( std::queue<string> queue, char **arr) const;
 
-        bool argumentlessSuboptionCheck(size_t nargs, char **argv);
+        bool argumentlessSuboptionCheck(size_t nargs, char **argv) ;
 
         virtual bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check, std::queue<string> *arg_buf);
 
         bool doesMapContain(const string seek_this) const;
+
+        void clearTempPointersArray(size_t arr_size, char **arr_ptr) const;
     };
 
 

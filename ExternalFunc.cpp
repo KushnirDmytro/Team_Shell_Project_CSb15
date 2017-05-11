@@ -14,6 +14,7 @@ namespace ext {
     DefaultOptionsManager::DefaultOptionsManager(string name_,
                                                  std::map<string, DefaultOptionsManager *> *opts_map) {
         //TODO options embedd
+        opts_map = opts_map_;
         option_name_ = name_;
     }
 
@@ -23,7 +24,6 @@ namespace ext {
             delete i.second;
         }
         delete opts_map_;
-
     }
 
     inline DefaultOptionsManager *DefaultOptionsManager::getSuboptionFromMap(const string potential_arg) const{
@@ -32,7 +32,6 @@ namespace ext {
             return nullptr;
         else
             return opts_map_->at(potential_arg);
-
     }
 
 
@@ -51,7 +50,6 @@ namespace ext {
                 printf("FOUNDED NO ARGUMENTS\n");
                 return false;
             }
-
         }
             //case when operations should be performed by other function
         else return suboptionsAreValid(nargs, argv);
@@ -64,19 +62,12 @@ namespace ext {
             return argumentlessSuboptionCheck(nargs, argv);
         }
 
-        //  vector<string> args_vec;
-        // args_vec.insert(args_vec.end(), argv, argv + nargs);
-
         std::queue<string> ls_argumens_queue;
-        for (size_t i = 0; i < nargs; ++i) {
+        for (size_t i = 0; i < nargs; ++i)
             ls_argumens_queue.push(string(argv[i]));
-        }
-
 
         DefaultOptionsManager *option_to_check = nullptr;
-
         std::queue<string> arg_buf;
-
         string current_arg_name;
 
         while (!ls_argumens_queue.empty()) {
@@ -88,9 +79,11 @@ namespace ext {
                 if (option_to_check != nullptr) {
 
                     if (!doesSuboptionSArgumentsAreValid(option_to_check, &arg_buf)) {
-                        std::cout << "check_failed on option " << option_to_check->option_name_ << std::endl;
+                        std::cout << "check_failed on option "
+                                  << option_to_check->option_name_ << std::endl;
                         return false;
                     }
+
                     while (!arg_buf.empty())
                         arg_buf.pop();
 
@@ -98,7 +91,8 @@ namespace ext {
 
                 option_to_check = getSuboptionFromMap(current_arg_name);
 
-            } else {
+            }
+            else {
 
                 if (option_to_check == nullptr) {
                     std::cout << "ERROR:"
@@ -115,29 +109,35 @@ namespace ext {
         }
 
         if (option_to_check != nullptr) {
+
             if (!doesSuboptionSArgumentsAreValid(option_to_check, &arg_buf)) {
                 std::cout << "check_failed on option "
                           << option_to_check->option_name_
                           << std::endl;
                 return false;
             }
+
         }
 
         std::cout << "CROSS_VALIDATION" << std::endl;
+
         if (this->areOptionsCrossValid()) {
             printf("ARGUMENT CHECK DONE \n");
             return true;
-        } else return false;
+        }
+        else return false;
     };
 
 
-    inline void clearTempPointersArray(size_t arr_size, char **arr_ptr) {
+    inline void DefaultOptionsManager::clearTempPointersArray(size_t arr_size, char **arr_ptr) const{
         for (size_t i = 0; i < arr_size; ++i)
             delete arr_ptr[i];
     }
 
-    bool DefaultOptionsManager::doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check,
-                                                                std::queue<string> *arg_buf) {
+    bool DefaultOptionsManager::doesSuboptionSArgumentsAreValid(
+            DefaultOptionsManager *opt_to_check,
+            std::queue<string> *arg_buf) {
+
         char *temp_buf[(*arg_buf).size()];
         convertStrQueueToCharArr((*arg_buf), temp_buf);
 
@@ -152,7 +152,9 @@ namespace ext {
     }
 
 
-    inline void DefaultOptionsManager::convertStrQueueToCharArr(std::queue<string> queue, char **arr) const{
+    inline void DefaultOptionsManager::convertStrQueueToCharArr(
+            std::queue<string> queue,
+            char **arr) const{
 
         size_t i = 0;
         while (!queue.empty()) {
@@ -165,9 +167,11 @@ namespace ext {
 
 
     inline bool DefaultOptionsManager::doesMapContain(const string seek_this_key) const{
+
         return !(opts_map_->find(seek_this_key)
                  ==
                  opts_map_->end());
+
     }
 
 

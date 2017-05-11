@@ -30,25 +30,18 @@ namespace ext{
 namespace sh_core {
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
 
-    int my_cd(size_t nargs, char **args);
+    int myCd(size_t nargs, char **args);
 
-    int my_pwd(size_t nargs, char **args);
+    int myPwd(size_t nargs, char **args);
 
-    int my_help(size_t nargs, char **args);
+    int myHelp(size_t nargs, char **args);
 
-    int my_exit(size_t nargs, char **args);
+    int myExit(size_t nargs, char **args);
 
-    int my_sh(size_t nargs, char **args);
+    int mySh(size_t nargs, char **args);
 }
 
-
 namespace sh_core {
-
-
-
-
-
-
 
 
     //===================DYNAMIC INITIALISATION ======================
@@ -72,13 +65,13 @@ namespace sh_core {
         extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
 
         embedded_lib= {
-                {"cd",   new sh_core::EmbeddedFunc("MY_CD", sh_core::my_cd, cd_help_msg )},
-                {"pwd",  new sh_core::EmbeddedFunc("MY_PWD", sh_core::my_pwd, pwd_help_msg )},
-                {"help", new sh_core::EmbeddedFunc("MY_HELP", sh_core::my_help, help_help_msg )},
-                {"exit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::my_exit, exit_help_msg )},
+                {"cd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, cd_help_msg)},
+                {"pwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, pwd_help_msg)},
+                {"help", new sh_core::EmbeddedFunc("MY_HELP", sh_core::myHelp, help_help_msg)},
+                {"exit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, exit_help_msg)},
                 {"mysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
-                                                    sh_core::my_sh,
-                                                    shell_script_interpreter_help_msg )},
+                                                   sh_core::mySh,
+                                                   shell_script_interpreter_help_msg)},
                 {"ls", extern_ls_obj}
         };
 
@@ -179,14 +172,14 @@ namespace sh_core {
 //====================BUILT-IN COMMANDS ============
 
 //show current directory
-    int my_pwd(size_t nargs, char **args) {
+    int myPwd(size_t nargs, char **args) {
         environment->dir_->refreshPath();
         printf("%s", environment->dir_->getActualPath().c_str());
         return 1;
     }
 
 //changes directory
-    int my_cd(size_t nargs, char **args) {
+    int myCd(size_t nargs, char **args) {
         if (args[1] == NULL) { //has to have at least one arg
             fprintf(stderr, "my_Shell: expected argument to \"cd\"\n");
 
@@ -217,7 +210,7 @@ namespace sh_core {
     }
 
 //shows help info
-    int my_help(size_t nargs, char **args) {
+    int myHelp(size_t nargs, char **args) {
 
         printf("Write command and arguments, if needed, then press 'Enter'\n");
         printf("To get detailed information, write <command option_name_> --help or <command option_name_> -h:\n");
@@ -236,7 +229,7 @@ namespace sh_core {
     }
 
 //just exits, that is it
-    int my_exit(size_t nargs, char **args) {
+    int myExit(size_t nargs, char **args) {
         printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
         return 0;
     }
@@ -244,7 +237,7 @@ namespace sh_core {
 
 
 //executes in this env external ".msh" files
-int my_sh(size_t nargs, char **args)
+int mySh(size_t nargs, char **args)
 {
     if (nargs > 1){
         string file_path;
