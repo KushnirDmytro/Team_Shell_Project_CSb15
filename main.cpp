@@ -37,6 +37,8 @@
 
 using namespace std;
 
+using namespace sh_core;
+
 
 #define  home_dir_call  "~"
 
