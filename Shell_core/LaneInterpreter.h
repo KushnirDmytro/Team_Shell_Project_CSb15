@@ -11,7 +11,6 @@
 //#include "../Embedded_func.h"
 #include "iostream"
 
-using namespace std;
 
 namespace sh_core {
 
@@ -36,6 +35,9 @@ namespace sh_core {
         ~LaneInterpreter();
         //TODO filemasks
     };
+
+    extern LaneInterpreter *interpreter;
+
 }
 
 

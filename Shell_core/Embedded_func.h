@@ -49,8 +49,6 @@ namespace sh_core {
 
 
     extern std::map<string, Embedded_func *> embedded_lib;
-
-
     extern env::Env *environment;
 
 }

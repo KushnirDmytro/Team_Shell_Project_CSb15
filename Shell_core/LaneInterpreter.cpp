@@ -8,7 +8,9 @@
 #include "LaneInterpreter.h"
 #include "Embedded_func.h"
 
-extern map <string, sh_core::Embedded_func*> embedded_lib;
+extern std::map <string, sh_core::Embedded_func*> embedded_lib;
+
+namespace fs = boost::filesystem;
 
 namespace sh_core {
 
@@ -69,7 +71,7 @@ namespace sh_core {
         unsigned int args_number = (int) args->size();
 
 
-        cout << "NUMBER OF ARGS FOUND: " << args_number << endl;
+        std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
         splitter->convertStrVectorToChars(args, cargs);
 
         for (int i = 0; i < getNumOfMyBuiltins(); i++) {
@@ -94,6 +96,128 @@ namespace sh_core {
 
         return myExecute(&args);
     }
+
+
+
+
+
+//====================BUILT-IN COMMANDS ============
+
+//show current directory
+    int my_pwd(size_t nargs, char **args) {
+        environment->dir_->refreshPath();
+        printf("%s", environment->dir_->getActualPath().c_str());
+        return 1;
+    }
+
+//changes directory
+    int my_cd(size_t nargs, char **args) {
+        if (args[1] == NULL) { //has to have at least one arg
+            fprintf(stderr, "my_Shell: expected argument to \"cd\"\n");
+
+        } else {
+            string str(args[1]);
+
+            if (str == home_dir_call) {
+
+                if (fs::is_directory(environment->user_->getHome_dirrectory())) {
+                    fs::current_path(environment->user_->getHome_dirrectory());
+                }
+            }
+            else
+
+            if (fs::is_directory(args[1])) {
+                fs::current_path(args[1]);
+            }
+            else {
+                //TODO filesystem errors
+                //boost::filesystem::filesystem_error()
+                perror("\n my_Shell failed to change dir_ \t");
+            }
+
+        }
+        environment->dir_->setActualPath(fs::current_path());
+        environment->dir_->setPathWasChanged(true);
+        return 1;
+    }
+
+//shows help info
+    int my_help(size_t nargs, char **args) {
+
+        printf("Write command and arguments, if needed, then press 'Enter'\n");
+        printf("To get detailed information, write <command option_name> --help or <command option_name> -h:\n");
+        printf("List of Commands:\n");
+        printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
+        printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
+        printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
+
+        printf(" In case of external function option_name inputed (some Shell extentions) it will be executed if founded\n");
+
+        printf(" 'exit' terminates executions of Shell program\n");
+
+        printf("\n");
+
+        return 1;
+    }
+
+//just exits, that is it
+    int my_exit(size_t nargs, char **args) {
+        printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
+        return 0;
+    }
+
+
+
+//executes in this env external ".msh" files
+int my_sh(size_t nargs, char **args)
+{
+    if (nargs > 1){
+        string file_path;
+        file_path = environment->dir_->getActualPath().string();
+        file_path.append("/");
+        file_path.append(args[1]);
+        if (fs::is_regular_file(args[1]) ){
+            sh_core::utils::FileLaneIterator *iter = new sh_core::utils::FileLaneIterator(args[1]);
+            string st;
+            std::cout << "------------FILE READING IN PROCESS------------------" << std::endl;
+            int i =0;
+            int status;
+            while(iter->fileIsReady()){
+                iter->getNextString(&st);
+                printf("String #%d red \n", i++);
+                std::cout << st << std::endl;
+                // st.append(" ");
+                if (st.length() == 0)
+                    continue;
+                status = interpreter->processSting(&st);
+                if (!status){
+                    delete iter;
+                    return 0;
+                };
+
+            }
+            delete iter;
+        }
+        else if (fs::is_regular_file(file_path) ){
+            utils::FileLaneIterator *iter = new utils::FileLaneIterator(file_path);
+            string st;
+            std::cout << "------------FILE READING IN PROCESS------------------" << std::endl;
+            if(iter->fileIsReady()){
+                iter->getNextString(&st);
+                std::cout << st << std::endl;
+                delete iter;
+                return interpreter->processSting(&st);
+            }
+            delete iter;
+        }
+        else{
+            perror(args[1]);
+            perror(file_path.c_str());
+        }
+    }
+    return 1;
+}
+
 
 
 }

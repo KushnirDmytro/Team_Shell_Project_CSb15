@@ -30,7 +30,6 @@
 #include "Env/Env.h"
 #include "Shell_core/LaneInterpreter.h"
 //====================CLASSES IMPORT END=====================
-#include "algorithm"
 
 
 //==============================DEFINITIONS====================
@@ -141,8 +140,6 @@ void my_loop()
 
 //=============ASSIST FUNCTIONS END============
 
-//extern options_struct ls_options;
-
 
 
 
@@ -169,8 +166,6 @@ int main(int argc, char **argv)
     sh_core::my_shell_fileinterpreter =  new sh_core::Embedded_func("MY_shell_script_interpreter",
                                                                     sh_core::my_sh,
                                                   shell_script_interpreter_help_msg );
- //   my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
-
 
 
 
@@ -184,8 +179,6 @@ int main(int argc, char **argv)
 
 
     //=========================ATTENTION!!!==========++++++!!!!!
-
-    //Options *ls_func_opts = new Options("LS_options");
 
     ext::extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
 
@@ -205,19 +198,11 @@ int main(int argc, char **argv)
 
        };
 
-    //env = nullptr;
 
     sh_core::environment =  new env::Env();
     sh_core::interpreter = new sh_core::LaneInterpreter();
 
-/*
-    default_user = new env::User();
-    default_interpreter = new env::LaneInterpreter();
-    def_line_split = new env::utils::LineSplitter();
-    //init_user(&this_user);
-    current_directory = new env::Directory();
-    console = new env::ConsoleView(current_directory, default_user);
-*/
+
     //===================DYNAMIC INITIALISATION END======================
 
     // Run command loop.
@@ -226,11 +211,7 @@ int main(int argc, char **argv)
     // Perform any shutdown/cleanup.
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
-   /*
-    delete default_user;
-    delete current_directory;
-    delete console;
-    */
+
     delete sh_core::interpreter;
     delete sh_core::environment;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
