@@ -7,7 +7,7 @@
 
 
 #include "ExternalFunc.h"
-#include "Extern_LS.h"
+#include "ExternLS.h"
 
 namespace ext {
 
@@ -26,7 +26,8 @@ namespace ext {
         delete opts_map_;
     }
 
-    inline DefaultOptionsManager *DefaultOptionsManager::getSuboptionFromMap(const string potential_arg) const{
+    inline DefaultOptionsManager *DefaultOptionsManager::getSuboptionFromMap(
+            const string potential_arg) const{
 
         if (!doesMapContain(potential_arg))
             return nullptr;
@@ -206,7 +207,7 @@ namespace ext {
 //Overriding
     int ExternalFunc::call(size_t nargs, char **args) {
 
-        //if (this->func_opts->suboptionsAreValid(nargs, args)){
+        //if (suboptionsAreValid(nargs, args)){
 
         return sh_core::EmbeddedFunc::call(nargs, args);
 

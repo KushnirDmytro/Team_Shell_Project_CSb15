@@ -99,12 +99,12 @@ namespace ext {
 
 
 
-    class Extern_LS : public ExternalFunc {
+    class ExternLS : public ExternalFunc {
 
     private:
 
-        size_t args_start_position_shift = 1;
-        std::vector<fs::path> *passes_to_apply;
+        size_t args_start_position_offset_ = 1;
+        std::vector<fs::path> *passes_to_apply_;
 
     public:
 
@@ -115,26 +115,16 @@ namespace ext {
         //ls_option_flags flags;
 
 
-        Extern_LS(const string &name,
+        ExternLS(const string &name,
                   sh_core::callable_function funct_to_assign,
                 //DefaultOptionsManager *options,
                   string &help_msg);
 
 
-        ~Extern_LS();
+        ~ExternLS();
 
 
-//TODO replace by function-comparator
-        int sort_vect(std::vector<fs::path> *vec_of_args, bool comparator) {
-            return 0;
-        }
 
-
-//TODO create structure for args and info
-// TODO specify falgs
-        int collect_additional_info(std::vector<fs::path> *vec_of_args, std::vector<string> *infos, char *flags) {
-            return 0;
-        }
 
 
         // 1--getting pathes from args
@@ -154,11 +144,11 @@ namespace ext {
 
         void print_dir_contain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
 
-        void clear_flags();
+        void clearFlags();
 
-        const std::stringstream *form_permission_report_for_file(const fs::path *f, struct stat *stat_struct);
+        const std::stringstream *formPermissionReportForFile(const fs::path *f, struct stat *stat_struct) const;
 
-        const std::stringstream *form_timereport_for_file(const fs::path *f);
+        const std::stringstream *form_timereport_for_file(const fs::path *f) const;
 
         void apply_sorting(std::vector<fs::path> *vec_to_sort);
 
@@ -194,7 +184,7 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
 // ==================== OPTIONS ===============
 
-   // extern Extern_LS *extern_ls_obj;
+   // extern ExternLS *extern_ls_obj;
 
 }
 #endif //LAB_2_SHELL_EXTERN_LS_H

@@ -10,7 +10,7 @@
 #include "Utils/LineSplitter.h"
 //#include "../EmbeddedFunc.h"
 #include "iostream"
-#include "../Extern_LS.h"
+#include "../ExternLS.h"
 
 
 #define  home_dir_call  "~"
@@ -27,7 +27,7 @@ namespace sh_core {
         utils::LineSplitter *splitter;
 
     public:
-        ext::Extern_LS *extern_ls_obj;
+        ext::ExternLS *extern_ls_obj;
 
         LaneInterpreter();
 

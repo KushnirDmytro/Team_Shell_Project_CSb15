@@ -15,7 +15,7 @@ namespace fs = boost::filesystem;
 
 namespace ext{
     int my_ls(size_t nargs, char **args);
-   // ext::Extern_LS *extern_ls_obj;
+   // ext::ExternLS *extern_ls_obj;
 
     //TODO solve it when splitting onto several EXEs
 //just activator-function
@@ -62,7 +62,7 @@ namespace sh_core {
 
         //=========================ATTENTION!!!==========++++++!!!!!
 
-        extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
+        extern_ls_obj = new ext::ExternLS("MY_EXT_LS", ext::my_ls , cd_help_msg);
 
         embedded_lib= {
                 {"cd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, cd_help_msg)},
@@ -109,7 +109,7 @@ namespace sh_core {
             perror("my_Shell failed to fork");
         } else {
             // Parent process
-            do {
+            do { //TODO provide test for invalid scenarios of exec (a.e. failed launch file and stay in shell copy)
                 wpid = waitpid(pid, &status, WUNTRACED);
                 /*
                  * WUNTRACED
@@ -204,6 +204,7 @@ namespace sh_core {
             }
 
         }
+
         environment->dir_->setActualPath(fs::current_path());
         environment->dir_->setPathWasChanged(true);
         return 1;
