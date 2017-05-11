@@ -19,8 +19,6 @@ using namespace std;
 
 namespace ext {
 
-
-
     LS_opts::LS_opts(string name,
                      bool noargs_allowed) :
             DefaultOptionsManager(name) {
@@ -56,7 +54,6 @@ namespace ext {
                                        bool *host_flag,
                                        bool noargs_allowed)
             : DefaultOptionsManager(name) {
-        opts_map_ = nullptr;
         noargs_allowed_ = noargs_allowed;
         flag_to_write = host_flag;
     }
@@ -95,7 +92,7 @@ namespace ext {
     };
 
     Ls_sort_opt::~Ls_sort_opt() {
-        delete this->sort_opts_map;
+        delete sort_opts_map;
     }
 
 
@@ -106,7 +103,7 @@ namespace ext {
 
         if (nargs == 0) {
             // setting defaul sorting scheme
-            sorts_ = NAME;
+            sorts_ = DEFAULT_SORT;
             return true;
         } else {
 
@@ -146,11 +143,8 @@ namespace ext {
                           funct_to_assign,
                           help_msg) {
 
-        //TODO make this vector static ptr
-        //passes_to_apply_ = new vector<fs::path>;
         //TODO GEI IT OUT WHEN PROBLEM SOLVED
         ls_opts = new LS_opts("LS_opts_object");
-
 
     };
 
@@ -205,7 +199,7 @@ namespace ext {
     }
 
 
-    inline void time_correction() {
+    inline void ExternLS::time_correction() const{
         struct tm time_struct;
         const std::time_t raw_time = timezone;
         gmtime_r(&raw_time, &time_struct);
@@ -225,7 +219,7 @@ namespace ext {
             v_finish = vec_to_sort->end();
         }
     */
-        switch (this->ls_opts->LS_flags.sort_type) {
+        switch (ls_opts->LS_flags.sort_type) {
             case NAME: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
@@ -287,8 +281,7 @@ namespace ext {
                 //sorting files only
                 sort(seek_first_file,
                      vec_to_sort->end(),
-                     [](fs::path first, fs::path second) ->
-                             bool {
+                     [](fs::path first, fs::path second) -> bool {
                          return fs::file_size(first) < fs::file_size(second);
                      }
                 );
@@ -305,7 +298,7 @@ namespace ext {
             }
         }
 
-        if (this->ls_opts->LS_flags.reverse_output) {
+        if (ls_opts->LS_flags.reverse_output) {
             reverse(vec_to_sort->begin(), vec_to_sort->end());
         }
 
@@ -313,8 +306,11 @@ namespace ext {
     };
 
 
-    int ExternLS::do_LS_job_with_vector( /*not const, to be sorted inside*/vector<fs::path> *p_from_args,
-                                                                            const int rec_depth) {
+    int ExternLS::do_LS_job_with_vector(
+            /*not const, to be sorted inside*/
+            vector<fs::path> *p_from_args,
+            const int rec_depth) {
+
         apply_sorting(p_from_args);
         // ===============INIT===========
         using vect = vector<fs::path>;
@@ -333,7 +329,7 @@ namespace ext {
                     if (is_directory(p)) {
 
                         if (!ls_opts->LS_flags.recursive && rec_depth != 0) {
-                            print_filedata(&p, rec_depth); // if we should not look into directory
+                            printFiledata(&p, rec_depth); // if we should not look into directory
                         } else {
                             vect subdir_contain;
                             copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
@@ -344,10 +340,10 @@ namespace ext {
                             if (ls_opts->LS_flags.recursive)//recursive dive into directory
                                 do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
                             else
-                                print_dir_contain(&p, &subdir_contain, rec_depth);
+                                printDirContain(&p, &subdir_contain, rec_depth);
                         }
                     } else
-                        print_filedata(&p, rec_depth);
+                        printFiledata(&p, rec_depth);
                 } else
                     cout << p << endl << " does not exist\n"; //yes doublecheck
             }
@@ -468,7 +464,7 @@ namespace ext {
     }
 
 
-    inline void ExternLS::print_filedata(const fs::path *path_to_print, const int depth) {
+    inline void ExternLS::printFiledata(const fs::path *path_to_print, const int depth) {
         for (int i = 0; i <= depth; ++i)
             printf("    ");
         char filemark = ' ';
@@ -494,12 +490,12 @@ namespace ext {
         printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
         if (ls_opts->LS_flags.detailed_listing)
-            print_file_about(path_to_print, depth, &fileStat);
+            printFileAbout(path_to_print, depth, &fileStat);
 
     }
 
 
-    inline void ExternLS::print_file_about(const fs::path *path_to_print, const int depth, struct stat *fileStat) {
+    inline void ExternLS::printFileAbout(const fs::path *path_to_print, const int depth, struct stat *fileStat) {
 
         const stringstream *time_stream = form_timereport_for_file(path_to_print);
         const stringstream *permissions_stream = formPermissionReportForFile(path_to_print, fileStat);
@@ -516,14 +512,14 @@ namespace ext {
 
 
     inline void
-    ExternLS::print_dir_contain(const fs::path *dir, const vector<fs::path> *dir_contain, const int rec_depth) {
+    ExternLS::printDirContain(const fs::path *dir, const vector<fs::path> *dir_contain, const int rec_depth) {
 
         for (int i = 0; i < rec_depth; ++i)
             printf("   ");
         cout << (*dir) << " CONTAINS:\n";
 
         for (const fs::path subpath: (*dir_contain))
-            print_filedata(&subpath, rec_depth + 1);
+            printFiledata(&subpath, rec_depth + 1);
 
     }
 

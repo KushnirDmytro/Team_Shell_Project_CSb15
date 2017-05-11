@@ -35,6 +35,7 @@ namespace ext {
     };
 
 
+    const ls_sorts DEFAULT_SORT = NAME;
 
 //==================DECLARATIONS of defaults ==============
 
@@ -75,9 +76,7 @@ namespace ext {
     class Ls_sort_opt : public DefaultOptionsManager {
     private:
 
-
     public:
-
 
         std::map<string, ls_sorts> *sort_opts_map;
         ls_sorts sorts_;
@@ -135,21 +134,7 @@ namespace ext {
 
         int do_LS_job_with_vector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
 
-        void print_file_about(const fs::path *path_to_print, const int depth, struct stat *fileStat);
 
-        void print_dir_contain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
-
-        void clearFlags();
-
-        const std::stringstream *formPermissionReportForFile(const fs::path *f, struct stat *stat_struct) const;
-
-        const std::stringstream *form_timereport_for_file(const fs::path *f) const;
-
-        void apply_sorting(std::vector<fs::path> *vec_to_sort);
-
-        void print_filedata(const fs::path *path_to_print, const int depth);
-
-        void clean_up_after_execution();
 
 //show current directory
         int my_ls_inner(size_t nargs, char **argv);
@@ -169,9 +154,28 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
   */
 
-
 //Overriding
         int call(size_t nargs, char **argv) override;
+    private:
+
+        void printFileAbout(const fs::path *path_to_print, const int depth, struct stat *fileStat);
+
+        void printDirContain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
+
+        void printFiledata(const fs::path *path_to_print, const int depth);
+
+        void clearFlags();
+
+        void clean_up_after_execution();
+
+        void time_correction() const;
+
+        const std::stringstream *formPermissionReportForFile(const fs::path *f, struct stat *stat_struct) const;
+
+        const std::stringstream *form_timereport_for_file(const fs::path *f) const;
+
+        void apply_sorting(std::vector<fs::path> *vec_to_sort);
+
     };
 
 
