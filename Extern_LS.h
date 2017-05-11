@@ -53,7 +53,7 @@ namespace ext {
 
         //bool suboptionsAreValid(size_t nargs_, char **argv) override;
 
-//    bool suboptionS_arguments_validation(DefaultOptionsManager* opt_to_check, vector<string>* arg_buf) override;
+//    bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager* opt_to_check, vector<string>* arg_buf) override;
 
     };
 

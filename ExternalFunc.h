@@ -42,7 +42,7 @@ namespace ext {
 
         string option_name_;
 
-        map<string, DefaultOptionsManager *> *opts_map;
+        map<string, DefaultOptionsManager *> *opts_map_;
 
         //default value definition
         bool noargs_allowed_ = true;
@@ -61,13 +61,13 @@ namespace ext {
 
         virtual bool areOptionsCrossValid();
 
-        void str_queue_to_char_arr(queue<string> queue, char **arr);
+        void convertStrQueueToCharArr( queue<string> queue, char **arr) const;
 
         bool argumentlessSuboptionCheck(size_t nargs, char **argv);
 
-        virtual bool suboptionS_arguments_validation(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf);
+        virtual bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf);
 
-        bool map_contains(const string seek_this) const;
+        bool doesMapContain(const string seek_this) const;
     };
 
 

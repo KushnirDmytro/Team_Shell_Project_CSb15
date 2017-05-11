@@ -28,7 +28,7 @@ namespace ext {
 
         this->noargs_allowed_ = noargs_allowed;
 
-        this->opts_map = new map<string, DefaultOptionsManager *>{
+        this->opts_map_ = new map<string, DefaultOptionsManager *>{
                 {"-l",
                         new LS_no_subopt_opt("-l", &this->LS_flags.detailed_listing)},
                 {"-r",
@@ -44,10 +44,10 @@ namespace ext {
 
 
     LS_opts::~LS_opts() {
-        delete this->opts_map->at("-l");
-        delete this->opts_map->at("-r");
-        delete this->opts_map->at("-R");
-        delete this->opts_map->at("--sort");
+        delete this->opts_map_->at("-l");
+        delete this->opts_map_->at("-r");
+        delete this->opts_map_->at("-R");
+        delete this->opts_map_->at("--sort");
     }
     // bool LS_opts::suboptionsAreValid(size_t nargs_, char **argv) override;
 
@@ -65,7 +65,7 @@ namespace ext {
                                        bool *host_flag,
                                        bool noargs_allowed_)
             : DefaultOptionsManager(name) {
-        opts_map = nullptr;
+        opts_map_ = nullptr;
         noargs_allowed_ = noargs_allowed_;
         flag_to_write = host_flag;
     }

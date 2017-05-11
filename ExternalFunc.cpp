@@ -16,14 +16,14 @@ namespace ext {
     }
 
     DefaultOptionsManager::~DefaultOptionsManager() {
-        delete opts_map;
+        delete opts_map_;
     }
 
     inline DefaultOptionsManager *DefaultOptionsManager::getSuboptionFromMap(const string potential_arg) const{
-        if (!map_contains(potential_arg))
+        if (!doesMapContain(potential_arg))
             return nullptr;
         else
-            return opts_map->at(potential_arg);
+            return opts_map_->at(potential_arg);
     }
 
 
@@ -72,11 +72,11 @@ namespace ext {
 
             current_arg_name = ls_argumens_queue.front().c_str();
 
-            if (map_contains(current_arg_name)) {
+            if (doesMapContain(current_arg_name)) {
                 //very first argument found case
                 if (option_to_check != nullptr) {
 
-                    if (!suboptionS_arguments_validation(option_to_check, &arg_buf)) {
+                    if (!doesSuboptionSArgumentsAreValid(option_to_check, &arg_buf)) {
                         cout << "check_failed on option " << option_to_check->option_name_ << endl;
                         return false;
                     }
@@ -103,7 +103,7 @@ namespace ext {
         }
 
         if (option_to_check != nullptr) {
-            if (!suboptionS_arguments_validation(option_to_check, &arg_buf)) {
+            if (!doesSuboptionSArgumentsAreValid(option_to_check, &arg_buf)) {
                 cout << "check_failed on option " << option_to_check->option_name_ << endl;
                 return false;
             }
@@ -122,9 +122,10 @@ namespace ext {
             delete arr_ptr[i];
     }
 
-    bool DefaultOptionsManager::suboptionS_arguments_validation(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf) {
+    bool DefaultOptionsManager::doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check,
+                                                                queue<string> *arg_buf) {
         char *temp_buf[(*arg_buf).size()];
-        str_queue_to_char_arr((*arg_buf), temp_buf);
+        convertStrQueueToCharArr((*arg_buf), temp_buf);
 
         if (!(opt_to_check->suboptionsAreValid(arg_buf->size(), temp_buf))) {
             printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name_.c_str());
@@ -137,7 +138,7 @@ namespace ext {
     }
 
 
-    void DefaultOptionsManager::str_queue_to_char_arr(queue<string> queue, char **arr) {
+    void DefaultOptionsManager::convertStrQueueToCharArr(queue<string> queue, char **arr) const{
         size_t i = 0;
         while (!queue.empty()) {
             arr[i] = new char[queue.front().size() + 1];
@@ -147,10 +148,10 @@ namespace ext {
     }
 
 
-    bool DefaultOptionsManager::map_contains(const string seek_this_key) const{
-        return !(opts_map->find(seek_this_key)
+    bool DefaultOptionsManager::doesMapContain(const string seek_this_key) const{
+        return !(opts_map_->find(seek_this_key)
                  ==
-                 opts_map->end());
+                 opts_map_->end());
     }
 
 
