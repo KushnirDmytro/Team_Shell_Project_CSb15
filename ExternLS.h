@@ -80,7 +80,7 @@ namespace ext {
 
 
         std::map<string, ls_sorts> *sort_opts_map;
-        ls_sorts *sorts;
+        ls_sorts sorts_;
 
         Ls_sort_opt(string name, ls_sorts *host_sorts);
 
@@ -108,12 +108,10 @@ namespace ext {
 
     public:
 
-
         //I HAD TO DO IT TO AVOID BUG
         LS_opts *ls_opts;
 
         //ls_option_flags flags;
-
 
         ExternLS(const string &name,
                   sh_core::callable_function funct_to_assign,
@@ -122,9 +120,6 @@ namespace ext {
 
 
         ~ExternLS();
-
-
-
 
 
         // 1--getting pathes from args

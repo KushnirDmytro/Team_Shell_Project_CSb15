@@ -21,25 +21,18 @@ namespace ext {
 
 
 
-
-
     LS_opts::LS_opts(string name,
                      bool noargs_allowed) :
             DefaultOptionsManager(name) {
 
-        this->noargs_allowed_ = noargs_allowed;
+        noargs_allowed_ = noargs_allowed;
 
         this->opts_map_ = new std::map<string, DefaultOptionsManager *>{
-                {"-l",
-                        new LS_no_subopt_opt("-l", &this->LS_flags.detailed_listing)},
-                {"-r",
-                        new LS_no_subopt_opt("-r", &this->LS_flags.reverse_output)},
-                {"-R",
-                        new LS_no_subopt_opt("-R", &this->LS_flags.recursive)},
-                {"--sort",
-                        new Ls_sort_opt("--sort", &this->LS_flags.sort_type)},
-                {"-F",
-                        new LS_no_subopt_opt("-F", &this->LS_flags.show_file_type)}
+                {"-l", new LS_no_subopt_opt("-l", &LS_flags.detailed_listing)},
+                {"-r", new LS_no_subopt_opt("-r", &LS_flags.reverse_output)},
+                {"-R", new LS_no_subopt_opt("-R", &LS_flags.recursive)},
+                {"--sort", new Ls_sort_opt("--sort", &LS_flags.sort_type)},
+                {"-F",  new LS_no_subopt_opt("-F", &LS_flags.show_file_type)}
         };
     };
 
@@ -61,16 +54,18 @@ namespace ext {
 //prototype for unspecified option
     LS_no_subopt_opt::LS_no_subopt_opt(string name,
                                        bool *host_flag,
-                                       bool noargs_allowed_)
+                                       bool noargs_allowed)
             : DefaultOptionsManager(name) {
         opts_map_ = nullptr;
-        noargs_allowed_ = noargs_allowed_;
+        noargs_allowed_ = noargs_allowed;
         flag_to_write = host_flag;
     }
 
 //checker for received suboptions
     bool LS_no_subopt_opt::suboptionsAreValid(size_t nargs, char **argv) {
+
         if (nargs == 0) {
+
             if (noargs_allowed_) {
                 (*flag_to_write) = true;
                 return true;
@@ -78,6 +73,7 @@ namespace ext {
                 printf("Unexpected argument for %s  /n", option_name_.c_str());
                 return false;
             }
+
         }
         else return suboptionsAreValid(nargs, argv);
     }
@@ -86,15 +82,15 @@ namespace ext {
 // option block for sorting
     Ls_sort_opt::Ls_sort_opt(string name, ls_sorts *sorts)
             : DefaultOptionsManager(name) {
-        this->noargs_allowed_ = false;
-        this->sort_opts_map = new map<string, ls_sorts>{
+        noargs_allowed_ = false;
+        sort_opts_map = new map<string, ls_sorts>{
                 {"U", UNSORT},
                 {"S", SIZE},
                 {"N", NAME},
                 {"X", EXTENTION},
                 {"t", TIME_MODIFIED}
         };
-        this->sorts = sorts;
+        sorts_ = *sorts;
 
     };
 
@@ -110,7 +106,7 @@ namespace ext {
 
         if (nargs == 0) {
             // setting defaul sorting scheme
-            *sorts = NAME;
+            sorts_ = NAME;
             return true;
         } else {
 
@@ -127,7 +123,7 @@ namespace ext {
 
                     printf("found option %d\n ", sort_opts_map->at(argument));
 
-                    *sorts = sort_opts_map->at(argument);
+                    sorts_ = sort_opts_map->at(argument);
                     return true;
                 }
             } else {
