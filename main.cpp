@@ -37,8 +37,6 @@
 using namespace std;
 
 
-#define  home_dir_call  "~"
-
 
 using  callable_function =  int (*)(size_t, char **);
 
@@ -67,33 +65,6 @@ vector<boost::filesystem::path> regex_match_directories(string regex){
 }
 
 
-namespace sh_core {
-//=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
-
-
-    int my_cd(size_t nargs, char **args);
-
-    int my_pwd(size_t nargs, char **args);
-
-    int my_help(size_t nargs, char **args);
-
-    int my_exit(size_t nargs, char **args);
-
-    int my_sh(size_t nargs, char **args);
-
-
-    sh_core::Embedded_func *my_shell_fileinterpreter;
-    sh_core::Embedded_func *my_pwd_obj;
-    sh_core::Embedded_func *my_cd_obj;
-    sh_core::Embedded_func *my_help_obj;
-    sh_core::Embedded_func *my_exit_obj;
-
-}
-namespace ext{
-
-    int my_ls(size_t nargs, char **args);
-    Extern_LS *extern_ls_obj;
-}
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
 
@@ -149,54 +120,12 @@ void my_loop()
 int main(int argc, char **argv)
 {
 
-    //===================DYNAMIC INITIALISATION ======================
-    string cd_help_msg = "to change directory type in: cd <directory option_name> \n"
-            "<~> = 'HOME' dirrectory if one defined \n"
-            "<.> = current dirrectory  \n"
-            "<..> = 'parrent directory'  ";
-    string pwd_help_msg = "displays fullname of current execution directory";
-    string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
-    string exit_help_msg = "function 'exit' terminates My_Shell execution";
-    string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
-            " 'mysh' <filename> to execurte script file";
-    sh_core::my_cd_obj = new sh_core::Embedded_func("MY_CD", sh_core::my_cd, cd_help_msg );
-    sh_core::my_pwd_obj = new sh_core::Embedded_func("MY_PWD", sh_core::my_pwd, pwd_help_msg );
-    sh_core::my_help_obj = new sh_core::Embedded_func("MY_HELP", sh_core::my_help, help_help_msg );
-    sh_core::my_exit_obj = new sh_core::Embedded_func("MY_EXIT", sh_core::my_exit, exit_help_msg );
-    sh_core::my_shell_fileinterpreter =  new sh_core::Embedded_func("MY_shell_script_interpreter",
-                                                                    sh_core::my_sh,
-                                                  shell_script_interpreter_help_msg );
-
-
 
 
 //TODO ASK HOW IT WORKS
     //Function_options *ls_func_opts = new Function_options(ls_func_opts_map_ptr);
 
 
-
-
-
-
-    //=========================ATTENTION!!!==========++++++!!!!!
-
-    ext::extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
-
-    //=========================ATTENTION!!!==========++++++!!!!!
-
-
-
-
-
-    sh_core::embedded_lib= {
-            {"cd",   sh_core::my_cd_obj},
-            {"pwd",  sh_core::my_pwd_obj},
-            {"help", sh_core::my_help_obj},
-            {"exit", sh_core::my_exit_obj},
-            {"mysh", sh_core::my_shell_fileinterpreter},
-            {"ls", ext::extern_ls_obj}
-
-       };
 
 
     sh_core::environment =  new env::Env();

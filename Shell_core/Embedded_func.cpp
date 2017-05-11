@@ -10,7 +10,7 @@
 
 namespace sh_core {
 
-    std::map<string, Embedded_func *> embedded_lib;
+    //std::map<string, Embedded_func *> embedded_lib;
 
 
     Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_) {

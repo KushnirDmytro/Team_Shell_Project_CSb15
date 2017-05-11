@@ -8,13 +8,100 @@
 #include "LaneInterpreter.h"
 #include "Embedded_func.h"
 
-extern std::map <string, sh_core::Embedded_func*> embedded_lib;
+//extern std::map <string, sh_core::Embedded_func*> embedded_lib;
 
 namespace fs = boost::filesystem;
 
+
+namespace ext{
+
+    int my_ls(size_t nargs, char **args);
+   // ext::Extern_LS *extern_ls_obj;
+
+    //TODO solve it when splitting onto several EXEs
+//just activator-function
+    int my_ls(size_t nargs, char **argv) {
+        return sh_core::interpreter->extern_ls_obj->my_ls_inner(nargs, argv);
+        //my_ls_inner(nargs, argv);
+    }
+
+}
+
+
+namespace sh_core {
+//=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
+
+
+    int my_cd(size_t nargs, char **args);
+
+    int my_pwd(size_t nargs, char **args);
+
+    int my_help(size_t nargs, char **args);
+
+    int my_exit(size_t nargs, char **args);
+
+    int my_sh(size_t nargs, char **args);
+
+
+
+
+}
+
+
 namespace sh_core {
 
+
+
+
+
+
+
+
+    //===================DYNAMIC INITIALISATION ======================
+
+
+
     LaneInterpreter::LaneInterpreter() {
+
+        string cd_help_msg = "to change directory type in: cd <directory option_name> \n"
+                "<~> = 'HOME' dirrectory if one defined \n"
+                "<.> = current dirrectory  \n"
+                "<..> = 'parrent directory'  ";
+        string pwd_help_msg = "displays fullname of current execution directory";
+        string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
+        string exit_help_msg = "function 'exit' terminates My_Shell execution";
+        string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
+                " 'mysh' <filename> to execurte script file";
+
+
+        my_cd_obj = new sh_core::Embedded_func("MY_CD", sh_core::my_cd, cd_help_msg );
+        my_pwd_obj = new sh_core::Embedded_func("MY_PWD", sh_core::my_pwd, pwd_help_msg );
+        my_help_obj = new sh_core::Embedded_func("MY_HELP", sh_core::my_help, help_help_msg );
+        my_exit_obj = new sh_core::Embedded_func("MY_EXIT", sh_core::my_exit, exit_help_msg );
+        my_shell_fileinterpreter =  new sh_core::Embedded_func("MY_shell_script_interpreter",
+                                                                        sh_core::my_sh,
+                                                                        shell_script_interpreter_help_msg );
+
+        //=========================ATTENTION!!!==========++++++!!!!!
+
+        extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
+
+
+
+        embedded_lib= {
+                {"cd",   my_cd_obj},
+                {"pwd",  my_pwd_obj},
+                {"help", my_help_obj},
+                {"exit", my_exit_obj},
+                {"mysh", my_shell_fileinterpreter},
+                {"ls", extern_ls_obj}
+
+        };
+
+
+
+        //=========================ATTENTION!!!==========++++++!!!!!
+
         splitter = new utils::LineSplitter();
     }
 
@@ -217,6 +304,8 @@ int my_sh(size_t nargs, char **args)
     }
     return 1;
 }
+
+
 
 
 
