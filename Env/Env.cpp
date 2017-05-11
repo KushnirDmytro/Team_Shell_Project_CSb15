@@ -10,7 +10,7 @@ namespace env {
     Env::Env() {
         dir_ = new Directory();
         user_ = new User();
-        //interpreter_ = new Interpreter();
+        //interpreter_ = new LaneInterpreter();
         console_ = new ConsoleView(dir_, user_);
     }
 

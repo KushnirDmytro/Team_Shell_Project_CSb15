@@ -20,7 +20,7 @@ env::Directory *current_directory;
 
 env::utils::LineSplitter* def_line_split;
 
-env::Interpreter* default_interpreter;
+env::LaneInterpreter* default_interpreter;
 
 env::ConsoleView *console;
 

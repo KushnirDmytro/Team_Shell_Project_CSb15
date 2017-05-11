@@ -5,25 +5,25 @@
 // Created by d1md1m on 28.03.17.
 //
 
-#include "Interpreter.h"
+#include "LaneInterpreter.h"
 #include "Embedded_func.h"
 
 extern map <string, Embedded_func*> embedded_lib;
 
 namespace sh_core {
 
-    Interpreter::Interpreter() {
+    LaneInterpreter::LaneInterpreter() {
         splitter = new utils::LineSplitter();
     }
 
-    Interpreter::~Interpreter() {
+    LaneInterpreter::~LaneInterpreter() {
         delete this->splitter;
     }
 //TODO filemasks
 
 
 // launcher for custom modules
-    int Interpreter::myExternLauncher(char **const args) const{
+    int LaneInterpreter::myExternLauncher(char **const args) const{
         pid_t pid, wpid;
         int status;
 
@@ -59,11 +59,11 @@ namespace sh_core {
     }
 
 
-    int Interpreter::getNumOfMyBuiltins() const{
+    int LaneInterpreter::getNumOfMyBuiltins() const{
         return (int) embedded_lib.size();
     }
 
-    int Interpreter::myExecute(const vector<string> *const args) const{
+    int LaneInterpreter::myExecute(const vector<string> *const args) const{
 
         char **cargs = new char *[args->size() + 1];
         unsigned int args_number = (int) args->size();
@@ -88,7 +88,7 @@ namespace sh_core {
 
     }
 
-    int Interpreter::processSting(string *values) const{
+    int LaneInterpreter::processSting(string *values) const{
 
         const vector<string> args = splitter->mySplitLine(values);
 

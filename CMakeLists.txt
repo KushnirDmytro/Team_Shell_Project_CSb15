@@ -9,7 +9,7 @@ set(SOURCE_FILES main.cpp Shell_core/Embedded_func.cpp Shell_core/Embedded_func.
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
         Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
-        Shell_core/Interpreter.cpp Shell_core/Interpreter.h
+        Shell_core/LaneInterpreter.cpp Shell_core/LaneInterpreter.h
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h

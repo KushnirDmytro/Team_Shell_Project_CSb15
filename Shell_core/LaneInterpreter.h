@@ -15,13 +15,13 @@ using namespace std;
 
 namespace sh_core {
 
-    class Interpreter {
+    class LaneInterpreter {
     private:
         utils::LineSplitter *splitter;
 
 
     public:
-        Interpreter();
+        LaneInterpreter();
 
 
         // launcher for custom modules
@@ -33,7 +33,7 @@ namespace sh_core {
 
         int processSting(string * values) const;
 
-        ~Interpreter();
+        ~LaneInterpreter();
         //TODO filemasks
     };
 }

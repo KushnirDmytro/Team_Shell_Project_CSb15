@@ -23,12 +23,12 @@
 #include "Env/Directory.h"
 #include "Shell_core/Embedded_func.h"
 #include "Shell_core/Utils/LineSplitter.h"
-#include "Shell_core/Interpreter.h"
+#include "Shell_core/LaneInterpreter.h"
 #include "Shell_core/Utils/FileLaneIterator.h"
 #include "External_func.h"
 #include "Extern_LS.h"
 #include "Env/Env.h"
-#include "Shell_core/Interpreter.h"
+#include "Shell_core/LaneInterpreter.h"
 //====================CLASSES IMPORT END=====================
 #include "algorithm"
 
@@ -92,7 +92,7 @@ Extern_LS *extern_ls_obj;
 
 //TODO ask how to place it inside other namespace
 env::Env *environment;
-sh_core::Interpreter *interpreter;
+sh_core::LaneInterpreter *interpreter;
 
 
 
@@ -199,11 +199,11 @@ int main(int argc, char **argv)
     //env = nullptr;
 
     environment =  new env::Env();
-    interpreter = new sh_core::Interpreter();
+    interpreter = new sh_core::LaneInterpreter();
 
 /*
     default_user = new env::User();
-    default_interpreter = new env::Interpreter();
+    default_interpreter = new env::LaneInterpreter();
     def_line_split = new env::utils::LineSplitter();
     //init_user(&this_user);
     current_directory = new env::Directory();
