@@ -40,12 +40,12 @@ namespace ext {
         //TODO MAKE PROTECTED WHEN SOLVE INIT PROBLEM
     public:
 
-        string option_name;
+        string option_name_;
 
         map<string, DefaultOptionsManager *> *opts_map;
 
         //default value definition
-        bool noargs_allowed = true;
+        bool noargs_allowed_ = true;
 
 
         //field for classes to initialize
@@ -55,7 +55,7 @@ namespace ext {
 
         ~DefaultOptionsManager();
 
-        DefaultOptionsManager *get_option(string potential_arg);
+        DefaultOptionsManager *getSuboptionFromMap(const string potential_arg) const;
 
         virtual bool are_suboptions_valid(size_t nargs, char **argv);
 
@@ -67,7 +67,7 @@ namespace ext {
 
         virtual bool suboptionS_arguments_validation(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf);
 
-        bool map_contains(string seek_this);
+        bool map_contains(const string seek_this) const;
     };
 
 

@@ -57,7 +57,7 @@ namespace sh_core {
 
     LaneInterpreter::LaneInterpreter() {
 
-        string cd_help_msg = "to change directory type in: cd <directory option_name> \n"
+        string cd_help_msg = "to change directory type in: cd <directory option_name_> \n"
                 "<~> = 'HOME' dirrectory if one defined \n"
                 "<.> = current dirrectory  \n"
                 "<..> = 'parrent directory'  ";
@@ -220,13 +220,13 @@ namespace sh_core {
     int my_help(size_t nargs, char **args) {
 
         printf("Write command and arguments, if needed, then press 'Enter'\n");
-        printf("To get detailed information, write <command option_name> --help or <command option_name> -h:\n");
+        printf("To get detailed information, write <command option_name_> --help or <command option_name_> -h:\n");
         printf("List of Commands:\n");
         printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
         printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
         printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
 
-        printf(" In case of external function option_name inputed (some Shell extentions) it will be executed if founded\n");
+        printf(" In case of external function option_name_ inputed (some Shell extentions) it will be executed if founded\n");
 
         printf(" 'exit' terminates executions of Shell program\n");
 

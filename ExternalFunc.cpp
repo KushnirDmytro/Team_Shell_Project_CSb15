@@ -12,17 +12,15 @@
 namespace ext {
 
     DefaultOptionsManager::DefaultOptionsManager(string name_) {
-        option_name = name_;
+        option_name_ = name_;
     }
 
     DefaultOptionsManager::~DefaultOptionsManager() {
         delete opts_map;
     }
 
-    inline DefaultOptionsManager *DefaultOptionsManager::get_option(string potential_arg) {
-        if (opts_map->find(potential_arg)
-            ==
-            opts_map->end())
+    inline DefaultOptionsManager *DefaultOptionsManager::getSuboptionFromMap(const string potential_arg) const{
+        if (!map_contains(potential_arg))
             return nullptr;
         else
             return opts_map->at(potential_arg);
@@ -37,7 +35,7 @@ namespace ext {
 
     bool DefaultOptionsManager::argumentless_option_check(size_t nargs, char **argv) {
         if (nargs == 0) {
-            if (noargs_allowed)
+            if (noargs_allowed_)
                 return true;
             else {
                 printf("FOUNDED NO ARGUMENTS\n");
@@ -79,7 +77,7 @@ namespace ext {
                 if (option_to_check != nullptr) {
 
                     if (!suboptionS_arguments_validation(option_to_check, &arg_buf)) {
-                        cout << "check_failed on option " << option_to_check->option_name << endl;
+                        cout << "check_failed on option " << option_to_check->option_name_ << endl;
                         return false;
                     }
                     while (!arg_buf.empty())
@@ -87,13 +85,13 @@ namespace ext {
 
                 }
 
-                option_to_check = get_option(current_arg_name);
+                option_to_check = getSuboptionFromMap(current_arg_name);
 
             } else {
 
                 if (option_to_check == nullptr) {
                     cout << "ERROR:" << current_arg_name << " is unextpected start of arguments sequence for "
-                         << option_name << endl;
+                         << option_name_ << endl;
                     return false;
                 }
 
@@ -106,7 +104,7 @@ namespace ext {
 
         if (option_to_check != nullptr) {
             if (!suboptionS_arguments_validation(option_to_check, &arg_buf)) {
-                cout << "check_failed on option " << option_to_check->option_name << endl;
+                cout << "check_failed on option " << option_to_check->option_name_ << endl;
                 return false;
             }
         }
@@ -129,7 +127,7 @@ namespace ext {
         str_queue_to_char_arr((*arg_buf), temp_buf);
 
         if (!(opt_to_check->are_suboptions_valid(arg_buf->size(), temp_buf))) {
-            printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name.c_str());
+            printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name_.c_str());
             return false;
         }
 
@@ -149,7 +147,7 @@ namespace ext {
     }
 
 
-    bool DefaultOptionsManager::map_contains(string seek_this_key) {
+    bool DefaultOptionsManager::map_contains(const string seek_this_key) const{
         return !(opts_map->find(seek_this_key)
                  ==
                  opts_map->end());

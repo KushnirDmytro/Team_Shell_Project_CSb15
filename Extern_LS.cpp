@@ -26,7 +26,7 @@ namespace ext {
                      bool noargs_allowed) :
             DefaultOptionsManager(name) {
 
-        this->noargs_allowed = noargs_allowed;
+        this->noargs_allowed_ = noargs_allowed;
 
         this->opts_map = new map<string, DefaultOptionsManager *>{
                 {"-l",
@@ -66,17 +66,17 @@ namespace ext {
                                        bool noargs_allowed_)
             : DefaultOptionsManager(name) {
         opts_map = nullptr;
-        noargs_allowed = noargs_allowed_;
+        noargs_allowed_ = noargs_allowed_;
         flag_to_write = host_flag;
     }
 
 //checker for received suboptions
     bool LS_no_subopt_opt::are_suboptions_valid(size_t nargs, char **argv) {
-        if (noargs_allowed && nargs == 0) {
+        if (noargs_allowed_ && nargs == 0) {
             (*this->flag_to_write) = true;
             return true;
         } else {
-            printf("Unexpected argument for %s  /n", this->option_name.c_str());
+            printf("Unexpected argument for %s  /n", this->option_name_.c_str());
             return false;
         }
     }
@@ -85,7 +85,7 @@ namespace ext {
 // option block for sorting
     Ls_sort_opt::Ls_sort_opt(string name, ls_sorts *sorts)
             : DefaultOptionsManager(name) {
-        this->noargs_allowed = false;
+        this->noargs_allowed_ = false;
         this->sort_opts_map = new map<string, ls_sorts>{
                 {"U", UNSORT},
                 {"S", SIZE},
@@ -120,7 +120,7 @@ namespace ext {
                 string argument = string(argv[0]);
 
                 if (sort_opts_map->find(argument) == sort_opts_map->end()) {
-                    printf("ERROR argument %s is not defined for %s\n", argument.c_str(), option_name.c_str());
+                    printf("ERROR argument %s is not defined for %s\n", argument.c_str(), option_name_.c_str());
                     return false;
                 } else {
 
