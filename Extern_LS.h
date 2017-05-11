@@ -79,7 +79,7 @@ namespace ext {
     public:
 
 
-        map<string, ls_sorts> *sort_opts_map;
+        std::map<string, ls_sorts> *sort_opts_map;
         ls_sorts *sorts;
 
         Ls_sort_opt(string name, ls_sorts *host_sorts);
@@ -104,7 +104,7 @@ namespace ext {
     private:
 
         size_t args_start_position_shift = 1;
-        vector<fs::path> *passes_to_apply;
+        std::vector<fs::path> *passes_to_apply;
 
     public:
 
@@ -125,14 +125,14 @@ namespace ext {
 
 
 //TODO replace by function-comparator
-        int sort_vect(vector<fs::path> *vec_of_args, bool comparator) {
+        int sort_vect(std::vector<fs::path> *vec_of_args, bool comparator) {
             return 0;
         }
 
 
 //TODO create structure for args and info
 // TODO specify falgs
-        int collect_additional_info(vector<fs::path> *vec_of_args, vector<string> *infos, char *flags) {
+        int collect_additional_info(std::vector<fs::path> *vec_of_args, std::vector<string> *infos, char *flags) {
             return 0;
         }
 
@@ -144,23 +144,23 @@ namespace ext {
         // 3.6 -- sorted vector allready can be printed with additional info
         // 3.6 -- else just outputting
 
-        int get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args);
+        int get_passes_from_args(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
         void set_default_directory_as_pass_to_apply();
 
-        int do_LS_job_with_vector(vector<fs::path> *p_from_args, const int rec_depth = 0);
+        int do_LS_job_with_vector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
 
         void print_file_about(const fs::path *path_to_print, const int depth, struct stat *fileStat);
 
-        void print_dir_contain(const fs::path *dir, const vector<fs::path> *dir_contain, const int rec_depth);
+        void print_dir_contain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
 
         void clear_flags();
 
-        const stringstream *form_permission_report_for_file(const fs::path *f, struct stat *stat_struct);
+        const std::stringstream *form_permission_report_for_file(const fs::path *f, struct stat *stat_struct);
 
-        const stringstream *form_timereport_for_file(const fs::path *f);
+        const std::stringstream *form_timereport_for_file(const fs::path *f);
 
-        void apply_sorting(vector<fs::path> *vec_to_sort);
+        void apply_sorting(std::vector<fs::path> *vec_to_sort);
 
         void print_filedata(const fs::path *path_to_print, const int depth);
 

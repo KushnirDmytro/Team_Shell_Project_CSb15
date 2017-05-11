@@ -14,7 +14,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-
+//TODO get it out
+using namespace std;
 
 namespace ext {
 
@@ -28,7 +29,7 @@ namespace ext {
 
         this->noargs_allowed_ = noargs_allowed;
 
-        this->opts_map_ = new map<string, DefaultOptionsManager *>{
+        this->opts_map_ = new std::map<string, DefaultOptionsManager *>{
                 {"-l",
                         new LS_no_subopt_opt("-l", &this->LS_flags.detailed_listing)},
                 {"-r",

@@ -24,8 +24,6 @@
 
 // =====================>class OPTIONS  DECLARATION
 
-using namespace std;
-
 namespace ext {
 
     class DefaultOptionsManager;
@@ -34,26 +32,28 @@ namespace ext {
 
     using options_validator = bool (*)(size_t, char **, DefaultOptionsManager *ref_to_owner_object);
 
-
     class DefaultOptionsManager {
+
+    protected:
 
         //TODO MAKE PROTECTED WHEN SOLVE INIT PROBLEM
     public:
 
         string option_name_;
 
-        map<string, DefaultOptionsManager *> *opts_map_;
+        std::map<string, DefaultOptionsManager *> *opts_map_;
 
         //default value definition
         bool noargs_allowed_ = true;
 
-
         //field for classes to initialize
         //options_validator opt_cross_valid = nullptr;
 
-        DefaultOptionsManager(string name);
+        DefaultOptionsManager(string name,
+                              std::map<string, DefaultOptionsManager *> *opts_map_ =
+                              new std::map<string, DefaultOptionsManager *> {});
 
-        ~DefaultOptionsManager();
+        virtual ~DefaultOptionsManager();
 
         DefaultOptionsManager *getSuboptionFromMap(const string potential_arg) const;
 
@@ -61,11 +61,11 @@ namespace ext {
 
         virtual bool areOptionsCrossValid();
 
-        void convertStrQueueToCharArr( queue<string> queue, char **arr) const;
+        void convertStrQueueToCharArr( std::queue<string> queue, char **arr) const;
 
         bool argumentlessSuboptionCheck(size_t nargs, char **argv);
 
-        virtual bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf);
+        virtual bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check, std::queue<string> *arg_buf);
 
         bool doesMapContain(const string seek_this) const;
     };

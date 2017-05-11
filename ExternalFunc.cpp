@@ -11,19 +11,28 @@
 
 namespace ext {
 
-    DefaultOptionsManager::DefaultOptionsManager(string name_) {
+    DefaultOptionsManager::DefaultOptionsManager(string name_,
+                                                 std::map<string, DefaultOptionsManager *> *opts_map) {
+        //TODO options embedd
         option_name_ = name_;
     }
 
     DefaultOptionsManager::~DefaultOptionsManager() {
+
+        for(auto i: *opts_map_){
+            delete i.second;
+        }
         delete opts_map_;
+
     }
 
     inline DefaultOptionsManager *DefaultOptionsManager::getSuboptionFromMap(const string potential_arg) const{
+
         if (!doesMapContain(potential_arg))
             return nullptr;
         else
             return opts_map_->at(potential_arg);
+
     }
 
 
@@ -35,12 +44,14 @@ namespace ext {
 
     bool DefaultOptionsManager::argumentlessSuboptionCheck(size_t nargs, char **argv) {
         if (nargs == 0) {
-            if (noargs_allowed_)
+
+            if (noargs_allowed_) //case when no args is ok
                 return true;
             else {
                 printf("FOUNDED NO ARGUMENTS\n");
                 return false;
             }
+
         }
             //case when operations should be performed by other function
         else return suboptionsAreValid(nargs, argv);
@@ -56,7 +67,7 @@ namespace ext {
         //  vector<string> args_vec;
         // args_vec.insert(args_vec.end(), argv, argv + nargs);
 
-        queue<string> ls_argumens_queue;
+        std::queue<string> ls_argumens_queue;
         for (size_t i = 0; i < nargs; ++i) {
             ls_argumens_queue.push(string(argv[i]));
         }
@@ -64,7 +75,7 @@ namespace ext {
 
         DefaultOptionsManager *option_to_check = nullptr;
 
-        queue<string> arg_buf;
+        std::queue<string> arg_buf;
 
         string current_arg_name;
 
@@ -77,7 +88,7 @@ namespace ext {
                 if (option_to_check != nullptr) {
 
                     if (!doesSuboptionSArgumentsAreValid(option_to_check, &arg_buf)) {
-                        cout << "check_failed on option " << option_to_check->option_name_ << endl;
+                        std::cout << "check_failed on option " << option_to_check->option_name_ << std::endl;
                         return false;
                     }
                     while (!arg_buf.empty())
@@ -90,8 +101,9 @@ namespace ext {
             } else {
 
                 if (option_to_check == nullptr) {
-                    cout << "ERROR:" << current_arg_name << " is unextpected start of arguments sequence for "
-                         << option_name_ << endl;
+                    std::cout << "ERROR:"
+                              << current_arg_name << " is unextpected start of arguments sequence for "
+                         << option_name_ << std::endl;
                     return false;
                 }
 
@@ -104,12 +116,14 @@ namespace ext {
 
         if (option_to_check != nullptr) {
             if (!doesSuboptionSArgumentsAreValid(option_to_check, &arg_buf)) {
-                cout << "check_failed on option " << option_to_check->option_name_ << endl;
+                std::cout << "check_failed on option "
+                          << option_to_check->option_name_
+                          << std::endl;
                 return false;
             }
         }
 
-        cout << "CROSS_VALIDATION" << endl;
+        std::cout << "CROSS_VALIDATION" << std::endl;
         if (this->areOptionsCrossValid()) {
             printf("ARGUMENT CHECK DONE \n");
             return true;
@@ -123,7 +137,7 @@ namespace ext {
     }
 
     bool DefaultOptionsManager::doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check,
-                                                                queue<string> *arg_buf) {
+                                                                std::queue<string> *arg_buf) {
         char *temp_buf[(*arg_buf).size()];
         convertStrQueueToCharArr((*arg_buf), temp_buf);
 
@@ -138,17 +152,19 @@ namespace ext {
     }
 
 
-    void DefaultOptionsManager::convertStrQueueToCharArr(queue<string> queue, char **arr) const{
+    inline void DefaultOptionsManager::convertStrQueueToCharArr(std::queue<string> queue, char **arr) const{
+
         size_t i = 0;
         while (!queue.empty()) {
             arr[i] = new char[queue.front().size() + 1];
             strcpy(arr[i], queue.front().c_str());
             queue.pop();
         }
+
     }
 
 
-    bool DefaultOptionsManager::doesMapContain(const string seek_this_key) const{
+    inline bool DefaultOptionsManager::doesMapContain(const string seek_this_key) const{
         return !(opts_map_->find(seek_this_key)
                  ==
                  opts_map_->end());
@@ -165,7 +181,7 @@ namespace ext {
 
 
 
-    bool ExternalFunc::isValidDirectory(size_t nargs, char **vargs) {
+    inline bool ExternalFunc::isValidDirectory(size_t nargs, char **vargs) {
         boost::filesystem::path full_path;
         for (size_t i = 0; i < nargs; ++i) {
             full_path = boost::filesystem::current_path();
