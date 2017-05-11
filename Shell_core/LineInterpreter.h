@@ -7,22 +7,27 @@
 
 #include <zconf.h>
 #include <wait.h>
-#include "Utils/LineSplitter.h"
-//#include "../Embedded_func.h"
 #include "iostream"
 
-using namespace std;
+#include "Utils/LineSplitter.h"
+//#include "../Embedded_func.h"
+#include "Embedded_func.h"
+#include "../Extern_LS.h"
 
 namespace sh_core {
 
-    class Interpreter {
+
+    class LineInterpreter {
     private:
-        utils::LineSplitter *splitter;
+        const utils::LineSplitter splitter;
+
+        const map <const string, Embedded_func*> *embedded_lib;
+
+        const map <const string, const fs::path*> *external_lib;
 
 
     public:
-        Interpreter();
-
+        LineInterpreter();
 
         // launcher for custom modules
         int myExternLauncher(char **args) const;
@@ -33,9 +38,12 @@ namespace sh_core {
 
         int processSting(string * values) const;
 
-        ~Interpreter();
+        ~LineInterpreter();
         //TODO filemasks
     };
+
+    extern LineInterpreter *interpreter;
+
 }
 
 

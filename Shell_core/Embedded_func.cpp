@@ -26,41 +26,43 @@ env::ConsoleView *console;
 
 */
 
-map <string, Embedded_func*> embedded_lib;
+namespace sh_core {
+
+    std::map<string, Embedded_func *> embedded_lib;
 
 
-Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_){
-    name=name_;
-    func = funct_to_assign_;
-    help_info = help_msg_;
-}
+    Embedded_func::Embedded_func(const string &name_, callable_function funct_to_assign_, string &help_msg_) {
+        name = name_;
+        func = funct_to_assign_;
+        help_info = help_msg_;
+    }
 
 
-int Embedded_func::search_for_help(size_t nargs, char** &argvector){
-    for (int i = 0; i< nargs ; ++i){
-        if (( strcmp(argvector[i], "--help") == 0  ) || ( strcmp(argvector[i], "-h") == 0  ) ){
+    int Embedded_func::search_for_help(size_t nargs, char **&argvector) {
+        for (int i = 0; i < nargs; ++i) {
+            if ((strcmp(argvector[i], "--help") == 0) || (strcmp(argvector[i], "-h") == 0)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    void Embedded_func::output_help(string &helpMsg) {
+        printf("%s\n", help_info.c_str());
+    }
+
+
+    int Embedded_func::call(size_t nargs_, char **args_) {
+        nargs = nargs_;
+        vargs = args_;
+//    this->initialized = true;
+        if (search_for_help(nargs, vargs)) {
+            output_help(help_info);
             return 1;
         }
+        return func(nargs, vargs);
+        //     return 1;
     }
-    return 0;
-}
-
-void Embedded_func::output_help(string &helpMsg){
-    printf("%s\n", help_info.c_str());
-}
-
-
-int Embedded_func::call(size_t nargs_, char **args_){
-    nargs = nargs_;
-    vargs = args_;
-//    this->initialized = true;
-    if (search_for_help(nargs, vargs)){
-        output_help(help_info);
-        return 1;
-    }
-    return func (nargs, vargs);
-    //     return 1;
-}
 
 
 
@@ -71,72 +73,66 @@ int Embedded_func::call(size_t nargs_, char **args_){
 //====================BUILT-IN COMMANDS ============
 
 //show current directory
-int my_pwd(size_t nargs, char **args)
-{
-    environment->dir_->refreshPath();
-    printf("%s", environment->dir_->getActualPath().c_str());
-    return 1;
-}
+    int my_pwd(size_t nargs, char **args) {
+        environment->dir_->refreshPath();
+        printf("%s", environment->dir_->getActualPath().c_str());
+        return 1;
+    }
 
 //changes directory
-int my_cd(size_t nargs, char **args)
-{
-    if (args[1] == NULL) { //has to have at least one arg
-        fprintf(stderr, "my_Shell: expected argument to \"cd\"\n");
-    } else {
-        string str(args[1]);
-        if (str == home_dir_call){
-            if ( boost::filesystem::is_directory( environment->user_->getHome_dirrectory() ) ){
-                boost::filesystem::current_path(environment->user_->getHome_dirrectory());
+    int my_cd(size_t nargs, char **args) {
+        if (args[1] == NULL) { //has to have at least one arg
+            fprintf(stderr, "my_Shell: expected argument to \"cd\"\n");
+        } else {
+            string str(args[1]);
+            if (str == home_dir_call) {
+                if (boost::filesystem::is_directory(environment->user_->getHome_dirrectory())) {
+                    boost::filesystem::current_path(environment->user_->getHome_dirrectory());
+                }
+            } else if (boost::filesystem::is_directory(args[1])) {
+                boost::filesystem::current_path(args[1]);
+            } else {
+                //TODO filesystem errors
+                //boost::filesystem::filesystem_error()
+                perror("\n my_Shell failed to change dir_ \t");
             }
-        }
-        else if (boost::filesystem::is_directory(args[1])){
-            boost::filesystem::current_path(args[1]);
-        }
-        else{
-            //TODO filesystem errors
-            //boost::filesystem::filesystem_error()
-            perror("\n my_Shell failed to change dir_ \t");
-        }
 
+        }
+        environment->dir_->setActualPath(boost::filesystem::current_path());
+        environment->dir_->setPathWasChanged(true);
+        return 1;
     }
-    environment->dir_->setActualPath(boost::filesystem::current_path());
-    environment->dir_->setPathWasChanged(true);
-    return 1;
-}
 
 //shows help info
-int my_help(size_t nargs, char **args)
-{
+    int my_help(size_t nargs, char **args) {
 
-    printf("Write command and arguments, if needed, then press 'Enter'\n");
-    printf("To get detailed information, write <command option_name> --help or <command option_name> -h:\n");
-    printf("List of Commands:\n");
-    printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
-    printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
-    printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
+        printf("Write command and arguments, if needed, then press 'Enter'\n");
+        printf("To get detailed information, write <command option_name> --help or <command option_name> -h:\n");
+        printf("List of Commands:\n");
+        printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
+        printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
+        printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
 
-    printf(" In case of external function option_name inputed (some Shell extentions) it will be executed if founded\n");
+        printf(" In case of external function option_name inputed (some Shell extentions) it will be executed if founded\n");
 
-    printf(" 'exit' terminates executions of Shell program\n");
+        printf(" 'exit' terminates executions of Shell program\n");
 
-    printf("\n");
+        printf("\n");
 
-    return 1;
-}
+        return 1;
+    }
 
 //just exits, that is it
-int my_exit(size_t nargs, char **args)
-{
-    printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
-    return 0;
-}
+    int my_exit(size_t nargs, char **args) {
+        printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
+        return 0;
+    }
 
 
-int my_sh(size_t nargs, char **args) {
-    cout << "HELLO, FIX ME, YOU DUMBASS!\n" ;
-    return 1;
-}
+    int my_sh(size_t nargs, char **args) {
+        cout << "HELLO, FIX ME, YOU DUMBASS!\n";
+        return 1;
+    }
 
 
 //TODO solve hierarchy problem
@@ -195,3 +191,4 @@ int my_sh(size_t nargs, char **args)
 */
 //====================BUILT-IN COMMANDS END============
 
+}

@@ -82,7 +82,7 @@ public:
 
 //=======================> class External Funcion
 
-class External_func : public Embedded_func{
+class External_func : public sh_core::Embedded_func{
 
 private:
 protected:
@@ -90,7 +90,7 @@ protected:
     //Options *func_opts;
 
     External_func (const string &name,
-                   callable_function funct_to_assign,
+                   sh_core::callable_function funct_to_assign,
                    //Options *options_ptr,
                    string &help_msg):
             Embedded_func(name, funct_to_assign,  help_msg){
@@ -123,7 +123,7 @@ extern env::Directory *current_directory;
 
 extern env::utils::LineSplitter* def_line_split;
 
-extern env::Interpreter* default_interpreter;
+extern env::LineInterpreter* default_interpreter;
 
 extern env::ConsoleView *console;
 

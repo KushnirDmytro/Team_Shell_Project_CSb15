@@ -9,11 +9,11 @@ set(SOURCE_FILES main.cpp Shell_core/Embedded_func.cpp Shell_core/Embedded_func.
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
         Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
-        Shell_core/Interpreter.cpp Shell_core/Interpreter.h
+        Shell_core/LineInterpreter.cpp Shell_core/LineInterpreter.h
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         External_func.cpp External_func.h
         Extern_LS.cpp Extern_LS.h
-        Environment_objects.cpp Env/shell_environment.h)
+        Env/shell_environment.h)
 add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h Env/shell_environment.h)
 
 

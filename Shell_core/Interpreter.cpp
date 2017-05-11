@@ -8,9 +8,10 @@
 #include "Interpreter.h"
 #include "Embedded_func.h"
 
-extern map <string, Embedded_func*> embedded_lib;
 
 namespace sh_core {
+
+    extern std::map <string, Embedded_func*> embedded_lib;
 
     Interpreter::Interpreter() {
         splitter = new utils::LineSplitter();

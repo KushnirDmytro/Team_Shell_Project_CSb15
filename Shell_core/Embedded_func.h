@@ -21,7 +21,9 @@
 #include "Utils/FileLaneIterator.h"
 
 
-using namespace std;
+
+namespace sh_core{
+
 using  callable_function =  int (*)(size_t, char **);
 
 
@@ -51,10 +53,10 @@ public:
 };
 
 
-extern map <string, Embedded_func*> embedded_lib;
+extern std::map <string, Embedded_func*> embedded_lib;
 
 
 extern env::Env *environment;
 
-
+}
 #endif //LAB_2_SHELL_EMBEDDEDFUNC_H
