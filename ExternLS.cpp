@@ -39,25 +39,22 @@ namespace ext {
                 {"--sort",
                         new Ls_sort_opt("--sort", &this->LS_flags.sort_type)},
                 {"-F",
-                        new LS_no_subopt_opt("-F", &this->LS_flags.file_props)}
+                        new LS_no_subopt_opt("-F", &this->LS_flags.show_file_type)}
         };
     };
 
 
     LS_opts::~LS_opts() {
-        delete this->opts_map_->at("-l");
-        delete this->opts_map_->at("-r");
-        delete this->opts_map_->at("-R");
-        delete this->opts_map_->at("--sort");
     }
     // bool LS_opts::suboptionsAreValid(size_t nargs_, char **argv) override;
 
 
     void LS_opts::clear_flags() {
-        this->LS_flags.recursive = false;
-        this->LS_flags.detailed_listing = false;
-        this->LS_flags.reverse_output = false;
-        this->LS_flags.sort_type = NAME;
+        LS_flags.recursive = false;
+        LS_flags.detailed_listing = false;
+        LS_flags.reverse_output = false;
+        LS_flags.show_file_type = false;
+        LS_flags.sort_type = NAME;
     };
 
 
@@ -73,13 +70,16 @@ namespace ext {
 
 //checker for received suboptions
     bool LS_no_subopt_opt::suboptionsAreValid(size_t nargs, char **argv) {
-        if (noargs_allowed_ && nargs == 0) {
-            (*this->flag_to_write) = true;
-            return true;
-        } else {
-            printf("Unexpected argument for %s  /n", this->option_name_.c_str());
-            return false;
+        if (nargs == 0) {
+            if (noargs_allowed_) {
+                (*flag_to_write) = true;
+                return true;
+            } else {
+                printf("Unexpected argument for %s  /n", option_name_.c_str());
+                return false;
+            }
         }
+        else return suboptionsAreValid(nargs, argv);
     }
 
 
@@ -139,7 +139,6 @@ namespace ext {
 
 
     ExternLS::~ExternLS() {
-        delete passes_to_apply_;
         delete ls_opts;
     }
 
@@ -152,7 +151,7 @@ namespace ext {
                           help_msg) {
 
         //TODO make this vector static ptr
-        passes_to_apply_ = new vector<fs::path>;
+        //passes_to_apply_ = new vector<fs::path>;
         //TODO GEI IT OUT WHEN PROBLEM SOLVED
         ls_opts = new LS_opts("LS_opts_object");
 
@@ -162,13 +161,13 @@ namespace ext {
 
     void inline ExternLS::clean_up_after_execution() {
         clearFlags();
-        passes_to_apply_->clear();
+        passes_to_apply_.clear();
         args_start_position_offset_ = 1;
     }
 
     void inline ExternLS::set_default_directory_as_pass_to_apply() {
         sh_core::environment->dir_->refreshPath();
-        passes_to_apply_->push_back(sh_core::environment->dir_->getActualPath());
+        passes_to_apply_.push_back(sh_core::environment->dir_->getActualPath());
         cout << "set path to apply as  ==>" << sh_core::environment->dir_->getActualPath() << endl;
         args_start_position_offset_ -= 1; //counting this data modification
     }
@@ -367,12 +366,12 @@ namespace ext {
 
 //show current directory
     int ExternLS::my_ls_inner(size_t nargs, char **argv) {
-        for (fs::path p : (*passes_to_apply_)) {
+        for (fs::path p : (passes_to_apply_)) {
             //passes are there from argument line
             cout << "FOUND PATH TO APPLY" << p << endl;
         }
 
-        this->do_LS_job_with_vector(passes_to_apply_);
+        this->do_LS_job_with_vector(&passes_to_apply_);
 
         clean_up_after_execution();
 
@@ -387,13 +386,13 @@ namespace ext {
             return 1;
         }
 
-        get_passes_from_args(nargs, argv, passes_to_apply_);
+        get_passes_from_args(nargs, argv, &passes_to_apply_);
 
-        if (passes_to_apply_->size() == 0) {
+        if (passes_to_apply_.size() == 0) {
             set_default_directory_as_pass_to_apply();
         }
 
-        args_start_position_offset_ += passes_to_apply_->size();
+        args_start_position_offset_ += passes_to_apply_.size();
 
         //shifting pointer to actual arguments position start
         argv += args_start_position_offset_;
@@ -483,12 +482,12 @@ namespace ext {
         stat(path_to_print->c_str(), &fileStat);
 
         if (fileStat.st_mode & S_IFDIR) {// is directory
-            filemark = '\\';
+            filemark = '/';
             printf("%c%s \n", filemark, path_to_print->filename().c_str());
             return;
         }
 
-        if (ls_opts->LS_flags.file_props) {
+        if (ls_opts->LS_flags.show_file_type) {
             if (S_ISLNK(fileStat.st_mode)) filemark = '@'; //symbolic link
             if (S_ISSOCK(fileStat.st_mode)) filemark = '='; // socket
             if (S_ISFIFO(fileStat.st_mode)) filemark = '|'; // pipe (named channel)

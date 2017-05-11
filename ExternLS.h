@@ -30,7 +30,7 @@ namespace ext {
         bool detailed_listing = false;
         bool recursive = false;
         bool reverse_output = false;
-        bool file_props = false;
+        bool show_file_type = false;
         ls_sorts sort_type = NAME;
     };
 
@@ -104,7 +104,7 @@ namespace ext {
     private:
 
         size_t args_start_position_offset_ = 1;
-        std::vector<fs::path> *passes_to_apply_;
+        std::vector<fs::path> passes_to_apply_;
 
     public:
 
