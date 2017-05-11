@@ -11,7 +11,7 @@ set(SOURCE_FILES main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
         Shell_core/LaneInterpreter.cpp Shell_core/LaneInterpreter.h
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
-        External_func.cpp External_func.h
+        ExternalFunc.cpp ExternalFunc.h
         Extern_LS.cpp Extern_LS.h
         Environment_objects.cpp Env/shell_environment.h)
 add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h Env/shell_environment.h)

@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 
 #include <sys/types.h>
-#include "External_func.h"
+#include "ExternalFunc.h"
 #include "ctime"
 
 //#include <boost/algorithm/string/case_conv.hpp>
@@ -39,7 +39,7 @@ namespace ext {
 //==================DECLARATIONS of defaults ==============
 
 //general options class for LS
-    class LS_opts : public Options {
+    class LS_opts : public DefaultOptionsManager {
     public:
         ls_option_flags LS_flags;
 
@@ -53,12 +53,12 @@ namespace ext {
 
         //bool are_suboptions_valid(size_t nargs_, char **argv) override;
 
-//    bool suboptionS_arguments_validation(Options* opt_to_check, vector<string>* arg_buf) override;
+//    bool suboptionS_arguments_validation(DefaultOptionsManager* opt_to_check, vector<string>* arg_buf) override;
 
     };
 
 
-    class LS_no_subopt_opt : public Options {
+    class LS_no_subopt_opt : public DefaultOptionsManager {
     public:
 
         bool *flag_to_write;
@@ -72,7 +72,7 @@ namespace ext {
     };
 
 
-    class Ls_sort_opt : public Options {
+    class Ls_sort_opt : public DefaultOptionsManager {
     private:
 
 
@@ -99,7 +99,7 @@ namespace ext {
 
 
 
-    class Extern_LS : public External_func {
+    class Extern_LS : public ExternalFunc {
 
     private:
 
@@ -117,7 +117,7 @@ namespace ext {
 
         Extern_LS(const string &name,
                   sh_core::callable_function funct_to_assign,
-                //Options *options,
+                //DefaultOptionsManager *options,
                   string &help_msg);
 
 

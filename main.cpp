@@ -25,7 +25,7 @@
 #include "Shell_core/Utils/LineSplitter.h"
 #include "Shell_core/LaneInterpreter.h"
 #include "Shell_core/Utils/FileLaneIterator.h"
-#include "External_func.h"
+#include "ExternalFunc.h"
 #include "Extern_LS.h"
 #include "Env/Env.h"
 #include "Shell_core/LaneInterpreter.h"

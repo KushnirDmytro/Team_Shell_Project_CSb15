@@ -24,11 +24,11 @@ namespace ext {
 
     LS_opts::LS_opts(string name,
                      bool noargs_allowed) :
-            Options(name) {
+            DefaultOptionsManager(name) {
 
         this->noargs_allowed = noargs_allowed;
 
-        this->opts_map = new map<string, Options *>{
+        this->opts_map = new map<string, DefaultOptionsManager *>{
                 {"-l",
                         new LS_no_subopt_opt("-l", &this->LS_flags.detailed_listing)},
                 {"-r",
@@ -64,7 +64,7 @@ namespace ext {
     LS_no_subopt_opt::LS_no_subopt_opt(string name,
                                        bool *host_flag,
                                        bool noargs_allowed_)
-            : Options(name) {
+            : DefaultOptionsManager(name) {
         opts_map = nullptr;
         noargs_allowed = noargs_allowed_;
         flag_to_write = host_flag;
@@ -84,7 +84,7 @@ namespace ext {
 
 // option block for sorting
     Ls_sort_opt::Ls_sort_opt(string name, ls_sorts *sorts)
-            : Options(name) {
+            : DefaultOptionsManager(name) {
         this->noargs_allowed = false;
         this->sort_opts_map = new map<string, ls_sorts>{
                 {"U", UNSORT},
@@ -146,7 +146,7 @@ namespace ext {
     Extern_LS::Extern_LS(const string &name,
                          sh_core::callable_function funct_to_assign,
                          string &help_msg) :
-            External_func(name,
+            ExternalFunc(name,
                           funct_to_assign,
                           help_msg) {
 
@@ -407,7 +407,7 @@ namespace ext {
             cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output << endl;
             cout << "Sorting type " << ls_opts->LS_flags.sort_type << endl;
 
-            return External_func::call(nargs, argv);
+            return ExternalFunc::call(nargs, argv);
         } else {
             clean_up_after_execution();
             return 1;

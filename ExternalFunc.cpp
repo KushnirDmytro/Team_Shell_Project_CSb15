@@ -6,20 +6,20 @@
 //
 
 
-#include "External_func.h"
+#include "ExternalFunc.h"
 #include "Extern_LS.h"
 
 namespace ext {
 
-    Options::Options(string name_) {
+    DefaultOptionsManager::DefaultOptionsManager(string name_) {
         option_name = name_;
     }
 
-    Options::~Options() {
+    DefaultOptionsManager::~DefaultOptionsManager() {
         delete opts_map;
     }
 
-    inline Options *Options::get_option(string potential_arg) {
+    inline DefaultOptionsManager *DefaultOptionsManager::get_option(string potential_arg) {
         if (opts_map->find(potential_arg)
             ==
             opts_map->end())
@@ -30,12 +30,12 @@ namespace ext {
 
 
 //checks for crossvalidations of flags setting
-    bool Options::are_options_cross_valid() {
+    bool DefaultOptionsManager::are_options_cross_valid() {
         printf("Purely default crosscheck, no aditional restrictions set\n");
         return true;
     }
 
-    bool Options::argumentless_option_check(size_t nargs, char **argv) {
+    bool DefaultOptionsManager::argumentless_option_check(size_t nargs, char **argv) {
         if (nargs == 0) {
             if (noargs_allowed)
                 return true;
@@ -49,7 +49,7 @@ namespace ext {
     }
 
 //default validator for suboptions and it's flags
-    bool Options::are_suboptions_valid(size_t nargs, char **argv) {
+    bool DefaultOptionsManager::are_suboptions_valid(size_t nargs, char **argv) {
 
         if (nargs == 0) {
             return argumentless_option_check(nargs, argv);
@@ -64,7 +64,7 @@ namespace ext {
         }
 
 
-        Options *option_to_check = nullptr;
+        DefaultOptionsManager *option_to_check = nullptr;
 
         queue<string> arg_buf;
 
@@ -124,7 +124,7 @@ namespace ext {
             delete arr_ptr[i];
     }
 
-    bool Options::suboptionS_arguments_validation(Options *opt_to_check, queue<string> *arg_buf) {
+    bool DefaultOptionsManager::suboptionS_arguments_validation(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf) {
         char *temp_buf[(*arg_buf).size()];
         str_queue_to_char_arr((*arg_buf), temp_buf);
 
@@ -139,7 +139,7 @@ namespace ext {
     }
 
 
-    void Options::str_queue_to_char_arr(queue<string> queue, char **arr) {
+    void DefaultOptionsManager::str_queue_to_char_arr(queue<string> queue, char **arr) {
         size_t i = 0;
         while (!queue.empty()) {
             arr[i] = new char[queue.front().size() + 1];
@@ -149,7 +149,7 @@ namespace ext {
     }
 
 
-    bool Options::map_contains(string seek_this_key) {
+    bool DefaultOptionsManager::map_contains(string seek_this_key) {
         return !(opts_map->find(seek_this_key)
                  ==
                  opts_map->end());
@@ -166,7 +166,7 @@ namespace ext {
 
 
 
-    bool External_func::validate_is_directory(size_t nargs, char **vargs) {
+    bool ExternalFunc::isValidDirectory(size_t nargs, char **vargs) {
         boost::filesystem::path full_path;
         for (size_t i = 0; i < nargs; ++i) {
             full_path = boost::filesystem::current_path();
@@ -185,7 +185,7 @@ namespace ext {
 
 
 //Overriding
-    int External_func::call(size_t nargs, char **args) {
+    int ExternalFunc::call(size_t nargs, char **args) {
 
         /*
         if (this->func_opts->are_suboptions_valid(nargs, args)){
