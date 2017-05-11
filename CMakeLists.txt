@@ -3,7 +3,7 @@ project(Lab_2_shell)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Shell_core/Embedded_func.cpp Shell_core/Embedded_func.h
+set(SOURCE_FILES main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Env/ConsoleView.cpp Env/ConsoleView.h
         Env/User.cpp Env/User.h
         Env/Env.cpp Env/Env.h

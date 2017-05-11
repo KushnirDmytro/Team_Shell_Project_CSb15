@@ -8,7 +8,7 @@
 #include <zconf.h>
 #include <wait.h>
 #include "Utils/LineSplitter.h"
-//#include "../Embedded_func.h"
+//#include "../EmbeddedFunc.h"
 #include "iostream"
 #include "../Extern_LS.h"
 
@@ -20,7 +20,7 @@ namespace sh_core {
     class LaneInterpreter {
     private:
 
-        std::map<string, Embedded_func *> embedded_lib;
+        std::map<string, EmbeddedFunc *> embedded_lib;
 
         //TODO make the same map for externals register
 

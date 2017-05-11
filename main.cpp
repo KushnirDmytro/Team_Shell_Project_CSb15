@@ -21,7 +21,7 @@
 #include "Env/ConsoleView.h"
 #include "Env/User.h"
 #include "Env/Directory.h"
-#include "Shell_core/Embedded_func.h"
+#include "Shell_core/EmbeddedFunc.h"
 #include "Shell_core/Utils/LineSplitter.h"
 #include "Shell_core/LaneInterpreter.h"
 #include "Shell_core/Utils/FileLaneIterator.h"

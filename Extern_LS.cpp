@@ -300,7 +300,7 @@ namespace ext {
                 break;
             }
 
-                //default sorting by name for safety
+                //default sorting by name_ for safety
             default: {
                 sort(vec_to_sort->begin(), vec_to_sort->end(),
                      [](fs::path first, fs::path secod) ->
@@ -381,8 +381,8 @@ namespace ext {
 //Overriding
     int Extern_LS::call(size_t nargs, char **argv) {
 
-        if (search_for_help(nargs, argv)) {
-            output_help(help_info);
+        if (searchForHelp(nargs, argv)) {
+            outputHelp(help_info_);
             return 1;
         }
 

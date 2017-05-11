@@ -24,31 +24,30 @@
 namespace sh_core {
     using callable_function =  int (*)(size_t, char **);
 
-
 #define  home_dir_call  "~"
 
 
-    class Embedded_func {
+    class EmbeddedFunc {
     protected:
-        string name;
+
+        string name_;
         char **vargs;
         size_t nargs;
-        string help_info;
+        string help_info_;
         //bool initialized;
-        callable_function func;
+        callable_function func_;
+
     public:
-        Embedded_func(const string &name, callable_function funct_to_assign, string &help_msg);
+        EmbeddedFunc(const string &name, callable_function funct_to_assign,const string &help_msg);
 
-        int search_for_help(size_t nargs, char **&argvector);
+        int searchForHelp(const size_t nargs, char **&argvector);
 
-        void output_help(string &helpMsg);
+        void outputHelp(const string &helpMsg) const;
 
         virtual int call(size_t nargs, char **args);
 
     };
 
-
-    extern std::map<string, Embedded_func *> embedded_lib;
     extern env::Env *environment;
 
 }

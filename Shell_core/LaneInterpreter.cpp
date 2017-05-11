@@ -6,9 +6,9 @@
 //
 
 #include "LaneInterpreter.h"
-#include "Embedded_func.h"
+#include "EmbeddedFunc.h"
 
-//extern std::map <string, sh_core::Embedded_func*> embedded_lib;
+//extern std::map <string, sh_core::EmbeddedFunc*> embedded_lib;
 
 namespace fs = boost::filesystem;
 
@@ -72,11 +72,11 @@ namespace sh_core {
         extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
 
         embedded_lib= {
-                {"cd",   new sh_core::Embedded_func("MY_CD", sh_core::my_cd, cd_help_msg )},
-                {"pwd",  new sh_core::Embedded_func("MY_PWD", sh_core::my_pwd, pwd_help_msg )},
-                {"help", new sh_core::Embedded_func("MY_HELP", sh_core::my_help, help_help_msg )},
-                {"exit", new sh_core::Embedded_func("MY_EXIT", sh_core::my_exit, exit_help_msg )},
-                {"mysh", new sh_core::Embedded_func("MY_shell_script_interpreter",
+                {"cd",   new sh_core::EmbeddedFunc("MY_CD", sh_core::my_cd, cd_help_msg )},
+                {"pwd",  new sh_core::EmbeddedFunc("MY_PWD", sh_core::my_pwd, pwd_help_msg )},
+                {"help", new sh_core::EmbeddedFunc("MY_HELP", sh_core::my_help, help_help_msg )},
+                {"exit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::my_exit, exit_help_msg )},
+                {"mysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
                                                     sh_core::my_sh,
                                                     shell_script_interpreter_help_msg )},
                 {"ls", extern_ls_obj}
@@ -152,7 +152,7 @@ namespace sh_core {
         for (int i = 0; i < getNumOfMyBuiltins(); i++) {
 
             auto search_iter = embedded_lib.find(cargs[0]);
-            if (search_iter != embedded_lib.end()) // case when we have such a func in our lib
+            if (search_iter != embedded_lib.end()) // case when we have such a func_ in our lib
             {
                 //=============CALLING INNER FUNCTION <=======================
                 return (search_iter->second)->call(args_number, cargs);
@@ -261,7 +261,6 @@ int my_sh(size_t nargs, char **args)
                 iter->getNextString(&st);
                 printf("String #%d red \n", i++);
                 std::cout << st << std::endl;
-                // st.append(" ");
                 if (st.length() == 0)
                     continue;
                 status = interpreter->processSting(&st);
