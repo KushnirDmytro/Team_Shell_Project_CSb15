@@ -49,7 +49,7 @@ namespace ext {
         delete this->opts_map->at("-R");
         delete this->opts_map->at("--sort");
     }
-    // bool LS_opts::are_suboptions_valid(size_t nargs, char **argv) override;
+    // bool LS_opts::are_suboptions_valid(size_t nargs_, char **argv) override;
 
 
     void LS_opts::clear_flags() {

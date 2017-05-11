@@ -31,10 +31,9 @@ namespace sh_core {
     protected:
 
         string name_;
-        char **vargs;
-        size_t nargs;
+        char **vargs_;
+        size_t nargs_;
         string help_info_;
-        //bool initialized;
         callable_function func_;
 
     public:

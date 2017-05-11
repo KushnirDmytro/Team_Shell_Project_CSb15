@@ -21,7 +21,7 @@ namespace ext{
 //just activator-function
     int my_ls(size_t nargs, char **argv) {
         return sh_core::interpreter->extern_ls_obj->my_ls_inner(nargs, argv);
-        //my_ls_inner(nargs, argv);
+        //my_ls_inner(nargs_, argv);
     }
 
 }
