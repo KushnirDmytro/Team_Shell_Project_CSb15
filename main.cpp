@@ -30,7 +30,7 @@
 #include "Env/Env.h"
 #include "Shell_core/Interpreter.h"
 //====================CLASSES IMPORT END=====================
-
+#include "algorithm"
 
 
 //==============================DEFINITIONS====================
