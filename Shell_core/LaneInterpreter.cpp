@@ -14,7 +14,6 @@ namespace fs = boost::filesystem;
 
 
 namespace ext{
-
     int my_ls(size_t nargs, char **args);
    // ext::Extern_LS *extern_ls_obj;
 
@@ -31,7 +30,6 @@ namespace ext{
 namespace sh_core {
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
 
-
     int my_cd(size_t nargs, char **args);
 
     int my_pwd(size_t nargs, char **args);
@@ -41,10 +39,6 @@ namespace sh_core {
     int my_exit(size_t nargs, char **args);
 
     int my_sh(size_t nargs, char **args);
-
-
-
-
 }
 
 
@@ -73,29 +67,19 @@ namespace sh_core {
         string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
                 " 'mysh' <filename> to execurte script file";
 
-
-        my_cd_obj = new sh_core::Embedded_func("MY_CD", sh_core::my_cd, cd_help_msg );
-        my_pwd_obj = new sh_core::Embedded_func("MY_PWD", sh_core::my_pwd, pwd_help_msg );
-        my_help_obj = new sh_core::Embedded_func("MY_HELP", sh_core::my_help, help_help_msg );
-        my_exit_obj = new sh_core::Embedded_func("MY_EXIT", sh_core::my_exit, exit_help_msg );
-        my_shell_fileinterpreter =  new sh_core::Embedded_func("MY_shell_script_interpreter",
-                                                                        sh_core::my_sh,
-                                                                        shell_script_interpreter_help_msg );
-
         //=========================ATTENTION!!!==========++++++!!!!!
 
         extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls , cd_help_msg);
 
-
-
         embedded_lib= {
-                {"cd",   my_cd_obj},
-                {"pwd",  my_pwd_obj},
-                {"help", my_help_obj},
-                {"exit", my_exit_obj},
-                {"mysh", my_shell_fileinterpreter},
+                {"cd",   new sh_core::Embedded_func("MY_CD", sh_core::my_cd, cd_help_msg )},
+                {"pwd",  new sh_core::Embedded_func("MY_PWD", sh_core::my_pwd, pwd_help_msg )},
+                {"help", new sh_core::Embedded_func("MY_HELP", sh_core::my_help, help_help_msg )},
+                {"exit", new sh_core::Embedded_func("MY_EXIT", sh_core::my_exit, exit_help_msg )},
+                {"mysh", new sh_core::Embedded_func("MY_shell_script_interpreter",
+                                                    sh_core::my_sh,
+                                                    shell_script_interpreter_help_msg )},
                 {"ls", extern_ls_obj}
-
         };
 
 
@@ -106,7 +90,11 @@ namespace sh_core {
     }
 
     LaneInterpreter::~LaneInterpreter() {
-        delete this->splitter;
+        for(auto i: embedded_lib){
+           delete i.second;
+        }
+
+        delete splitter;
     }
 //TODO filemasks
 

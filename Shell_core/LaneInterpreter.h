@@ -20,16 +20,11 @@ namespace sh_core {
     class LaneInterpreter {
     private:
 
-        Embedded_func *my_shell_fileinterpreter;
-        Embedded_func *my_pwd_obj;
-        Embedded_func *my_cd_obj;
-        Embedded_func *my_help_obj;
-        Embedded_func *my_exit_obj;
-
         std::map<string, Embedded_func *> embedded_lib;
 
-        utils::LineSplitter *splitter;
+        //TODO make the same map for externals register
 
+        utils::LineSplitter *splitter;
 
     public:
         ext::Extern_LS *extern_ls_obj;
