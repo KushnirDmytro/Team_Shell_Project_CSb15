@@ -148,6 +148,7 @@ namespace ext {
 
 
     bool DefaultOptionsManager::map_contains(const string seek_this_key) const{
+        // rt
         return !(opts_map->find(seek_this_key)
                  ==
                  opts_map->end());
