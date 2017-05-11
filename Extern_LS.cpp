@@ -49,7 +49,7 @@ namespace ext {
         delete this->opts_map->at("-R");
         delete this->opts_map->at("--sort");
     }
-    // bool LS_opts::are_suboptions_valid(size_t nargs_, char **argv) override;
+    // bool LS_opts::suboptionsAreValid(size_t nargs_, char **argv) override;
 
 
     void LS_opts::clear_flags() {
@@ -71,7 +71,7 @@ namespace ext {
     }
 
 //checker for received suboptions
-    bool LS_no_subopt_opt::are_suboptions_valid(size_t nargs, char **argv) {
+    bool LS_no_subopt_opt::suboptionsAreValid(size_t nargs, char **argv) {
         if (noargs_allowed_ && nargs == 0) {
             (*this->flag_to_write) = true;
             return true;
@@ -103,7 +103,7 @@ namespace ext {
 
 
 // suboptions validator
-    bool Ls_sort_opt::are_suboptions_valid(size_t nargs, char **argv) {
+    bool Ls_sort_opt::suboptionsAreValid(size_t nargs, char **argv) {
         cout << "ENTERED SORT_OPTIONS" << endl;
         cout << nargs << " Args number" << endl;
 
@@ -398,7 +398,7 @@ namespace ext {
         argv += args_start_position_shift;
         nargs -= args_start_position_shift;
 
-        if (ls_opts->are_suboptions_valid(nargs, argv)) {
+        if (ls_opts->suboptionsAreValid(nargs, argv)) {
             cout << "problem checking" << endl;
 
 

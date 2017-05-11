@@ -51,7 +51,7 @@ namespace ext {
 
         void clear_flags();
 
-        //bool are_suboptions_valid(size_t nargs_, char **argv) override;
+        //bool suboptionsAreValid(size_t nargs_, char **argv) override;
 
 //    bool suboptionS_arguments_validation(DefaultOptionsManager* opt_to_check, vector<string>* arg_buf) override;
 
@@ -67,7 +67,7 @@ namespace ext {
                          bool *host_flag_to_write,
                          bool noargs_allowed = true);
 
-        bool are_suboptions_valid(size_t nargs, char **argv) override;
+        bool suboptionsAreValid(size_t nargs, char **argv) override;
 
     };
 
@@ -86,7 +86,7 @@ namespace ext {
 
         ~Ls_sort_opt();
 
-        bool are_suboptions_valid(size_t nargs, char **argv) override;
+        bool suboptionsAreValid(size_t nargs, char **argv) override;
 
 
     };

@@ -28,12 +28,12 @@ namespace ext {
 
 
 //checks for crossvalidations of flags setting
-    bool DefaultOptionsManager::are_options_cross_valid() {
+    bool DefaultOptionsManager::areOptionsCrossValid() {
         printf("Purely default crosscheck, no aditional restrictions set\n");
         return true;
     }
 
-    bool DefaultOptionsManager::argumentless_option_check(size_t nargs, char **argv) {
+    bool DefaultOptionsManager::argumentlessSuboptionCheck(size_t nargs, char **argv) {
         if (nargs == 0) {
             if (noargs_allowed_)
                 return true;
@@ -43,14 +43,14 @@ namespace ext {
             }
         }
             //case when operations should be performed by other function
-        else return are_suboptions_valid(nargs, argv);
+        else return suboptionsAreValid(nargs, argv);
     }
 
 //default validator for suboptions and it's flags
-    bool DefaultOptionsManager::are_suboptions_valid(size_t nargs, char **argv) {
+    bool DefaultOptionsManager::suboptionsAreValid(size_t nargs, char **argv) {
 
         if (nargs == 0) {
-            return argumentless_option_check(nargs, argv);
+            return argumentlessSuboptionCheck(nargs, argv);
         }
 
         //  vector<string> args_vec;
@@ -110,14 +110,14 @@ namespace ext {
         }
 
         cout << "CROSS_VALIDATION" << endl;
-        if (this->are_options_cross_valid()) {
+        if (this->areOptionsCrossValid()) {
             printf("ARGUMENT CHECK DONE \n");
             return true;
         } else return false;
     };
 
 
-    inline void clear_temp_array_of_pointers(size_t arr_size, char **arr_ptr) {
+    inline void clearTempPointersArray(size_t arr_size, char **arr_ptr) {
         for (size_t i = 0; i < arr_size; ++i)
             delete arr_ptr[i];
     }
@@ -126,12 +126,12 @@ namespace ext {
         char *temp_buf[(*arg_buf).size()];
         str_queue_to_char_arr((*arg_buf), temp_buf);
 
-        if (!(opt_to_check->are_suboptions_valid(arg_buf->size(), temp_buf))) {
+        if (!(opt_to_check->suboptionsAreValid(arg_buf->size(), temp_buf))) {
             printf("ARGUMENT CHECK FAILED AT OPTION %s\n", opt_to_check->option_name_.c_str());
             return false;
         }
 
-        clear_temp_array_of_pointers(arg_buf->size(), temp_buf);
+        clearTempPointersArray(arg_buf->size(), temp_buf);
         //arg_buf->clear();
         return true;
     }
@@ -148,7 +148,6 @@ namespace ext {
 
 
     bool DefaultOptionsManager::map_contains(const string seek_this_key) const{
-        // rt
         return !(opts_map->find(seek_this_key)
                  ==
                  opts_map->end());
@@ -186,17 +185,8 @@ namespace ext {
 //Overriding
     int ExternalFunc::call(size_t nargs, char **args) {
 
-        /*
-        if (this->func_opts->are_suboptions_valid(nargs, args)){
-            cout << "problem checking" << endl;
+        //if (this->func_opts->suboptionsAreValid(nargs, args)){
 
-
-            cout<< "Detailed listing flag "<<  ( (LS_opts*)this->func_opts)->LS_flags.detailed_listing  <<endl;
-            cout<< "Recursive output flag "<<( (LS_opts*)this->func_opts)->LS_flags.recursive  <<endl;
-            cout<< "Reverted output flag "<<( (LS_opts*)this->func_opts)->LS_flags.reverse_output  <<endl;
-            cout<< "Sorting type "<<  ( (LS_opts*)this->func_opts)->LS_flags.sort_type <<endl;
-
-           */
         return sh_core::EmbeddedFunc::call(nargs, args);
 
     };

@@ -57,13 +57,13 @@ namespace ext {
 
         DefaultOptionsManager *getSuboptionFromMap(const string potential_arg) const;
 
-        virtual bool are_suboptions_valid(size_t nargs, char **argv);
+        virtual bool suboptionsAreValid(size_t nargs, char **argv);
 
-        virtual bool are_options_cross_valid();
+        virtual bool areOptionsCrossValid();
 
         void str_queue_to_char_arr(queue<string> queue, char **arr);
 
-        bool argumentless_option_check(size_t nargs, char **argv);
+        bool argumentlessSuboptionCheck(size_t nargs, char **argv);
 
         virtual bool suboptionS_arguments_validation(DefaultOptionsManager *opt_to_check, queue<string> *arg_buf);
 
