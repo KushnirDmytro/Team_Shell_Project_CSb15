@@ -23,19 +23,19 @@
 #include "Env/Directory.h"
 #include "Shell_core/Embedded_func.h"
 #include "Shell_core/Utils/LineSplitter.h"
-#include "Shell_core/LineInterpreter.h"
+#include "Shell_core/Interpreter.h"
 #include "Shell_core/Utils/FileLaneIterator.h"
 #include "External_func.h"
 #include "Extern_LS.h"
 #include "Env/Env.h"
-#include "Shell_core/LineInterpreter.h"
+#include "Shell_core/Interpreter.h"
 //====================CLASSES IMPORT END=====================
 
 
 
 //==============================DEFINITIONS====================
 
-using namespace sh_core;
+//using namespace std;
 
 
 #define  home_dir_call  "~"
@@ -69,32 +69,44 @@ vector<boost::filesystem::path> regex_match_directories(string regex){
 
 
 
+namespace ext{
+    int my_ls(size_t nargs, char **args);
+    ext::Extern_LS *extern_ls_obj;
+}
+
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
-
-int my_ls(size_t nargs, char **args);
-int my_cd(size_t nargs, char **args);
-int my_pwd(size_t nargs, char **args);
-int my_help(size_t nargs, char **args);
-int my_exit(size_t nargs, char **args);
-int my_sh(size_t nargs, char **args);
+namespace sh_core {
 
 
-Embedded_func *my_shell_fileinterpreter;
-Embedded_func *my_pwd_obj;
-Embedded_func *my_cd_obj;
-Embedded_func *my_help_obj;
-Embedded_func *my_exit_obj;
-Extern_LS *extern_ls_obj;
+    int my_cd(size_t nargs, char **args);
 
+    int my_pwd(size_t nargs, char **args);
+
+    int my_help(size_t nargs, char **args);
+
+    int my_exit(size_t nargs, char **args);
+
+    int my_sh(size_t nargs, char **args);
+
+
+    sh_core::Embedded_func *my_shell_fileinterpreter;
+    sh_core::Embedded_func *my_pwd_obj;
+    sh_core::Embedded_func *my_cd_obj;
+    sh_core::Embedded_func *my_help_obj;
+    sh_core::Embedded_func *my_exit_obj;
+   }
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
 
 
 //TODO ask how to place it inside other namespace
-env::Env *environment;
-LineInterpreter *interpreter;
+namespace env {
+}
+namespace sh_core {
+    env::Env *environment;
 
-
+    sh_core::Interpreter *interpreter;
+}
 
 //=============ASSIST FUNCTIONS============
 
@@ -117,12 +129,12 @@ void my_loop()
 
 
     do {
-        environment->console_->displayPromptMsg();
+        sh_core::environment->console_->displayPromptMsg();
         line = my_read_line();
         if (strlen(line.c_str()) == 0){
             continue;
         }
-        status = interpreter->processSting(&line);
+        status = sh_core::interpreter->processSting(&line);
         //args = mySplitLine(line);
         //status = my_execute(args); //if 0 - finished, exited
 
@@ -153,12 +165,12 @@ int main(int argc, char **argv)
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
     string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
             " 'mysh' <filename> to execurte script file";
-    my_cd_obj = new Embedded_func("MY_CD", my_cd, cd_help_msg );
-    my_pwd_obj = new Embedded_func("MY_PWD", my_pwd, pwd_help_msg );
-    my_help_obj = new Embedded_func("MY_HELP", my_help, help_help_msg );
-    my_exit_obj = new Embedded_func("MY_EXIT", my_exit, exit_help_msg );
-    my_shell_fileinterpreter =  new Embedded_func("MY_shell_script_interpreter",
-                                                  my_sh,
+    sh_core::my_cd_obj = new sh_core::Embedded_func("MY_CD", sh_core::my_cd, cd_help_msg );
+    sh_core::my_pwd_obj = new sh_core::Embedded_func("MY_PWD", sh_core::my_pwd, pwd_help_msg );
+    sh_core::my_help_obj = new sh_core::Embedded_func("MY_HELP", sh_core::my_help, help_help_msg );
+    sh_core::my_exit_obj = new sh_core::Embedded_func("MY_EXIT", sh_core::my_exit, exit_help_msg );
+    sh_core::my_shell_fileinterpreter =  new sh_core::Embedded_func("MY_shell_script_interpreter",
+                                                                    sh_core::my_sh,
                                                   shell_script_interpreter_help_msg );
  //   my_ls_obj = new Embedded_func("MY_LS", my_ls, cd_help_msg );
 
@@ -178,22 +190,31 @@ int main(int argc, char **argv)
 
     //Options *ls_func_opts = new Options("LS_options");
 
-    extern_ls_obj = new Extern_LS("MY_EXT_LS", my_ls , cd_help_msg);
-
+        ext::extern_ls_obj = new ext::Extern_LS("MY_EXT_LS", ext::my_ls, cd_help_msg);
     //=========================ATTENTION!!!==========++++++!!!!!
 
 
 
 
 
+    sh_core::embedded_lib= {
+            {"cd",   sh_core::my_cd_obj},
+            {"pwd",  sh_core::my_pwd_obj},
+            {"help", sh_core::my_help_obj},
+            {"exit", sh_core::my_exit_obj},
+            {"mysh", sh_core::my_shell_fileinterpreter},
+            {"ls", ext::extern_ls_obj}
+
+       };
+
     //env = nullptr;
 
-    environment =  new env::Env();
-    interpreter = new sh_core::LineInterpreter();
+    sh_core::environment =  new env::Env();
+    sh_core::interpreter = new sh_core::Interpreter();
 
 /*
     default_user = new env::User();
-    default_interpreter = new env::LineInterpreter();
+    default_interpreter = new env::Interpreter();
     def_line_split = new env::utils::LineSplitter();
     //init_user(&this_user);
     current_directory = new env::Directory();
@@ -212,7 +233,7 @@ int main(int argc, char **argv)
     delete current_directory;
     delete console;
     */
-    delete environment;
+    delete sh_core::environment;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 
     return EXIT_SUCCESS;
