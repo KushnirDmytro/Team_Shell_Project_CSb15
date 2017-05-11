@@ -30,14 +30,14 @@
 #include "Env/Env.h"
 #include "Shell_core/Interpreter.h"
 //====================CLASSES IMPORT END=====================
-
-
+#include "algorithm"
 
 //==============================DEFINITIONS====================
 
 //using namespace std;
 
 using namespace sh_core;
+
 
 
 #define  home_dir_call  "~"
