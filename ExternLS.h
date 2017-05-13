@@ -26,16 +26,17 @@ namespace ext {
         NAME, UNSORT, SIZE, TIME_MODIFIED, EXTENTION
     };
 
+    const ls_sorts DEFAULT_SORT = NAME;
+
     struct ls_option_flags {
         bool detailed_listing_ = false;
         bool recursive_ = false;
         bool reverse_output_ = false;
         bool show_file_type = false;
-        ls_sorts sort_type_ = NAME;
+        ls_sorts sort_type_ = DEFAULT_SORT;
     };
 
 
-    const ls_sorts DEFAULT_SORT = NAME;
 
 //==================DECLARATIONS of defaults ==============
 
@@ -79,6 +80,7 @@ namespace ext {
     public:
 
         std::map<string, ls_sorts> *sort_opts_map_;
+        //this is a link to real sorting flag, available only via map using
         ls_sorts *soring_should_be_applied_;
 
         Ls_sort_opt(string name, ls_sorts *host_sorts);
@@ -128,7 +130,7 @@ namespace ext {
         // 3.6 -- sorted vector allready can be printed with additional info
         // 3.6 -- else just outputting
 
-        int get_passes_from_args(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
+        int extractPassesFromArgs(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
         void setCurrentDirectoryAsPassToApply();
 
@@ -172,7 +174,7 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
         const std::stringstream *formPermissionReportForFile(const fs::path *f, struct stat *stat_struct) const;
 
-        const std::stringstream *form_timereport_for_file(const fs::path *f) const;
+        const std::stringstream *FormTimereportForFile(const fs::path *f) const;
 
         void applySorting(std::vector<fs::path> *vec_to_sort) const;
 

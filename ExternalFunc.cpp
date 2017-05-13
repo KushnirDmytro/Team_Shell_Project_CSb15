@@ -14,7 +14,7 @@ namespace ext {
     DefaultOptionsManager::DefaultOptionsManager(string name_,
                                                  std::map<string, DefaultOptionsManager *> *opts_map) {
         //TODO options embedd
-        opts_map = opts_map_;
+        opts_map_ = opts_map;
         option_name_ = name_;
     }
 
@@ -42,11 +42,14 @@ namespace ext {
         return true;
     }
 
-    bool DefaultOptionsManager::argumentlessSuboptionCheck(size_t nargs, char **argv) {
+    bool DefaultOptionsManager::argumentlessSuboptionCheck(size_t nargs, char **argv, bool* report_succsess) {
         if (nargs == 0) {
 
-            if (noargs_allowed_) //case when no args is ok
+            if (noargs_allowed_) { //case when no args is ok
+                if (report_succsess != nullptr)
+                    *report_succsess = true;
                 return true;
+            }
             else {
                 printf("FOUNDED NO ARGUMENTS\n");
                 return false;
@@ -60,7 +63,7 @@ namespace ext {
     bool DefaultOptionsManager::suboptionsAreValid(size_t nargs, char **argv) {
 
         if (nargs == 0) {
-            return argumentlessSuboptionCheck(nargs, argv);
+            return argumentlessSuboptionCheck(nargs, argv, nullptr);
         }
 
         std::queue<string> ls_argumens_queue;
@@ -122,7 +125,7 @@ namespace ext {
 
         std::cout << "CROSS_VALIDATION" << std::endl;
 
-        if (this->areOptionsCrossValid()) {
+        if (areOptionsCrossValid()) {
             printf("ARGUMENT CHECK DONE \n");
             return true;
         }

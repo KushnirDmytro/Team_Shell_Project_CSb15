@@ -63,7 +63,7 @@ namespace ext {
 
         void convertStrQueueToCharArr( std::queue<string> queue, char **arr) const;
 
-        bool argumentlessSuboptionCheck(size_t nargs, char **argv) ;
+        bool argumentlessSuboptionCheck(size_t nargs, char **argv, bool*  report_success) ;
 
         virtual bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager *opt_to_check, std::queue<string> *arg_buf);
 

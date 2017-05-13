@@ -50,6 +50,8 @@ namespace ext {
 
 
 //prototype for unspecified option
+
+
     LS_no_subopt_opt::LS_no_subopt_opt(string name,
                                        bool *host_flag,
                                        bool noargs_allowed)
@@ -58,21 +60,12 @@ namespace ext {
         flag_to_write = host_flag;
     }
 
+
 //checker for received suboptions
     bool LS_no_subopt_opt::suboptionsAreValid(size_t nargs, char **argv) {
 
-        if (nargs == 0) {
+        return argumentlessSuboptionCheck(nargs, argv, flag_to_write);
 
-            if (noargs_allowed_) {
-                (*flag_to_write) = true;
-                return true;
-            } else {
-                printf("Unexpected argument for %s  /n", option_name_.c_str());
-                return false;
-            }
-
-        }
-        else return suboptionsAreValid(nargs, argv);
     }
 
 
@@ -170,7 +163,7 @@ namespace ext {
 // 3.5 -- in case of recursion expanding directories while sorting on preliminar stages
 // 3.6 -- sorted vector allready can be printed with additional info
 // 3.6 -- else just outputting
-    int ExternLS::get_passes_from_args(size_t nargs, char **argv, vector<fs::path> *p_form_args) {
+    int ExternLS::extractPassesFromArgs(size_t nargs, char **argv, vector<fs::path> *p_form_args) {
         int i = 1; //argv index
         char *arg_buf_ptr = argv[i];
 
@@ -381,7 +374,7 @@ namespace ext {
             return 1;
         }
 
-        get_passes_from_args(nargs, argv, &passes_to_apply_);
+        extractPassesFromArgs(nargs, argv, &passes_to_apply_);
 
         if (passes_to_apply_.size() == 0) {
             setCurrentDirectoryAsPassToApply();
@@ -443,7 +436,7 @@ namespace ext {
     }
 
 
-    inline const stringstream *ExternLS::form_timereport_for_file(const fs::path *path_to_print) const{
+    inline const stringstream *ExternLS::FormTimereportForFile(const fs::path *path_to_print) const{
 
         struct tm time_struct;
         const std::time_t raw_time = fs::last_write_time(*path_to_print) - timezone;
@@ -512,7 +505,7 @@ namespace ext {
     inline void ExternLS::printFileAbout(const fs::path *path_to_print, const int depth, struct stat *file_Stat) const{
 
         //just to be explicit and be able to delete it later
-        const stringstream *time_stream = form_timereport_for_file(path_to_print);
+        const stringstream *time_stream = FormTimereportForFile(path_to_print);
         const stringstream *permissions_stream = formPermissionReportForFile(path_to_print, file_Stat);
 
         printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
