@@ -12,8 +12,10 @@
 namespace ext {
 
     DefaultOptionsManager::DefaultOptionsManager(string name_,
+                                                 bool * state_of_success,
                                                  std::map<string, DefaultOptionsManager *> *opts_map) {
         //TODO options embedd
+        default_state_to_write = state_of_success;
         opts_map_ = opts_map;
         option_name_ = name_;
     }
@@ -63,7 +65,7 @@ namespace ext {
     bool DefaultOptionsManager::suboptionsAreValid(size_t nargs, char **argv) {
 
         if (nargs == 0) {
-            return argumentlessSuboptionCheck(nargs, argv, nullptr);
+            return argumentlessSuboptionCheck(nargs, argv, default_state_to_write);
         }
 
         std::queue<string> ls_argumens_queue;

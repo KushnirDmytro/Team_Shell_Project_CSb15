@@ -49,6 +49,7 @@ namespace ext {
         bool *default_state_to_write;
 
         DefaultOptionsManager(string name,
+                              bool * state_of_success  = nullptr,
                               std::map<string, DefaultOptionsManager *> *opts_map_ =
                               new std::map<string, DefaultOptionsManager *> {});
 

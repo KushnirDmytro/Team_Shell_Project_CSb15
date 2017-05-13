@@ -57,7 +57,7 @@ namespace ext {
 
     };
 
-
+/*
     class LS_no_subopt_opt : public DefaultOptionsManager {
     public:
 
@@ -70,7 +70,7 @@ namespace ext {
         bool suboptionsAreValid(size_t nargs, char **argv) override;
 
     };
-
+*/
 
     class Ls_sort_opt : public DefaultOptionsManager {
     private:
