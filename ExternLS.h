@@ -79,7 +79,7 @@ namespace ext {
     public:
 
         std::map<string, ls_sorts> *sort_opts_map_;
-        ls_sorts soring_should_be_applied_;
+        ls_sorts *soring_should_be_applied_;
 
         Ls_sort_opt(string name, ls_sorts *host_sorts);
 

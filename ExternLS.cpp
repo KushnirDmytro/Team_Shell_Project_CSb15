@@ -87,7 +87,7 @@ namespace ext {
                 {"X", EXTENTION},
                 {"t", TIME_MODIFIED}
         };
-        soring_should_be_applied_ = *sorts;
+        soring_should_be_applied_ = sorts;
     };
 
     Ls_sort_opt::~Ls_sort_opt() {
@@ -102,7 +102,7 @@ namespace ext {
 
         if (nargs == 0) {
             // setting defaul sorting scheme
-            soring_should_be_applied_ = DEFAULT_SORT;
+            *soring_should_be_applied_ = DEFAULT_SORT;
             return true;
         } else {
 
@@ -119,7 +119,7 @@ namespace ext {
 
                     printf("found option %d\n ", sort_opts_map_->at(argument));
 
-                    soring_should_be_applied_ = sort_opts_map_->at(argument);
+                    *soring_should_be_applied_ = sort_opts_map_->at(argument);
                     return true;
                 }
             } else {
