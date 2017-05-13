@@ -27,11 +27,11 @@ namespace ext {
     };
 
     struct ls_option_flags {
-        bool detailed_listing = false;
-        bool recursive = false;
-        bool reverse_output = false;
+        bool detailed_listing_ = false;
+        bool recursive_ = false;
+        bool reverse_output_ = false;
         bool show_file_type = false;
-        ls_sorts sort_type = NAME;
+        ls_sorts sort_type_ = NAME;
     };
 
 
@@ -78,8 +78,8 @@ namespace ext {
 
     public:
 
-        std::map<string, ls_sorts> *sort_opts_map;
-        ls_sorts sorts_;
+        std::map<string, ls_sorts> *sort_opts_map_;
+        ls_sorts soring_should_be_applied_;
 
         Ls_sort_opt(string name, ls_sorts *host_sorts);
 
@@ -130,7 +130,7 @@ namespace ext {
 
         int get_passes_from_args(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
-        void set_default_directory_as_pass_to_apply();
+        void setCurrentDirectoryAsPassToApply();
 
         int do_LS_job_with_vector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
 
@@ -158,23 +158,23 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
         int call(size_t nargs, char **argv) override;
     private:
 
-        void printFileAbout(const fs::path *path_to_print, const int depth, struct stat *fileStat);
+        void printFileAbout(const fs::path *path_to_print, const int depth, struct stat *file_Stat) const;
 
         void printDirContain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
 
-        void printFiledata(const fs::path *path_to_print, const int depth);
+        void printAllAboutFile(const fs::path *path_to_print, const int depth) const;
 
         void clearFlags();
 
-        void clean_up_after_execution();
+        void cleanUpAllAfterExecution();
 
-        void time_correction() const;
+        void performTimeCorrection() const;
 
         const std::stringstream *formPermissionReportForFile(const fs::path *f, struct stat *stat_struct) const;
 
         const std::stringstream *form_timereport_for_file(const fs::path *f) const;
 
-        void apply_sorting(std::vector<fs::path> *vec_to_sort);
+        void applySorting(std::vector<fs::path> *vec_to_sort) const;
 
     };
 

@@ -26,10 +26,10 @@ namespace ext {
         noargs_allowed_ = noargs_allowed;
 
         this->opts_map_ = new std::map<string, DefaultOptionsManager *>{
-                {"-l", new LS_no_subopt_opt("-l", &LS_flags.detailed_listing)},
-                {"-r", new LS_no_subopt_opt("-r", &LS_flags.reverse_output)},
-                {"-R", new LS_no_subopt_opt("-R", &LS_flags.recursive)},
-                {"--sort", new Ls_sort_opt("--sort", &LS_flags.sort_type)},
+                {"-l", new LS_no_subopt_opt("-l", &LS_flags.detailed_listing_)},
+                {"-r", new LS_no_subopt_opt("-r", &LS_flags.reverse_output_)},
+                {"-R", new LS_no_subopt_opt("-R", &LS_flags.recursive_)},
+                {"--sort", new Ls_sort_opt("--sort", &LS_flags.sort_type_)},
                 {"-F",  new LS_no_subopt_opt("-F", &LS_flags.show_file_type)}
         };
     };
@@ -41,11 +41,11 @@ namespace ext {
 
 
     void LS_opts::clear_flags() {
-        LS_flags.recursive = false;
-        LS_flags.detailed_listing = false;
-        LS_flags.reverse_output = false;
+        LS_flags.recursive_ = false;
+        LS_flags.detailed_listing_ = false;
+        LS_flags.reverse_output_ = false;
         LS_flags.show_file_type = false;
-        LS_flags.sort_type = NAME;
+        LS_flags.sort_type_ = NAME;
     };
 
 
@@ -80,19 +80,18 @@ namespace ext {
     Ls_sort_opt::Ls_sort_opt(string name, ls_sorts *sorts)
             : DefaultOptionsManager(name) {
         noargs_allowed_ = false;
-        sort_opts_map = new map<string, ls_sorts>{
+        sort_opts_map_ = new map<string, ls_sorts>{
                 {"U", UNSORT},
                 {"S", SIZE},
                 {"N", NAME},
                 {"X", EXTENTION},
                 {"t", TIME_MODIFIED}
         };
-        sorts_ = *sorts;
-
+        soring_should_be_applied_ = *sorts;
     };
 
     Ls_sort_opt::~Ls_sort_opt() {
-        delete sort_opts_map;
+        delete sort_opts_map_;
     }
 
 
@@ -103,7 +102,7 @@ namespace ext {
 
         if (nargs == 0) {
             // setting defaul sorting scheme
-            sorts_ = DEFAULT_SORT;
+            soring_should_be_applied_ = DEFAULT_SORT;
             return true;
         } else {
 
@@ -113,14 +112,14 @@ namespace ext {
 
                 string argument = string(argv[0]);
 
-                if (sort_opts_map->find(argument) == sort_opts_map->end()) {
+                if (sort_opts_map_->find(argument) == sort_opts_map_->end()) {
                     printf("ERROR argument %s is not defined for %s\n", argument.c_str(), option_name_.c_str());
                     return false;
                 } else {
 
-                    printf("found option %d\n ", sort_opts_map->at(argument));
+                    printf("found option %d\n ", sort_opts_map_->at(argument));
 
-                    sorts_ = sort_opts_map->at(argument);
+                    soring_should_be_applied_ = sort_opts_map_->at(argument);
                     return true;
                 }
             } else {
@@ -149,17 +148,19 @@ namespace ext {
     };
 
 
-    void inline ExternLS::clean_up_after_execution() {
+    void inline ExternLS::cleanUpAllAfterExecution() {
         clearFlags();
         passes_to_apply_.clear();
         args_start_position_offset_ = 1;
     }
 
-    void inline ExternLS::set_default_directory_as_pass_to_apply() {
+    void inline ExternLS::setCurrentDirectoryAsPassToApply() {
+
         sh_core::environment->dir_->refreshPath();
         passes_to_apply_.push_back(sh_core::environment->dir_->getActualPath());
         cout << "set path to apply as  ==>" << sh_core::environment->dir_->getActualPath() << endl;
         args_start_position_offset_ -= 1; //counting this data modification
+
     }
 
 
@@ -199,19 +200,21 @@ namespace ext {
     }
 
 
-    inline void ExternLS::time_correction() const{
+    inline void ExternLS::performTimeCorrection() const{
+        //for first file not to have empty time-data
         struct tm time_struct;
         const std::time_t raw_time = timezone;
+
         gmtime_r(&raw_time, &time_struct);
     }
 
 
-    inline void ExternLS::apply_sorting(vector<fs::path> *vec_to_sort) {
+    inline void ExternLS::applySorting(vector<fs::path> *vec_to_sort) const{
         /*
         // знаю що написана дурня і тег взагалі не про те
         bidirectional_iterator_tag<fs::path>  v_start;
         bidirectional_iterator_tag<fs::path> v_finish;
-        if (this->ls_opts->LS_flags.reverse_output){
+        if (this->ls_opts->LS_flags.reverse_output_){
              v_start = vec_to_sort->rbegin();
              v_finish = vec_to_sort->rend();
         } else{
@@ -219,7 +222,7 @@ namespace ext {
             v_finish = vec_to_sort->end();
         }
     */
-        switch (ls_opts->LS_flags.sort_type) {
+        switch (ls_opts->LS_flags.sort_type_) {
             case NAME: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
@@ -298,7 +301,7 @@ namespace ext {
             }
         }
 
-        if (ls_opts->LS_flags.reverse_output) {
+        if (ls_opts->LS_flags.reverse_output_) {
             reverse(vec_to_sort->begin(), vec_to_sort->end());
         }
 
@@ -311,13 +314,13 @@ namespace ext {
             vector<fs::path> *p_from_args,
             const int rec_depth) {
 
-        apply_sorting(p_from_args);
+        applySorting(p_from_args);
         // ===============INIT===========
         using vect = vector<fs::path>;
         // ===============INIT END===========
 
-        if (ls_opts->LS_flags.detailed_listing) {
-            time_correction();
+        if (ls_opts->LS_flags.detailed_listing_) {
+            performTimeCorrection();
         }
 
         //iterate list of arguments get
@@ -328,22 +331,22 @@ namespace ext {
                 {
                     if (is_directory(p)) {
 
-                        if (!ls_opts->LS_flags.recursive && rec_depth != 0) {
-                            printFiledata(&p, rec_depth); // if we should not look into directory
+                        if (!ls_opts->LS_flags.recursive_ && rec_depth != 0) {
+                            printAllAboutFile(&p, rec_depth); // if we should not look into directory
                         } else {
                             vect subdir_contain;
                             copy(fs::directory_iterator(p), fs::directory_iterator(), back_inserter(subdir_contain));
-                            apply_sorting(&subdir_contain);
+                            applySorting(&subdir_contain);
                             for (int i = 0; i < rec_depth; ++i)
                                 printf("   ");
                             cout << p << " is a directory containing:\n";
-                            if (ls_opts->LS_flags.recursive)//recursive dive into directory
+                            if (ls_opts->LS_flags.recursive_)//recursive_ dive into directory
                                 do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
                             else
                                 printDirContain(&p, &subdir_contain, rec_depth);
                         }
                     } else
-                        printFiledata(&p, rec_depth);
+                        printAllAboutFile(&p, rec_depth);
                 } else
                     cout << p << endl << " does not exist\n"; //yes doublecheck
             }
@@ -363,9 +366,9 @@ namespace ext {
             cout << "FOUND PATH TO APPLY" << p << endl;
         }
 
-        this->do_LS_job_with_vector(&passes_to_apply_);
+        do_LS_job_with_vector(&passes_to_apply_);
 
-        clean_up_after_execution();
+        cleanUpAllAfterExecution();
 
         return 1;
     }
@@ -381,7 +384,7 @@ namespace ext {
         get_passes_from_args(nargs, argv, &passes_to_apply_);
 
         if (passes_to_apply_.size() == 0) {
-            set_default_directory_as_pass_to_apply();
+            setCurrentDirectoryAsPassToApply();
         }
 
         args_start_position_offset_ += passes_to_apply_.size();
@@ -394,14 +397,14 @@ namespace ext {
             cout << "problem checking" << endl;
 
 
-            cout << "Detailed listing flag " << ls_opts->LS_flags.detailed_listing << endl;
-            cout << "Recursive output flag " << ls_opts->LS_flags.recursive << endl;
-            cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output << endl;
-            cout << "Sorting type " << ls_opts->LS_flags.sort_type << endl;
+            cout << "Detailed listing flag " << ls_opts->LS_flags.detailed_listing_ << endl;
+            cout << "Recursive output flag " << ls_opts->LS_flags.recursive_ << endl;
+            cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output_ << endl;
+            cout << "Sorting type " << ls_opts->LS_flags.sort_type_ << endl;
 
             return ExternalFunc::call(nargs, argv);
         } else {
-            clean_up_after_execution();
+            cleanUpAllAfterExecution();
             return 1;
         }
     };
@@ -413,7 +416,8 @@ namespace ext {
 
 
     inline const stringstream*
-    ExternLS::formPermissionReportForFile (const fs::path *path_to_print, struct stat *fileStat) const{
+    ExternLS::formPermissionReportForFile (const fs::path *path_to_print,
+                                           struct stat *fileStat) const{
 
         stat(path_to_print->c_str(), fileStat);
 
@@ -438,14 +442,21 @@ namespace ext {
         return result;
     }
 
+
     inline const stringstream *ExternLS::form_timereport_for_file(const fs::path *path_to_print) const{
 
         struct tm time_struct;
-
         const std::time_t raw_time = fs::last_write_time(*path_to_print) - timezone;
-
         gmtime_r(&raw_time, &time_struct);
 
+/*
+ *  IT CAN BE USED FOR FUTURE DEBUG OF "@1H issue"
+        std::time_t raw_time_now;
+        time(&raw_time_now);
+        struct tm time_now_struct;
+        gmtime_r(&raw_time_now, &time_now_struct);
+        std::cout << "NOW IS DST: " << time_now_struct.tm_isdst << endl;
+*/
 
         stringstream *ss = new stringstream;
 
@@ -464,14 +475,17 @@ namespace ext {
     }
 
 
-    inline void ExternLS::printFiledata(const fs::path *path_to_print, const int depth) {
+    inline void ExternLS::printAllAboutFile(const fs::path *path_to_print, const int depth) const {
         for (int i = 0; i <= depth; ++i)
             printf("    ");
         char filemark = ' ';
 
+        //didn't find the way to make it const
         struct stat fileStat;
 
         stat(path_to_print->c_str(), &fileStat);
+
+        const struct stat constFileStat = fileStat;
 
         if (fileStat.st_mode & S_IFDIR) {// is directory
             filemark = '/';
@@ -489,21 +503,22 @@ namespace ext {
 
         printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
-        if (ls_opts->LS_flags.detailed_listing)
+        if (ls_opts->LS_flags.detailed_listing_)
             printFileAbout(path_to_print, depth, &fileStat);
 
     }
 
 
-    inline void ExternLS::printFileAbout(const fs::path *path_to_print, const int depth, struct stat *fileStat) {
+    inline void ExternLS::printFileAbout(const fs::path *path_to_print, const int depth, struct stat *file_Stat) const{
 
+        //just to be explicit and be able to delete it later
         const stringstream *time_stream = form_timereport_for_file(path_to_print);
-        const stringstream *permissions_stream = formPermissionReportForFile(path_to_print, fileStat);
+        const stringstream *permissions_stream = formPermissionReportForFile(path_to_print, file_Stat);
 
         printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
                permissions_stream->str().c_str(),
                path_to_print->extension().c_str(),
-               fileStat->st_size,
+               file_Stat->st_size,
                time_stream->str().c_str());
 
         delete permissions_stream;
@@ -519,7 +534,7 @@ namespace ext {
         cout << (*dir) << " CONTAINS:\n";
 
         for (const fs::path subpath: (*dir_contain))
-            printFiledata(&subpath, rec_depth + 1);
+            printAllAboutFile(&subpath, rec_depth + 1);
 
     }
 
