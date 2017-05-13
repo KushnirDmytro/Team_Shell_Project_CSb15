@@ -25,7 +25,7 @@ namespace ext {
     using std::endl;
     using std::vector;
     using std::stringstream;
-    using string;
+    using std::string;
 
     namespace fs = boost::filesystem;
 

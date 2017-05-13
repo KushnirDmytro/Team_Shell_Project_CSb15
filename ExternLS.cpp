@@ -193,23 +193,14 @@ namespace ext {
 
     inline void ExternLS::
     applySorting(vector<fs::path> *vec_to_sort) const{
-        /*
-        // знаю що написана дурня і тег взагалі не про те
-        bidirectional_iterator_tag<fs::path>  v_start;
-        bidirectional_iterator_tag<fs::path> v_finish;
-        if (this->ls_opts->ls_flags_.reverse_output_){
-             v_start = vec_to_sort->rbegin();
-             v_finish = vec_to_sort->rend();
-        } else{
-            v_start = vec_to_sort->begin();
-            v_finish = vec_to_sort->end();
-        }
-    */
+
+        bool isReverse = ls_flags.reverse_output_; //used to perform XOR
+
         switch (ls_flags.sort_type_) {
             case NAME: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
-                     [](fs::path first, fs::path second) ->
+                     [isReverse](fs::path first, fs::path second) ->
                              bool {
                          string st1 = first.filename().string();
                          string st2 = second.filename().string();
@@ -217,7 +208,7 @@ namespace ext {
                                         [](unsigned char c) { return std::tolower(c); });
                          std::transform(st2.begin(), st2.end(), st2.begin(),
                                         [](unsigned char c) { return std::tolower(c); });
-                         return st1 < st2;
+                         return (st1 < st2) ^ isReverse;
                      }
                 );
                 break;
@@ -226,9 +217,9 @@ namespace ext {
             case TIME_MODIFIED: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
-                     [](fs::path first, fs::path second) ->
+                     [isReverse](fs::path first, fs::path second) ->
                              bool {
-                         return fs::last_write_time(first) < fs::last_write_time(second);
+                         return isReverse ^ (fs::last_write_time(first) < fs::last_write_time(second));
                      }
                 );
                 break;
@@ -246,11 +237,12 @@ namespace ext {
             case EXTENTION: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
-                     [](fs::path first, fs::path second) ->
+                     [isReverse](fs::path first, fs::path second) ->
                              bool {
-                         return first.extension() < second.extension();
-                     }
-                );
+                         return isReverse?  // UNEXPECTED BUG using XOR
+                                first.extension() > second.extension():
+                                first.extension() < second.extension();
+                     });
                 break;
             }
 
@@ -267,8 +259,8 @@ namespace ext {
                 //sorting files only
                 sort(seek_first_file,
                      vec_to_sort->end(),
-                     [](fs::path first, fs::path second) -> bool {
-                         return fs::file_size(first) < fs::file_size(second);
+                     [isReverse](fs::path first, fs::path second) -> bool {
+                         return isReverse ^ (fs::file_size(first) < fs::file_size(second));
                      }
                 );
 
@@ -277,17 +269,22 @@ namespace ext {
 
                 //default sorting by name_ for safety
             default: {
-                sort(vec_to_sort->begin(), vec_to_sort->end(),
-                     [](fs::path first, fs::path secod) ->
-                             bool { return first.filename() < secod.filename(); });
+                sort(vec_to_sort->begin(),
+                     vec_to_sort->end(),
+                     [isReverse](fs::path first, fs::path second) ->
+                             bool {
+                         string st1 = first.filename().string();
+                         string st2 = second.filename().string();
+                         std::transform(st1.begin(), st1.end(), st1.begin(),
+                                        [](unsigned char c) { return std::tolower(c); });
+                         std::transform(st2.begin(), st2.end(), st2.begin(),
+                                        [](unsigned char c) { return std::tolower(c); });
+                         return (st1 < st2) ^ isReverse;
+                     }
+                );
                 break;
             }
         }
-
-        if (ls_flags.reverse_output_) {
-            reverse(vec_to_sort->begin(), vec_to_sort->end());
-        }
-
 
     };
 
