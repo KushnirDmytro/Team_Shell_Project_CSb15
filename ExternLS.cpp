@@ -6,7 +6,6 @@
 //
 
 #include "ExternLS.h"
-#include <boost/lexical_cast.hpp>
 
 
 //TODO get it out
@@ -390,10 +389,7 @@ namespace ext {
 
 
     inline const stringstream*
-    ExternLS::formPermissionReportForFile (const fs::path *path_to_print,
-                                           struct stat *fileStat) const{
-
-        stat(path_to_print->c_str(), fileStat);
+    ExternLS::formPermissionReportForFile (const struct stat *fileStat) const{
 
         stringstream *result = new stringstream;
 
@@ -418,7 +414,7 @@ namespace ext {
 
 
     inline const stringstream *ExternLS::
-    FormTimereportForFile(const fs::path *path_to_print) const{
+    formTimereportForFile(const fs::path *path_to_print) const{
 
         struct tm time_struct;
         const std::time_t raw_time = fs::last_write_time(*path_to_print) - timezone;
@@ -457,11 +453,11 @@ namespace ext {
         char filemark = ' ';
 
         //didn't find the way to make it const
-        struct stat fileStat;
+        struct stat fileStatBuf;
 
-        stat(path_to_print->c_str(), &fileStat);
+        stat(path_to_print->c_str(), &fileStatBuf);
 
-        const struct stat constFileStat = fileStat;
+        const struct stat fileStat = fileStatBuf;
 
         if (fileStat.st_mode & S_IFDIR) {// is directory
             filemark = '/';
@@ -488,11 +484,11 @@ namespace ext {
     inline void ExternLS::
     printFileAbout(const fs::path *path_to_print,
                    const int depth,
-                   struct stat *file_Stat) const{
+                   const struct stat *file_Stat) const{
 
         //just to be explicit and be able to delete it later
-        const stringstream *time_stream = FormTimereportForFile(path_to_print);
-        const stringstream *permissions_stream = formPermissionReportForFile(path_to_print, file_Stat);
+        const stringstream *time_stream = formTimereportForFile(path_to_print);
+        const stringstream *permissions_stream = formPermissionReportForFile( file_Stat);
 
         printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
                permissions_stream->str().c_str(),

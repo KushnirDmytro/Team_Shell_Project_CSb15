@@ -4,14 +4,18 @@
 #ifndef LAB_2_SHELL_EXTERN_LS_H
 #define LAB_2_SHELL_EXTERN_LS_H
 
-
 #include <sys/stat.h>
-
 #include <sys/types.h>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <map>
+
 #include "ExternalFunc.h"
 #include "ctime"
 
-#include <boost/algorithm/string.hpp>
+#include "Shell_core/EmbeddedFunc.h"
+
 
 namespace ext {
 
@@ -42,9 +46,6 @@ namespace ext {
 
     class ExternLS : public ExternalFunc {
 
-
-    protected:
-
 // ==================== OPTIONS ===============
         //general opt manager class
         class LS_OptsManager : public DefaultOptionsManager {
@@ -53,7 +54,7 @@ namespace ext {
             class LsSortOptsManager : public DefaultOptionsManager {
 
             private:
-                std::map<string, ls_sorts> *sort_opts_map_;
+                map<string, ls_sorts> *sort_opts_map_;
                 //this is a link to real sorting flag, available only via map using
                 ls_sorts *soring_should_be_applied_;
             public:
@@ -83,8 +84,6 @@ namespace ext {
 
 
 
-
-
     private:
         size_t args_start_position_offset_ = 1;
         std::vector<fs::path> passes_to_apply_;
@@ -94,7 +93,6 @@ namespace ext {
 
         ExternLS(const string &name,
                   sh_core::callable_function funct_to_assign,
-                //DefaultOptionsManager *options,
                   string &help_msg);
 
 
@@ -114,7 +112,7 @@ namespace ext {
 
         int extractPassesFromArgs(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
-        void printFileAbout(const fs::path *path_to_print, const int depth, struct stat *file_Stat) const;
+        void printFileAbout(const fs::path *path_to_print, const int depth, const struct stat *file_Stat) const;
 
         void printDirContain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
 
@@ -124,19 +122,13 @@ namespace ext {
 
         void performTimeCorrection() const;
 
-        const std::stringstream *formPermissionReportForFile(const fs::path *f, struct stat *stat_struct) const;
+        const std::stringstream *formPermissionReportForFile(const struct stat *stat_struct) const;
 
-        const std::stringstream *FormTimereportForFile(const fs::path *f) const;
+        const std::stringstream *formTimereportForFile(const fs::path *f) const;
 
         void applySorting(std::vector<fs::path> *vec_to_sort) const;
 
     };
-
-
-
-
-// ==================== OPTIONS ===============
-
 
 }
 #endif //LAB_2_SHELL_EXTERN_LS_H
