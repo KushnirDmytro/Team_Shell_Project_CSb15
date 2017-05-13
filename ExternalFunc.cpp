@@ -196,6 +196,17 @@ namespace ext {
 
 
 
+    ExternalFunc::ExternalFunc(const string &name,
+                 sh_core::callable_function funct_to_assign,
+                 string &help_msg,
+                 DefaultOptionsManager *options_ptr) :
+            sh_core::EmbeddedFunc(name, funct_to_assign, help_msg) {
+        func_opts_ = options_ptr;
+    }
+
+    ExternalFunc::~ExternalFunc() {
+        delete func_opts_;
+    };
 
     inline bool ExternalFunc::isValidDirectory(size_t nargs, char **vargs) {
         boost::filesystem::path full_path;
@@ -236,6 +247,7 @@ namespace ext {
     void ExternalFunc::clearFlags(DefaultOptionsManager* opt_to_clear) {
         opt_to_clear->clearFlags();
     }
+
 
 
 

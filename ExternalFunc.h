@@ -91,10 +91,9 @@ namespace ext {
         ExternalFunc(const string &name,
                       sh_core::callable_function funct_to_assign,
                       string &help_msg,
-                      DefaultOptionsManager *options_ptr = nullptr ) :
-                sh_core::EmbeddedFunc(name, funct_to_assign, help_msg) {
-            func_opts_ = options_ptr;
-        }
+                      DefaultOptionsManager *options_ptr);
+
+        virtual ~ExternalFunc();
 
         DefaultOptionsManager *func_opts_;
 

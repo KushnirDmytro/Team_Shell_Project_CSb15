@@ -14,7 +14,6 @@
 #include "ExternalFunc.h"
 #include "ctime"
 
-//#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace ext {
@@ -41,7 +40,8 @@ namespace ext {
 //general options class for LS
     class LS_opts : public DefaultOptionsManager {
     public:
-        LsFlagsStruct *ls_flags_;
+        LsFlagsStruct *ls_flags_; // It is not a place to store it, just a link to handle
+        // actually this pretty obvious solution made my day...
 
     public:
         LS_opts(string name,
@@ -95,7 +95,7 @@ namespace ext {
     public:
 
         //I HAD TO DO IT TO AVOID BUG
-        LS_opts *ls_opts;
+       // LS_opts *ls_opts;
         LsFlagsStruct ls_flags;
 
 
@@ -105,7 +105,7 @@ namespace ext {
                   string &help_msg);
 
 
-        ~ExternLS();
+        virtual ~ExternLS();
 
 
         // 1--getting pathes from args

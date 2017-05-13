@@ -7,12 +7,7 @@
 
 #include "ExternLS.h"
 #include <boost/lexical_cast.hpp>
-#include <sys/types.h>
-#include <sys/xattr.h>
 
-
-#include <sys/stat.h>
-#include <sys/types.h>
 
 //TODO get it out
 using namespace std;
@@ -62,6 +57,7 @@ namespace ext {
                 {"t", TIME_MODIFIED}
         };
         soring_should_be_applied_ = sorts;
+        // just duplication to ease access and enforce data integrity
     };
 
     Ls_sort_opt::~Ls_sort_opt() {
@@ -75,7 +71,7 @@ namespace ext {
         cout << nargs << " Args number" << endl;
 
         if (nargs == 0) {
-            // setting defaul sorting scheme
+            // setting default sorting scheme
             *soring_should_be_applied_ = DEFAULT_SORT;
             return true;
         } else {
@@ -104,8 +100,8 @@ namespace ext {
     }
 
 
-    ExternLS::~ExternLS() {
-        delete ls_opts;
+    ExternLS::~ExternLS(){
+       // delete ls_opts;
     }
 
 
@@ -113,18 +109,18 @@ namespace ext {
                          sh_core::callable_function funct_to_assign,
                          string &help_msg) :
             ExternalFunc(name,
-                          funct_to_assign,
-                          help_msg) {
+                         funct_to_assign,
+                         help_msg,
+                         new LS_opts("LS_opts_object",  &ls_flags)) {
 
         //TODO GEI IT OUT WHEN PROBLEM SOLVED
-        ls_opts = new LS_opts("LS_opts_object",  &this->ls_flags);
+       // ls_opts = new LS_opts("LS_opts_object",  &this->ls_flags);
 
     };
 
 
     void inline ExternLS::cleanUpAllAfterExecution() {
-        clearFlags(ls_opts);
-        //clearFlags(ls_opts);
+        clearFlags(func_opts_);
         passes_to_apply_.clear();
         args_start_position_offset_ = 1;
     }
@@ -197,7 +193,7 @@ namespace ext {
             v_finish = vec_to_sort->end();
         }
     */
-        switch (ls_opts->ls_flags_->sort_type_) {
+        switch (ls_flags.sort_type_) {
             case NAME: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
@@ -276,7 +272,7 @@ namespace ext {
             }
         }
 
-        if (ls_opts->ls_flags_->reverse_output_) {
+        if (ls_flags.reverse_output_) {
             reverse(vec_to_sort->begin(), vec_to_sort->end());
         }
 
@@ -294,7 +290,7 @@ namespace ext {
         using vect = vector<fs::path>;
         // ===============INIT END===========
 
-        if (ls_opts->ls_flags_->detailed_listing_) {
+        if (ls_flags.detailed_listing_) {
             performTimeCorrection();
         }
 
@@ -306,7 +302,7 @@ namespace ext {
                 {
                     if (is_directory(p)) {
 
-                        if (!ls_opts->ls_flags_->recursive_ && rec_depth != 0) {
+                        if (!ls_flags.recursive_ && rec_depth != 0) {
                             printAllAboutFile(&p, rec_depth); // if we should not look into directory
                         } else {
                             vect subdir_contain;
@@ -315,7 +311,7 @@ namespace ext {
                             for (int i = 0; i < rec_depth; ++i)
                                 printf("   ");
                             cout << p << " is a directory containing:\n";
-                            if (ls_opts->ls_flags_->recursive_)//recursive_ dive into directory
+                            if (ls_flags.recursive_)//recursive_ dive into directory
                                 do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
                             else
                                 printDirContain(&p, &subdir_contain, rec_depth);
@@ -368,14 +364,14 @@ namespace ext {
         argv += args_start_position_offset_;
         nargs -= args_start_position_offset_;
 
-        if (ls_opts->suboptionsAreValid(nargs, argv)) {
+        if (func_opts_->suboptionsAreValid(nargs, argv)) {
             cout << "problem checking" << endl;
 
 
-            cout << "Detailed listing flag " << ls_opts->ls_flags_->detailed_listing_ << endl;
-            cout << "Recursive output flag " << ls_opts->ls_flags_->recursive_ << endl;
-            cout << "Reverted output flag " << ls_opts->ls_flags_->reverse_output_ << endl;
-            cout << "Sorting type " << ls_opts->ls_flags_->sort_type_ << endl;
+            cout << "Detailed listing flag " << ls_flags.detailed_listing_ << endl;
+            cout << "Recursive output flag " << ls_flags.recursive_ << endl;
+            cout << "Reverted output flag " << ls_flags.reverse_output_ << endl;
+            cout << "Sorting type " << ls_flags.sort_type_ << endl;
 
             return ExternalFunc::call(nargs, argv);
         } else {
@@ -468,7 +464,7 @@ namespace ext {
             return;
         }
 
-        if (ls_opts->ls_flags_->show_file_type) {
+        if (ls_flags.show_file_type) {
             if (S_ISLNK(fileStat.st_mode)) filemark = '@'; //symbolic link
             if (S_ISSOCK(fileStat.st_mode)) filemark = '='; // socket
             if (S_ISFIFO(fileStat.st_mode)) filemark = '|'; // pipe (named channel)
@@ -478,7 +474,7 @@ namespace ext {
 
         printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
-        if (ls_opts->ls_flags_->detailed_listing_)
+        if (ls_flags.detailed_listing_)
             printFileAbout(path_to_print, depth, &fileStat);
 
     }
