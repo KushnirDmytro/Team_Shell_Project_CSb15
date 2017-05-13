@@ -14,7 +14,18 @@ using namespace std;
 
 namespace ext {
 
-    LS_opts::LS_opts(string name,
+
+    /* didn't manage syntax to handle them as class pseudos (without making them public)
+
+    using Ops = LS_OptsManager;
+    using Sorts = LsSortOptsManager;
+
+    // solution with this one suffers in IDE (it can't link inlines properly, but still compiler does)
+    using LS = ExternLS;
+*/
+
+    ExternLS::LS_OptsManager::
+    LS_OptsManager(string name,
                      LsFlagsStruct *ls_flags,
                      bool noargs_allowed) :
             DefaultOptionsManager(name,
@@ -23,7 +34,7 @@ namespace ext {
                     {"-l", new DefaultOptionsManager("-l", &ls_flags->detailed_listing_)},
                     {"-r", new DefaultOptionsManager("-r", &ls_flags->reverse_output_)},
                     {"-R", new DefaultOptionsManager("-R", &ls_flags->recursive_)},
-                    {"--sort", new Ls_sort_opt("--sort", &ls_flags->sort_type_)},
+                    {"--sort", new LsSortOptsManager("--sort", &ls_flags->sort_type_)},
                     {"-F",  new DefaultOptionsManager("-F", &ls_flags->show_file_type)}
             }) {
         ls_flags_ = ls_flags;
@@ -32,11 +43,13 @@ namespace ext {
     };
 
 
-    LS_opts::~LS_opts() {
+    ExternLS::LS_OptsManager::
+    ~LS_OptsManager() {
     }
 
 
-    void LS_opts::clearFlags() {
+    void  ExternLS::LS_OptsManager::
+    clearFlags() {
         ls_flags_->recursive_ = false;
         ls_flags_->detailed_listing_ = false;
         ls_flags_->reverse_output_ = false;
@@ -46,7 +59,8 @@ namespace ext {
 
 
 // option block for sorting
-    Ls_sort_opt::Ls_sort_opt(string name, ls_sorts *sorts)
+    ExternLS::LS_OptsManager::LsSortOptsManager::
+    LsSortOptsManager(string name, ls_sorts *sorts)
             : DefaultOptionsManager(name) {
         noargs_allowed_ = false;
         sort_opts_map_ = new map<string, ls_sorts>{
@@ -60,13 +74,15 @@ namespace ext {
         // just duplication to ease access and enforce data integrity
     };
 
-    Ls_sort_opt::~Ls_sort_opt() {
+    ExternLS::LS_OptsManager::LsSortOptsManager::
+    ~LsSortOptsManager() {
         delete sort_opts_map_;
     }
 
 
 // suboptions validator
-    bool Ls_sort_opt::suboptionsAreValid(size_t nargs, char **argv) {
+    bool  ExternLS::LS_OptsManager::LsSortOptsManager::
+    suboptionsAreValid(size_t nargs, char **argv) {
         cout << "ENTERED SORT_OPTIONS" << endl;
         cout << nargs << " Args number" << endl;
 
@@ -101,7 +117,6 @@ namespace ext {
 
 
     ExternLS::~ExternLS(){
-       // delete ls_opts;
     }
 
 
@@ -111,10 +126,7 @@ namespace ext {
             ExternalFunc(name,
                          funct_to_assign,
                          help_msg,
-                         new LS_opts("LS_opts_object",  &ls_flags)) {
-
-        //TODO GEI IT OUT WHEN PROBLEM SOLVED
-       // ls_opts = new LS_opts("LS_opts_object",  &this->ls_flags);
+                         new LS_OptsManager("LS_opts_object",  &ls_flags)) {
 
     };
 
@@ -141,7 +153,8 @@ namespace ext {
 // 3.5 -- in case of recursion expanding directories while sorting on preliminar stages
 // 3.6 -- sorted vector allready can be printed with additional info
 // 3.6 -- else just outputting
-    int ExternLS::extractPassesFromArgs(size_t nargs, char **argv, vector<fs::path> *p_form_args) {
+    int ExternLS::
+    extractPassesFromArgs(size_t nargs, char **argv, vector<fs::path> *p_form_args) {
         int i = 1; //argv index
         char *arg_buf_ptr = argv[i];
 
@@ -171,7 +184,8 @@ namespace ext {
     }
 
 
-    inline void ExternLS::performTimeCorrection() const{
+    inline void ExternLS::
+    performTimeCorrection() const{
         //for first file not to have empty time-data
         struct tm time_struct;
         const std::time_t raw_time = timezone;
@@ -180,7 +194,8 @@ namespace ext {
     }
 
 
-    inline void ExternLS::applySorting(vector<fs::path> *vec_to_sort) const{
+    inline void ExternLS::
+    applySorting(vector<fs::path> *vec_to_sort) const{
         /*
         // знаю що написана дурня і тег взагалі не про те
         bidirectional_iterator_tag<fs::path>  v_start;
@@ -280,7 +295,7 @@ namespace ext {
     };
 
 
-    int ExternLS::do_LS_job_with_vector(
+    int ExternLS::doLsJobWithVector(
             /*made not const in order to be sorted inside*/
             vector<fs::path> *p_from_args,
             const int rec_depth) {
@@ -312,7 +327,7 @@ namespace ext {
                                 printf("   ");
                             cout << p << " is a directory containing:\n";
                             if (ls_flags.recursive_)//recursive_ dive into directory
-                                do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
+                                doLsJobWithVector(&subdir_contain, rec_depth + 1);
                             else
                                 printDirContain(&p, &subdir_contain, rec_depth);
                         }
@@ -331,13 +346,14 @@ namespace ext {
 
 
 //show current directory
+    //TODO GET IT OUT
     int ExternLS::my_ls_inner(size_t nargs, char **argv) {
         for (fs::path p : (passes_to_apply_)) {
             //passes are there from argument line
             cout << "FOUND PATH TO APPLY" << p << endl;
         }
 
-        do_LS_job_with_vector(&passes_to_apply_);
+        doLsJobWithVector(&passes_to_apply_);
 
         cleanUpAllAfterExecution();
 
@@ -370,23 +386,6 @@ namespace ext {
         cleanUpAllAfterExecution();
 
         return result;
-        /*
-        if (func_opts_->suboptionsAreValid(nargs, argv)) {
-            cout << "problem checking" << endl;
-
-
-            //debug info
-            cout << "Detailed listing flag " << ls_flags.detailed_listing_ << endl;
-            cout << "Recursive output flag " << ls_flags.recursive_ << endl;
-            cout << "Reverted output flag " << ls_flags.reverse_output_ << endl;
-            cout << "Sorting type " << ls_flags.sort_type_ << endl;
-
-            return result;
-        } else {
-            cleanUpAllAfterExecution();
-            return 1;
-        }
-        */
     };
 
 
@@ -418,7 +417,8 @@ namespace ext {
     }
 
 
-    inline const stringstream *ExternLS::FormTimereportForFile(const fs::path *path_to_print) const{
+    inline const stringstream *ExternLS::
+    FormTimereportForFile(const fs::path *path_to_print) const{
 
         struct tm time_struct;
         const std::time_t raw_time = fs::last_write_time(*path_to_print) - timezone;
@@ -450,7 +450,8 @@ namespace ext {
     }
 
 
-    inline void ExternLS::printAllAboutFile(const fs::path *path_to_print, const int depth) const {
+    inline void ExternLS::
+    printAllAboutFile(const fs::path *path_to_print, const int depth) const {
         for (int i = 0; i <= depth; ++i)
             printf("    ");
         char filemark = ' ';
@@ -484,7 +485,10 @@ namespace ext {
     }
 
 
-    inline void ExternLS::printFileAbout(const fs::path *path_to_print, const int depth, struct stat *file_Stat) const{
+    inline void ExternLS::
+    printFileAbout(const fs::path *path_to_print,
+                   const int depth,
+                   struct stat *file_Stat) const{
 
         //just to be explicit and be able to delete it later
         const stringstream *time_stream = FormTimereportForFile(path_to_print);
@@ -501,8 +505,9 @@ namespace ext {
     }
 
 
-    inline void
-    ExternLS::printDirContain(const fs::path *dir, const vector<fs::path> *dir_contain, const int rec_depth) {
+    inline void ExternLS::
+    printDirContain(const fs::path *dir,
+                    const vector<fs::path> *dir_contain, const int rec_depth) {
 
         for (int i = 0; i < rec_depth; ++i)
             printf("   ");

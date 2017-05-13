@@ -1,9 +1,6 @@
 //
 // Created by d1md1m on 31.03.17.
 //
-
-
-
 #ifndef LAB_2_SHELL_EXTERN_LS_H
 #define LAB_2_SHELL_EXTERN_LS_H
 
@@ -37,62 +34,63 @@ namespace ext {
 
 //==================DECLARATIONS of defaults ==============
 
-//general options class for LS
-    class LS_opts : public DefaultOptionsManager {
-    public:
-        LsFlagsStruct *ls_flags_; // It is not a place to store it, just a link to handle
-        // actually this pretty obvious solution made my day...
 
-    public:
-        LS_opts(string name,
-                LsFlagsStruct *ls_flags,
-                bool noargs_allowed = true);
-
-        ~LS_opts();
-
-        void clearFlags() override;
+    class ExternLS;
+    class LS_OptsManager;
+    class LsSortOptsManager;
 
 
-    };
+    class ExternLS : public ExternalFunc {
 
 
-    class Ls_sort_opt : public DefaultOptionsManager {
-    private:
+    protected:
 
-    public:
+// ==================== OPTIONS ===============
+        //general opt manager class
+        class LS_OptsManager : public DefaultOptionsManager {
 
-        std::map<string, ls_sorts> *sort_opts_map_;
-        //this is a link to real sorting flag, available only via map using
-        ls_sorts *soring_should_be_applied_;
+            // ============Inner_class lvl 2
+            class LsSortOptsManager : public DefaultOptionsManager {
 
-        Ls_sort_opt(string name, ls_sorts *host_sorts);
+            private:
+                std::map<string, ls_sorts> *sort_opts_map_;
+                //this is a link to real sorting flag, available only via map using
+                ls_sorts *soring_should_be_applied_;
+            public:
+                LsSortOptsManager(string name, ls_sorts *host_sorts);
 
-        ~Ls_sort_opt();
+                ~LsSortOptsManager();
 
-        bool suboptionsAreValid(size_t nargs, char **argv) override;
-
-
-    };
-
+                bool suboptionsAreValid(size_t nargs, char **argv) override;
+            };
+            // ============Inner_class lvl 2
 
 
+        private:
+            LsFlagsStruct *ls_flags_; // It is not a place to store it, just a link to handle
+            // actually this pretty obvious solution made my day...
 
+        public:
+            LS_OptsManager(string name,
+                           LsFlagsStruct *ls_flags,
+                           bool noargs_allowed = true);
+
+            ~LS_OptsManager();
+
+            void clearFlags() override;
+        };
 // ==================== OPTIONS ===============
 
 
 
 
-    class ExternLS : public ExternalFunc {
 
     private:
-
         size_t args_start_position_offset_ = 1;
         std::vector<fs::path> passes_to_apply_;
-
-    public:
-
         LsFlagsStruct ls_flags;
 
+    public:
 
         ExternLS(const string &name,
                   sh_core::callable_function funct_to_assign,
@@ -102,41 +100,19 @@ namespace ext {
 
         virtual ~ExternLS();
 
-
-        // 1--getting pathes from args
-        // 2--verifying options and setting flags
-        // 3--sorting directories according to flags
-        // 3.5 -- in case of recursion expanding directories while sorting on preliminar stages
-        // 3.6 -- sorted vector already can be printed with additional info
-        // 3.6 -- else just outputting
-        int extractPassesFromArgs(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
-
         void setCurrentDirectoryAsPassToApply();
-
-        int do_LS_job_with_vector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
-
 
 //show current directory
         int my_ls_inner(size_t nargs, char **argv);
 
-/*
-
- //NOT FAIL
- ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug /home/d1md1m/CLionProjects/Lab_2_shell --sort -l -R
-
-
- ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort -l -R
-
-
- //FAIL
-ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
-
-
-  */
 
 //Overriding
         int call(size_t nargs, char **argv) override;
+
     private:
+        int doLsJobWithVector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
+
+        int extractPassesFromArgs(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
         void printFileAbout(const fs::path *path_to_print, const int depth, struct stat *file_Stat) const;
 

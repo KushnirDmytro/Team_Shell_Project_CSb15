@@ -96,16 +96,13 @@ namespace ext {
 
         DefaultOptionsManager *func_opts_;
 
-
         bool isValidDirectory(size_t nargs, char **vargs);
+
+        void clearFlags(DefaultOptionsManager* opt_to_clear);
 
     public:
 //Overriding
         int call(size_t nargs, char **args) override;
-
-        void clearFlags(DefaultOptionsManager* opt_to_clear);
-
-
 
     };
 
