@@ -28,7 +28,7 @@ namespace ext {
 
     const ls_sorts DEFAULT_SORT = NAME;
 
-    struct ls_option_flags {
+    struct LsFlagsStruct {
         bool detailed_listing_ = false;
         bool recursive_ = false;
         bool reverse_output_ = false;
@@ -41,10 +41,11 @@ namespace ext {
 //general options class for LS
     class LS_opts : public DefaultOptionsManager {
     public:
-        ls_option_flags LS_flags;
+        LsFlagsStruct *ls_flags_;
 
     public:
         LS_opts(string name,
+                LsFlagsStruct *ls_flags,
                 bool noargs_allowed = true);
 
         ~LS_opts();
@@ -95,6 +96,7 @@ namespace ext {
 
         //I HAD TO DO IT TO AVOID BUG
         LS_opts *ls_opts;
+        LsFlagsStruct ls_flags;
 
 
         ExternLS(const string &name,
@@ -147,9 +149,6 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
         void printDirContain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
 
         void printAllAboutFile(const fs::path *path_to_print, const int depth) const;
-
-        //TODO get it AWAY!
-        //void clearFlags() ;
 
         void cleanUpAllAfterExecution();
 

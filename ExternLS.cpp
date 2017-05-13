@@ -20,17 +20,18 @@ using namespace std;
 namespace ext {
 
     LS_opts::LS_opts(string name,
+                     LsFlagsStruct *ls_flags,
                      bool noargs_allowed) :
             DefaultOptionsManager(name,
                                   new bool,
                                   new std::map<string, DefaultOptionsManager *>{
-                    {"-l", new DefaultOptionsManager("-l", &LS_flags.detailed_listing_)},
-                    {"-r", new DefaultOptionsManager("-r", &LS_flags.reverse_output_)},
-                    {"-R", new DefaultOptionsManager("-R", &LS_flags.recursive_)},
-                    {"--sort", new Ls_sort_opt("--sort", &LS_flags.sort_type_)},
-                    {"-F",  new DefaultOptionsManager("-F", &LS_flags.show_file_type)}
+                    {"-l", new DefaultOptionsManager("-l", &ls_flags->detailed_listing_)},
+                    {"-r", new DefaultOptionsManager("-r", &ls_flags->reverse_output_)},
+                    {"-R", new DefaultOptionsManager("-R", &ls_flags->recursive_)},
+                    {"--sort", new Ls_sort_opt("--sort", &ls_flags->sort_type_)},
+                    {"-F",  new DefaultOptionsManager("-F", &ls_flags->show_file_type)}
             }) {
-
+        ls_flags_ = ls_flags;
         noargs_allowed_ = noargs_allowed;
 
     };
@@ -41,11 +42,11 @@ namespace ext {
 
 
     void LS_opts::clearFlags() {
-        LS_flags.recursive_ = false;
-        LS_flags.detailed_listing_ = false;
-        LS_flags.reverse_output_ = false;
-        LS_flags.show_file_type = false;
-        LS_flags.sort_type_ = DEFAULT_SORT;
+        ls_flags_->recursive_ = false;
+        ls_flags_->detailed_listing_ = false;
+        ls_flags_->reverse_output_ = false;
+        ls_flags_->show_file_type = false;
+        ls_flags_->sort_type_ = DEFAULT_SORT;
     };
 
 
@@ -116,7 +117,7 @@ namespace ext {
                           help_msg) {
 
         //TODO GEI IT OUT WHEN PROBLEM SOLVED
-        ls_opts = new LS_opts("LS_opts_object");
+        ls_opts = new LS_opts("LS_opts_object",  &this->ls_flags);
 
     };
 
@@ -188,7 +189,7 @@ namespace ext {
         // знаю що написана дурня і тег взагалі не про те
         bidirectional_iterator_tag<fs::path>  v_start;
         bidirectional_iterator_tag<fs::path> v_finish;
-        if (this->ls_opts->LS_flags.reverse_output_){
+        if (this->ls_opts->ls_flags_.reverse_output_){
              v_start = vec_to_sort->rbegin();
              v_finish = vec_to_sort->rend();
         } else{
@@ -196,7 +197,7 @@ namespace ext {
             v_finish = vec_to_sort->end();
         }
     */
-        switch (ls_opts->LS_flags.sort_type_) {
+        switch (ls_opts->ls_flags_->sort_type_) {
             case NAME: {
                 sort(vec_to_sort->begin(),
                      vec_to_sort->end(),
@@ -275,7 +276,7 @@ namespace ext {
             }
         }
 
-        if (ls_opts->LS_flags.reverse_output_) {
+        if (ls_opts->ls_flags_->reverse_output_) {
             reverse(vec_to_sort->begin(), vec_to_sort->end());
         }
 
@@ -293,7 +294,7 @@ namespace ext {
         using vect = vector<fs::path>;
         // ===============INIT END===========
 
-        if (ls_opts->LS_flags.detailed_listing_) {
+        if (ls_opts->ls_flags_->detailed_listing_) {
             performTimeCorrection();
         }
 
@@ -305,7 +306,7 @@ namespace ext {
                 {
                     if (is_directory(p)) {
 
-                        if (!ls_opts->LS_flags.recursive_ && rec_depth != 0) {
+                        if (!ls_opts->ls_flags_->recursive_ && rec_depth != 0) {
                             printAllAboutFile(&p, rec_depth); // if we should not look into directory
                         } else {
                             vect subdir_contain;
@@ -314,7 +315,7 @@ namespace ext {
                             for (int i = 0; i < rec_depth; ++i)
                                 printf("   ");
                             cout << p << " is a directory containing:\n";
-                            if (ls_opts->LS_flags.recursive_)//recursive_ dive into directory
+                            if (ls_opts->ls_flags_->recursive_)//recursive_ dive into directory
                                 do_LS_job_with_vector(&subdir_contain, rec_depth + 1);
                             else
                                 printDirContain(&p, &subdir_contain, rec_depth);
@@ -371,10 +372,10 @@ namespace ext {
             cout << "problem checking" << endl;
 
 
-            cout << "Detailed listing flag " << ls_opts->LS_flags.detailed_listing_ << endl;
-            cout << "Recursive output flag " << ls_opts->LS_flags.recursive_ << endl;
-            cout << "Reverted output flag " << ls_opts->LS_flags.reverse_output_ << endl;
-            cout << "Sorting type " << ls_opts->LS_flags.sort_type_ << endl;
+            cout << "Detailed listing flag " << ls_opts->ls_flags_->detailed_listing_ << endl;
+            cout << "Recursive output flag " << ls_opts->ls_flags_->recursive_ << endl;
+            cout << "Reverted output flag " << ls_opts->ls_flags_->reverse_output_ << endl;
+            cout << "Sorting type " << ls_opts->ls_flags_->sort_type_ << endl;
 
             return ExternalFunc::call(nargs, argv);
         } else {
@@ -467,7 +468,7 @@ namespace ext {
             return;
         }
 
-        if (ls_opts->LS_flags.show_file_type) {
+        if (ls_opts->ls_flags_->show_file_type) {
             if (S_ISLNK(fileStat.st_mode)) filemark = '@'; //symbolic link
             if (S_ISSOCK(fileStat.st_mode)) filemark = '='; // socket
             if (S_ISFIFO(fileStat.st_mode)) filemark = '|'; // pipe (named channel)
@@ -477,7 +478,7 @@ namespace ext {
 
         printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
-        if (ls_opts->LS_flags.detailed_listing_)
+        if (ls_opts->ls_flags_->detailed_listing_)
             printFileAbout(path_to_print, depth, &fileStat);
 
     }
