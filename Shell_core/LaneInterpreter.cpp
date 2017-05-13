@@ -6,9 +6,6 @@
 //
 
 #include "LaneInterpreter.h"
-#include "EmbeddedFunc.h"
-
-//extern std::map <string, sh_core::EmbeddedFunc*> embedded_lib;
 
 namespace fs = boost::filesystem;
 
@@ -43,10 +40,7 @@ namespace sh_core {
 
 namespace sh_core {
 
-
     //===================DYNAMIC INITIALISATION ======================
-
-
 
     LaneInterpreter::LaneInterpreter() {
 
@@ -74,10 +68,6 @@ namespace sh_core {
                                                    shell_script_interpreter_help_msg)},
                 {"ls", extern_ls_obj}
         };
-
-
-
-        //=========================ATTENTION!!!==========++++++!!!!!
 
         splitter = new utils::LineSplitter();
     }

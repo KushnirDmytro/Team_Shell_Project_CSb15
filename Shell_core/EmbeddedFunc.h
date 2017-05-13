@@ -6,14 +6,9 @@
 #define LAB_2_SHELL_EMBEDDEDFUNC_H
 
 
-//namespace fs = boost::filesystem;
-
 #include  <string>
 #include <map>
 #include <cstring>
-//#include "default_definitions.h"
-
-
 #include <boost/filesystem/operations.hpp>
 
 
@@ -21,7 +16,13 @@
 #include "Utils/FileLaneIterator.h"
 
 
+namespace fs = boost::filesystem;
+
+
 namespace sh_core {
+    using std::string;
+
+
     using callable_function =  int (*)(size_t, char **);
 
 #define  home_dir_call  "~"

@@ -14,10 +14,10 @@
 #include <boost/range/iterator_range.hpp>
 
 #include <queue>
-
+#include <map>
+#include <iostream>
+#include <string.h>
 #include "Env/Env.h"
-
-
 #include "Shell_core/EmbeddedFunc.h"
 
 
@@ -26,6 +26,9 @@
 
 namespace ext {
 
+
+    using std::string;
+    using std::map;
     class DefaultOptionsManager;
 
 //takes some arguments and checks are they in valid list (or of valid kind)

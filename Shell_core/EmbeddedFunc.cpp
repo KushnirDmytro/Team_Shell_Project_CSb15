@@ -27,7 +27,7 @@ namespace sh_core {
         return 0;
     }
 
-    void EmbeddedFunc::outputHelp(const string &helpMsg) const{
+    void EmbeddedFunc::outputHelp(const string &helpMsg) const {
         printf("%s\n", help_info_.c_str());
     }
 
@@ -41,10 +41,4 @@ namespace sh_core {
         }
         return func_(nargs_, vargs_);
     }
-
-
-
-
-//====================BUILT-IN COMMANDS END============
-
 }

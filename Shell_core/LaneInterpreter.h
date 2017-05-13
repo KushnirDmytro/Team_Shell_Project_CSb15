@@ -7,15 +7,20 @@
 
 #include <zconf.h>
 #include <wait.h>
+#include <iostream>
+#include <vector>
+#include <boost/filesystem.hpp>
+
 #include "Utils/LineSplitter.h"
-//#include "../EmbeddedFunc.h"
-#include "iostream"
 #include "../ExternLS.h"
 
 
 #define  home_dir_call  "~"
 
 namespace sh_core {
+
+    using std::string;
+    using std::vector;
 
     class LaneInterpreter {
     private:

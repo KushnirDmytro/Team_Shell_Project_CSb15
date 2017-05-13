@@ -7,14 +7,12 @@
 
 
 #include "ExternalFunc.h"
-#include "ExternLS.h"
 
 namespace ext {
 
     DefaultOptionsManager::DefaultOptionsManager(string name_,
                                                  bool * state_of_success,
                                                  std::map<string, DefaultOptionsManager *> *opts_map) {
-        //TODO options embedd
         default_state_to_write = state_of_success;
         opts_map_ = opts_map;
         option_name_ = name_;

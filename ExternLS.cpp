@@ -8,20 +8,18 @@
 #include "ExternLS.h"
 
 
-//TODO get it out
-using namespace std;
+
+
+/* didn't manage syntax to handle them as class pseudos (without making them public)
+using Ops = LS_OptsManager;
+using Sorts = LsSortOptsManager;
+
+// solution with this one suffers in IDE (it can't link inlines properly, but still compiler does)
+using LS = ExternLS;
+*/
+
 
 namespace ext {
-
-
-    /* didn't manage syntax to handle them as class pseudos (without making them public)
-
-    using Ops = LS_OptsManager;
-    using Sorts = LsSortOptsManager;
-
-    // solution with this one suffers in IDE (it can't link inlines properly, but still compiler does)
-    using LS = ExternLS;
-*/
 
     ExternLS::LS_OptsManager::
     LS_OptsManager(string name,
@@ -476,14 +474,13 @@ namespace ext {
         printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
         if (ls_flags.detailed_listing_)
-            printFileAbout(path_to_print, depth, &fileStat);
+            printFileAbout(path_to_print, &fileStat);
 
     }
 
 
     inline void ExternLS::
     printFileAbout(const fs::path *path_to_print,
-                   const int depth,
                    const struct stat *file_Stat) const{
 
         //just to be explicit and be able to delete it later

@@ -10,6 +10,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <map>
+#include <iostream>
 
 #include "ExternalFunc.h"
 #include "ctime"
@@ -18,6 +19,13 @@
 
 
 namespace ext {
+
+    using std::map;
+    using std::cout;
+    using std::endl;
+    using std::vector;
+    using std::stringstream;
+    using string;
 
     namespace fs = boost::filesystem;
 
@@ -112,7 +120,7 @@ namespace ext {
 
         int extractPassesFromArgs(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
-        void printFileAbout(const fs::path *path_to_print, const int depth, const struct stat *file_Stat) const;
+        void printFileAbout(const fs::path *path_to_print,  const struct stat *file_Stat) const;
 
         void printDirContain(const fs::path *dir, const std::vector<fs::path> *dir_contain, const int rec_depth);
 
