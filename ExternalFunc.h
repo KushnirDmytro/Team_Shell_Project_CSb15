@@ -46,8 +46,7 @@ namespace ext {
         //default value definition
         bool noargs_allowed_ = true;
 
-        //field for classes to initialize
-        //options_validator opt_cross_valid = nullptr;
+        bool *default_state_to_write;
 
         DefaultOptionsManager(string name,
                               std::map<string, DefaultOptionsManager *> *opts_map_ =
@@ -88,7 +87,7 @@ namespace ext {
 
         ExternalFunc(const string &name,
                       sh_core::callable_function funct_to_assign,
-                //DefaultOptionsManager *options_ptr,
+            //         DefaultOptionsManager *options_ptr,
                       string &help_msg) :
                 sh_core::EmbeddedFunc(name, funct_to_assign, help_msg) {
             //this->func_opts = options_ptr;

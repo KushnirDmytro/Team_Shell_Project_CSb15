@@ -21,23 +21,21 @@ namespace ext {
 
     LS_opts::LS_opts(string name,
                      bool noargs_allowed) :
-            DefaultOptionsManager(name) {
+            DefaultOptionsManager(name, new std::map<string, DefaultOptionsManager *>{
+                    {"-l", new LS_no_subopt_opt("-l", &LS_flags.detailed_listing_)},
+                    {"-r", new LS_no_subopt_opt("-r", &LS_flags.reverse_output_)},
+                    {"-R", new LS_no_subopt_opt("-R", &LS_flags.recursive_)},
+                    {"--sort", new Ls_sort_opt("--sort", &LS_flags.sort_type_)},
+                    {"-F",  new LS_no_subopt_opt("-F", &LS_flags.show_file_type)}
+            }) {
 
         noargs_allowed_ = noargs_allowed;
 
-        this->opts_map_ = new std::map<string, DefaultOptionsManager *>{
-                {"-l", new LS_no_subopt_opt("-l", &LS_flags.detailed_listing_)},
-                {"-r", new LS_no_subopt_opt("-r", &LS_flags.reverse_output_)},
-                {"-R", new LS_no_subopt_opt("-R", &LS_flags.recursive_)},
-                {"--sort", new Ls_sort_opt("--sort", &LS_flags.sort_type_)},
-                {"-F",  new LS_no_subopt_opt("-F", &LS_flags.show_file_type)}
-        };
     };
 
 
     LS_opts::~LS_opts() {
     }
-    // bool LS_opts::suboptionsAreValid(size_t nargs_, char **argv) override;
 
 
     void LS_opts::clear_flags() {
@@ -50,8 +48,6 @@ namespace ext {
 
 
 //prototype for unspecified option
-
-
     LS_no_subopt_opt::LS_no_subopt_opt(string name,
                                        bool *host_flag,
                                        bool noargs_allowed)

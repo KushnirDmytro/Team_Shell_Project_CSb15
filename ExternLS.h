@@ -36,8 +36,6 @@ namespace ext {
         ls_sorts sort_type_ = DEFAULT_SORT;
     };
 
-
-
 //==================DECLARATIONS of defaults ==============
 
 //general options class for LS
