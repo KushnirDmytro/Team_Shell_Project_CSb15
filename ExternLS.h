@@ -52,9 +52,6 @@ namespace ext {
 
         void clearFlags() override;
 
-        //bool suboptionsAreValid(size_t nargs_, char **argv) override;
-
-//    bool doesSuboptionSArgumentsAreValid(DefaultOptionsManager* opt_to_check, vector<string>* arg_buf) override;
 
     };
 
@@ -94,8 +91,6 @@ namespace ext {
 
     public:
 
-        //I HAD TO DO IT TO AVOID BUG
-       // LS_opts *ls_opts;
         LsFlagsStruct ls_flags;
 
 
@@ -112,9 +107,8 @@ namespace ext {
         // 2--verifying options and setting flags
         // 3--sorting directories according to flags
         // 3.5 -- in case of recursion expanding directories while sorting on preliminar stages
-        // 3.6 -- sorted vector allready can be printed with additional info
+        // 3.6 -- sorted vector already can be printed with additional info
         // 3.6 -- else just outputting
-
         int extractPassesFromArgs(size_t nargs, char **argv, std::vector<fs::path> *p_form_args);
 
         void setCurrentDirectoryAsPassToApply();
@@ -167,7 +161,6 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
 // ==================== OPTIONS ===============
 
-   // extern ExternLS *extern_ls_obj;
 
 }
 #endif //LAB_2_SHELL_EXTERN_LS_H

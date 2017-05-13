@@ -281,7 +281,7 @@ namespace ext {
 
 
     int ExternLS::do_LS_job_with_vector(
-            /*not const, to be sorted inside*/
+            /*made not const in order to be sorted inside*/
             vector<fs::path> *p_from_args,
             const int rec_depth) {
 
@@ -364,27 +364,31 @@ namespace ext {
         argv += args_start_position_offset_;
         nargs -= args_start_position_offset_;
 
+
+        int result =  ExternalFunc::call(nargs, argv);
+
+        cleanUpAllAfterExecution();
+
+        return result;
+        /*
         if (func_opts_->suboptionsAreValid(nargs, argv)) {
             cout << "problem checking" << endl;
 
 
+            //debug info
             cout << "Detailed listing flag " << ls_flags.detailed_listing_ << endl;
             cout << "Recursive output flag " << ls_flags.recursive_ << endl;
             cout << "Reverted output flag " << ls_flags.reverse_output_ << endl;
             cout << "Sorting type " << ls_flags.sort_type_ << endl;
 
-            return ExternalFunc::call(nargs, argv);
+            return result;
         } else {
             cleanUpAllAfterExecution();
             return 1;
         }
+        */
     };
 
-/*
-    void inline ExternLS::clearFlags() {
-        ls_opts->clearFlags();
-    };
-*/
 
     inline const stringstream*
     ExternLS::formPermissionReportForFile (const fs::path *path_to_print,

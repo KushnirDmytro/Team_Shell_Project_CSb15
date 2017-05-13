@@ -229,27 +229,20 @@ namespace ext {
 //Overriding
     int ExternalFunc::call(size_t nargs, char **args) {
 
-     //   if (func_opts_ != nullptr && func_opts_->suboptionsAreValid(nargs, args))
-
-
-
+        if (func_opts_ != nullptr && func_opts_->suboptionsAreValid(nargs, args)){
             return sh_core::EmbeddedFunc::call(nargs, args);
-
-
-            /*
+        }
         else{
-            std::cout << "Opts check failed " << std::endl;
+            std::cout << "Opts check failed in function " << name_ <<std::endl;
             return false;
         }
-             */
+
     };
+
 
     void ExternalFunc::clearFlags(DefaultOptionsManager* opt_to_clear) {
         opt_to_clear->clearFlags();
     }
-
-
-
 
 
 }

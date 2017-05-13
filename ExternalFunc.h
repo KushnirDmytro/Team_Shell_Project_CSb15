@@ -86,7 +86,6 @@ namespace ext {
     private:
     protected:
 
-        //DefaultOptionsManager *func_opts;
 
         ExternalFunc(const string &name,
                       sh_core::callable_function funct_to_assign,
@@ -105,6 +104,7 @@ namespace ext {
         int call(size_t nargs, char **args) override;
 
         void clearFlags(DefaultOptionsManager* opt_to_clear);
+
 
 
     };

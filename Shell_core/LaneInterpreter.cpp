@@ -86,7 +86,6 @@ namespace sh_core {
         for(auto i: embedded_lib){
            delete i.second;
         }
-
         delete splitter;
     }
 //TODO filemasks
