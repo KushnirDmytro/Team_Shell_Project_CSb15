@@ -148,7 +148,8 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
         void printAllAboutFile(const fs::path *path_to_print, const int depth) const;
 
-        void clearFlags() ;
+        //TODO get it AWAY!
+        //void clearFlags() ;
 
         void cleanUpAllAfterExecution();
 

@@ -105,6 +105,8 @@ namespace ext {
 //Overriding
         int call(size_t nargs, char **args) override;
 
+        void clearFlags(DefaultOptionsManager* opt_to_clear);
+
 
     };
 

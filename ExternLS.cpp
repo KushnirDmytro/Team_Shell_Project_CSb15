@@ -122,7 +122,8 @@ namespace ext {
 
 
     void inline ExternLS::cleanUpAllAfterExecution() {
-        clearFlags();
+        clearFlags(ls_opts);
+        //clearFlags(ls_opts);
         passes_to_apply_.clear();
         args_start_position_offset_ = 1;
     }
@@ -382,11 +383,11 @@ namespace ext {
         }
     };
 
-
+/*
     void inline ExternLS::clearFlags() {
         ls_opts->clearFlags();
     };
-
+*/
 
     inline const stringstream*
     ExternLS::formPermissionReportForFile (const fs::path *path_to_print,

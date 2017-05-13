@@ -153,7 +153,7 @@ namespace ext {
         }
 
         clearTempPointersArray(arg_buf->size(), temp_buf);
-        //arg_buf->clear();
+
         return true;
     }
 
@@ -181,7 +181,9 @@ namespace ext {
     }
 
     inline void DefaultOptionsManager::clearFlags() {
-        std::cout << "HEY, you have not overloaded clearing Flags function! \n";
+        std::cout << "HEY, you have not overloaded clearing Flags function! I am: "
+                  << option_name_
+                  << std::endl;
     }
 
 
@@ -230,6 +232,12 @@ namespace ext {
         }
              */
     };
+
+    void ExternalFunc::clearFlags(DefaultOptionsManager* opt_to_clear) {
+        opt_to_clear->clearFlags();
+    }
+
+
 
 
 }

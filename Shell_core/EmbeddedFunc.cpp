@@ -32,15 +32,14 @@ namespace sh_core {
     }
 
 
-    int EmbeddedFunc::call(size_t nargs_, char **args_) {
-        nargs_ = nargs_;
-        vargs_ = args_;
+    int EmbeddedFunc::call(size_t nargs, char **args) {
+        nargs_ = nargs;
+        vargs_ = args;
         if (searchForHelp(nargs_, vargs_)) {
             outputHelp(help_info_);
             return 1;
         }
         return func_(nargs_, vargs_);
-        //     return 1;
     }
 
 
