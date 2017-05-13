@@ -180,6 +180,10 @@ namespace ext {
 
     }
 
+    inline void DefaultOptionsManager::clearFlags() {
+        std::cout << "HEY, you have not overloaded clearing Flags function! \n";
+    }
+
 
 
 
@@ -212,10 +216,19 @@ namespace ext {
 //Overriding
     int ExternalFunc::call(size_t nargs, char **args) {
 
-        //if (suboptionsAreValid(nargs, args)){
+     //   if (func_opts_ != nullptr && func_opts_->suboptionsAreValid(nargs, args))
 
-        return sh_core::EmbeddedFunc::call(nargs, args);
 
+
+            return sh_core::EmbeddedFunc::call(nargs, args);
+
+
+            /*
+        else{
+            std::cout << "Opts check failed " << std::endl;
+            return false;
+        }
+             */
     };
 
 

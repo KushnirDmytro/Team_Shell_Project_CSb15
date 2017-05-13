@@ -70,6 +70,8 @@ namespace ext {
         bool doesMapContain(const string seek_this) const;
 
         void clearTempPointersArray(size_t arr_size, char **arr_ptr) const;
+
+        virtual void clearFlags();
     };
 
 
@@ -88,11 +90,13 @@ namespace ext {
 
         ExternalFunc(const string &name,
                       sh_core::callable_function funct_to_assign,
-            //         DefaultOptionsManager *options_ptr,
-                      string &help_msg) :
+                      string &help_msg,
+                      DefaultOptionsManager *options_ptr = nullptr ) :
                 sh_core::EmbeddedFunc(name, funct_to_assign, help_msg) {
-            //this->func_opts = options_ptr;
+            func_opts_ = options_ptr;
         }
+
+        DefaultOptionsManager *func_opts_;
 
 
         bool isValidDirectory(size_t nargs, char **vargs);

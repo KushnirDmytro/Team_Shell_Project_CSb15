@@ -49,7 +49,7 @@ namespace ext {
 
         ~LS_opts();
 
-        void clear_flags();
+        void clearFlags() override;
 
         //bool suboptionsAreValid(size_t nargs_, char **argv) override;
 
@@ -57,20 +57,6 @@ namespace ext {
 
     };
 
-/*
-    class LS_no_subopt_opt : public DefaultOptionsManager {
-    public:
-
-        bool *flag_to_write;
-
-        LS_no_subopt_opt(string name,
-                         bool *host_flag_to_write,
-                         bool noargs_allowed = true);
-
-        bool suboptionsAreValid(size_t nargs, char **argv) override;
-
-    };
-*/
 
     class Ls_sort_opt : public DefaultOptionsManager {
     private:
@@ -110,7 +96,6 @@ namespace ext {
         //I HAD TO DO IT TO AVOID BUG
         LS_opts *ls_opts;
 
-        //ls_option_flags flags;
 
         ExternLS(const string &name,
                   sh_core::callable_function funct_to_assign,
@@ -133,7 +118,6 @@ namespace ext {
         void setCurrentDirectoryAsPassToApply();
 
         int do_LS_job_with_vector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
-
 
 
 //show current directory
@@ -164,7 +148,7 @@ ls /home/d1md1m/CLionProjects/Lab_2_shell/cmake-build-debug --sort N -l -R
 
         void printAllAboutFile(const fs::path *path_to_print, const int depth) const;
 
-        void clearFlags();
+        void clearFlags() ;
 
         void cleanUpAllAfterExecution();
 

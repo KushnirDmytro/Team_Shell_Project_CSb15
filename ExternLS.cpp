@@ -40,32 +40,14 @@ namespace ext {
     }
 
 
-    void LS_opts::clear_flags() {
+    void LS_opts::clearFlags() {
         LS_flags.recursive_ = false;
         LS_flags.detailed_listing_ = false;
         LS_flags.reverse_output_ = false;
         LS_flags.show_file_type = false;
-        LS_flags.sort_type_ = NAME;
+        LS_flags.sort_type_ = DEFAULT_SORT;
     };
 
-/*
-//prototype for unspecified option
-    LS_no_subopt_opt::LS_no_subopt_opt(string name,
-                                       bool *host_flag,
-                                       bool noargs_allowed)
-            : DefaultOptionsManager(name) {
-        noargs_allowed_ = noargs_allowed;
-        flag_to_write = host_flag;
-    }
-
-
-//checker for received suboptions
-    bool LS_no_subopt_opt::suboptionsAreValid(size_t nargs, char **argv) {
-
-        return argumentlessSuboptionCheck(nargs, argv, flag_to_write);
-
-    }
-*/
 
 // option block for sorting
     Ls_sort_opt::Ls_sort_opt(string name, ls_sorts *sorts)
@@ -402,7 +384,7 @@ namespace ext {
 
 
     void inline ExternLS::clearFlags() {
-        ls_opts->clear_flags();
+        ls_opts->clearFlags();
     };
 
 
