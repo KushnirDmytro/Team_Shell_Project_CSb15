@@ -7,7 +7,6 @@
 #include "EmbeddedFunc.h"
 
 using std::string;
-//extern env::Env *environment;
 
 #define  home_dir_call  "~"
 

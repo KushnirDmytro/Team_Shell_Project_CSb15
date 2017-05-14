@@ -29,7 +29,7 @@ namespace sh_core {
 //produced Kovalchuk, Refactored & extracted by Kushnir
             int convertStrVectorToChars(const vector<string> *args, char **cargs) const;
 
-
+            //TODO solve problem of spaced filenames
             ~LineSplitter();
         };
     }

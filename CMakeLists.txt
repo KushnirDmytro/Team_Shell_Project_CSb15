@@ -34,6 +34,11 @@ set(SOURCE_FILES my_rm/remove_main.cpp my_rm/deleter.cpp my_rm/deleter.h)
 
 add_executable(rm ${SOURCE_FILES})
 
+set(SOURCE_FILES mv_master/mv_main.cpp)
+add_executable(mv ${SOURCE_FILES})
+
+set(SOURCE_FILES cp_master/cp_main.cpp)
+add_executable(cp ${SOURCE_FILES})
 
 FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
 

@@ -25,27 +25,6 @@ using  callable_function =  int (*)(size_t, char **);
 
 
 
-/*
-
-// HOW TO CURE SPACED FILENAMES???
-void cure_spaced_filenemas(size_t nargs,char* vargs[]){
-    for (size_t i = 0; i < nargs; ++i){
-        //TODO
-        //USE BOOST::FILESYSTEM::PATH to recognise start, mid, end of directory
-    }
-}
-
-
-
-vector<boost::filesystem::path> regex_match_directories(string regex){
-    //TODO
-    //process via iterators all possible pathes that match such expression
-    vector<boost::filesystem::path> proceed_buffer;
-    vector<boost::filesystem::path> directories;
-    return directories;
-}
-*/
-
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
 
