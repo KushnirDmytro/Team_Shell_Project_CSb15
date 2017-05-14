@@ -106,7 +106,14 @@ namespace ext{
     //TODO solve it when splitting onto several EXEs
 //just activator-function
     int myLsStaticLauncher(size_t nargs, char **argv) {
-        return ext::LsObject->my_ls_inner(nargs, argv);
+        // this class is needed only to be static initializer but can instead incapsulate behaviour
+        // I just decide not to get behaviour out of class in generic case
+
+        //printf("Initialization and checks performed successfully\n");
+
+        return 1;
+
+        //return ext::LsObject->my_ls_inner(nargs, argv);
         //my_ls_inner(initialNargs_, argv);
     }
 
@@ -115,17 +122,13 @@ namespace ext{
 
 int main(int argc, char **argv)
 {
-    printf("HELLO LS!!!\n");
 
     string ls_help = "PRINT HELP HERE";
 
 
     ext::LsObject = new ext::ExternLS("EXTERN_LS", ext::myLsStaticLauncher, ls_help);
 
-    printf("HELLO LSOBJECT!!!\n");
-
     sh_core::environment =  new env::Env();
-    sh_core::interpreter = new sh_core::LaneInterpreter();
 
     return ext::LsObject->call(argc, argv);
 
@@ -139,7 +142,6 @@ int main(int argc, char **argv)
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
 
-    delete sh_core::interpreter;
     delete sh_core::environment;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 

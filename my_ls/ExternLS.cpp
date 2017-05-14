@@ -8,8 +8,6 @@
 #include "ExternLS.h"
 
 
-
-
 /* didn't manage syntax to handle them as class pseudos (without making them public)
 using Ops = LS_OptsManager;
 using Sorts = LsSortOptsManager;
@@ -374,8 +372,9 @@ namespace ext {
         argv += args_start_position_offset_;
         nargs -= args_start_position_offset_;
 
-
         int result =  ExternalFunc::call(nargs, argv);
+
+        doLsJobWithVector(&passes_to_apply_);
 
         cleanUpAllAfterExecution();
 

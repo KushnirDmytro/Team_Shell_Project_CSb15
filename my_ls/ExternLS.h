@@ -55,7 +55,7 @@ namespace ext {
 
     class ExternLS : public ExternalFunc {
 
-// ==================== OPTIONS ===============
+// ==================== OPTIONS (Inner class)===============
         //general opt manager class
         class LS_OptsManager : public DefaultOptionsManager {
 
@@ -73,7 +73,7 @@ namespace ext {
 
                 bool suboptionsAreValid(size_t nargs, char **argv) override;
             };
-            // ============Inner_class lvl 2
+            // ============Inner_class lvl 2 END
 
 
         private:
@@ -88,7 +88,7 @@ namespace ext {
 
             void clearFlags() override;
         };
-// ==================== OPTIONS ===============
+// ==================== OPTIONS (Inner class) END===============
 
 
 
@@ -103,7 +103,6 @@ namespace ext {
                   sh_core::callable_function funct_to_assign,
                   string &help_msg);
 
-
         virtual ~ExternLS();
 
         void setCurrentDirectoryAsPassToApply();
@@ -111,11 +110,8 @@ namespace ext {
 //show current directory
         int my_ls_inner(size_t nargs, char **argv);
 
-
 //Overriding
         int call(size_t nargs, char **argv) override;
-
-       // int static statCallAdapter(size_t nargs, char **argv);
 
     private:
         int doLsJobWithVector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
