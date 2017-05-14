@@ -13,7 +13,7 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
-        Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h)
+        Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h)
 add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
 
 
@@ -37,8 +37,19 @@ add_executable(rm ${SOURCE_FILES})
 set(SOURCE_FILES mv_master/mv_main.cpp)
 add_executable(mv ${SOURCE_FILES})
 
-set(SOURCE_FILES cp_master/cp_main.cpp)
+set(SOURCE_FILES cp_master/cp_main.cpp )
 add_executable(cp ${SOURCE_FILES})
+
+set(SOURCE_FILES my_mkdir/mkdir_main.cpp
+        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h
+        Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
+        Env/ConsoleView.cpp Env/ConsoleView.h
+        Env/User.cpp Env/User.h
+        Env/Env.cpp Env/Env.h
+        Env/Directory.cpp Env/Directory.h
+        ExternalFunc.cpp ExternalFunc.h)
+add_executable(mkdir ${SOURCE_FILES})
+
 
 FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
 
@@ -48,6 +59,7 @@ target_link_libraries( Lab_2_shell  ${Boost_LIBRARIES} )
 #target_link_libraries( myLsStaticLauncher ${Boost_LIBRARIES} )
 target_link_libraries( rm ${Boost_LIBRARIES} )
 target_link_libraries( ls ${Boost_LIBRARIES} )
+target_link_libraries( mkdir ${Boost_LIBRARIES} )
 
 
 
