@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <boost/filesystem.hpp>
+#include <string.h>
 
 #include "Utils/LineSplitter.h"
 #include "coreFuncLib.h"
@@ -30,7 +31,7 @@ namespace sh_core {
         utils::LineSplitter *splitter;
 
         // launcher for custom modules
-        int myExternLauncher(char **args) const;
+        int myExternLauncher(char **args, const char* dest = nullptr) const;
 
         int getNumOfMyBuiltins() const;
 

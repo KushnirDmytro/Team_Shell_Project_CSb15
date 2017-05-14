@@ -12,6 +12,8 @@ namespace fs = boost::filesystem;
 
 namespace sh_core {
 
+#include <string.h>
+
     extern string shell_script_interpreter_help_msg;
     extern string cd_help_msg;
     extern string pwd_help_msg;
@@ -21,7 +23,7 @@ namespace sh_core {
     //===================DYNAMIC INITIALISATION ======================
 
     inline fs::path* absPathTo(string arg){
-        return  new fs::path (fs::path(environment->dir_->getActualPath()) / fs::path("ls") );
+        return  new fs::path (fs::path(environment->dir_->getActualPath()) / fs::path(arg) );
     }
 
     LaneInterpreter::LaneInterpreter() {
@@ -38,7 +40,7 @@ namespace sh_core {
                                                    shell_script_interpreter_help_msg)}
         };
 
-        external_lib_  = {
+        external_lib_  = { //initializing full pathnames
                 {"ls", absPathTo("ls") },
                 {"rm", absPathTo("rm")},
                 {"cp", absPathTo("cp")},
@@ -60,14 +62,17 @@ namespace sh_core {
 
 
 // launcher for custom modules
-    int LaneInterpreter::myExternLauncher(char **const args) const{
+    int LaneInterpreter::myExternLauncher(char **const args, const char* dest) const{
+        if (dest == nullptr)
+            dest = args[0];
+
         pid_t pid, wpid;
         int status;
 
         pid = fork();
         if (pid == 0) {
             //  we are in Child process
-            if (execv(args[0], args) == -1) {
+            if (execv(dest, args) == -1) {
                 perror("my_Shell failed to launch this file");
             }
             exit(EXIT_FAILURE);
@@ -124,28 +129,33 @@ namespace sh_core {
     int LaneInterpreter::myExecute(const vector<string> *const args) const{
 
         char **cargs = new char *[args->size() + 1];
-        unsigned int args_number = (int) args->size();
+        size_t args_number = args->size();
 
         std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
         splitter->convertStrVectorToChars(args, cargs);
 
-        for (int i = 0; i < getNumOfMyBuiltins(); i++) {
+        string possibleFunc = string(cargs[0]);
 
-            string possibleFunc = string(cargs[0]);
-
-            //auto search_iter = embedded_lib_.find(cargs[0]);
-
-            if (hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
+        int result;
+        if (hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
             {
                 //=============CALLING INNER FUNCTION <=======================
-                return embedded_lib_.at(possibleFunc)->call(args_number, cargs);
+                result = embedded_lib_.at(possibleFunc)->call(args_number, cargs);
             }
+        else{ // CALLING EXTERN FUNC <======================
+            if (hasSuchExternal(&possibleFunc)){
+                //string *buffer = new string(external_lib_.at(possibleFunc)->string().c_str());
+                //strcpy(cargs[0], external_lib_.at(possibleFunc)->string().c_str());
+                //I know it is not safe but in some reason strcpy_s does not want to import
+                result = myExternLauncher(cargs, external_lib_.at(possibleFunc)->string().c_str());
+                //using full pathname instead of just local one
+            }
+            else
+                result = myExternLauncher(cargs);
         }
 
-        // CALLING EXTERN FUNC <======================
-        return myExternLauncher(cargs);
-
-
+        delete cargs;
+        return result;
     }
 
     int LaneInterpreter::processSting(string *values) const{
