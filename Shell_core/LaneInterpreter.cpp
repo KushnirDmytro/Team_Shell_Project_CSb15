@@ -73,7 +73,7 @@ namespace sh_core {
         pid = fork();
         if (pid == 0) {
             //  we are in Child process
-            if (execv(dest, args) == -1) {
+            if (execvp(dest, args) == -1) {
                 perror("my_Shell failed to launch this file");
             }
             exit(EXIT_FAILURE);
@@ -132,7 +132,8 @@ namespace sh_core {
         char **cargs = new char *[args->size() + 1];
         size_t args_number = args->size();
 
-        std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
+        // we'll need this debugging part 2
+        //std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
         splitter->convertStrVectorToChars(args, cargs);
 
         string possibleFunc = string(cargs[0]);

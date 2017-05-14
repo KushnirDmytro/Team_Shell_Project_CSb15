@@ -75,7 +75,15 @@ namespace sh_core{
         printf("List of Commands:\n");
         printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
         printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
-        printf(" 'mysh' <script_filename>.sh can launch *.sh scripts interpreting them\n");
+        printf(" 'mysh' <script_filename>.sh can launch *.msh scripts interpreting them\n");
+
+        printf(" Registered external functions:\n");
+
+        printf(" 'ls' (detailed options ls -h) to list directory contain\n");
+
+        printf(" 'mv' <filename> <directory>  moves <filename> to <directory> \n");
+        printf(" 'rm' FULL filename removes selected file\n");
+        printf(" 'cp' <from> <to> copies one file  to another\n");
 
         printf(" In case of external function option_name_ inputed (some Shell extentions) it will be executed if founded\n");
 

@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include "deleter.h"
-#include <vector>
 #include <boost/filesystem.hpp>
 #include <sstream>
 
