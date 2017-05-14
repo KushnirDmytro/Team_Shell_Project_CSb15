@@ -46,6 +46,8 @@ namespace sh_core {
 
         int processSting(string * values) const;
 
+        bool doesAllPathesValidAndRefineToAbsolute(vector <fs::path> *args) const;
+
         ~LaneInterpreter();
         //TODO filemasks
     };

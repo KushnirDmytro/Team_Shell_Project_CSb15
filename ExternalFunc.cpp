@@ -10,6 +10,7 @@
 
 namespace ext {
 
+
     DefaultOptionsManager::DefaultOptionsManager(string name_,
                                                  bool * state_of_success,
                                                  std::map<string, DefaultOptionsManager *> *opts_map) {
@@ -206,22 +207,6 @@ namespace ext {
         delete func_opts_;
     };
 
-    inline bool ExternalFunc::isValidDirectory(size_t nargs, char **vargs) {
-        boost::filesystem::path full_path;
-        for (size_t i = 0; i < nargs; ++i) {
-            full_path = boost::filesystem::current_path();
-            full_path /= string(vargs[i]);
-            if (
-                    (!boost::filesystem::is_directory(vargs[i]))
-                    ||
-                    (!(boost::filesystem::is_directory(full_path)))
-                    ) {
-
-                return false;
-            }
-        }
-        return true;
-    }
 
 
 //Overriding

@@ -117,6 +117,27 @@ namespace sh_core {
         return 1;
     }
 
+    bool LaneInterpreter::doesAllPathesValidAndRefineToAbsolute(vector <fs::path> *args) const{
+        fs::path full_path;
+        for (auto iter: *args) {
+            if (fs::exists(iter))
+                continue;
+            else {
+                full_path = sh_core::environment->dir_->getActualPath();
+                full_path /= iter;
+                if (fs::exists(full_path)) {
+                    iter = fs::path(full_path);
+                    continue;
+                }
+                else{
+                    printf("Failed verification of arguments on: %s \n", iter.string().c_str());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     int LaneInterpreter::getNumOfMyBuiltins() const{
         return (int) embedded_lib.size();

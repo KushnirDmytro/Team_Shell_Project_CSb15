@@ -143,13 +143,14 @@ namespace ext {
 
     }
 
-
+// ALGO OF PROCESSING STUFF
 // 1--getting pathes from args
 // 2--verifying options and setting flags
 // 3--sorting directories according to flags
 // 3.5 -- in case of recursion expanding directories while sorting on preliminar stages
 // 3.6 -- sorted vector allready can be printed with additional info
 // 3.6 -- else just outputting
+
     int ExternLS::
     extractPassesFromArgs(size_t nargs, char **argv, vector<fs::path> *p_form_args) {
         int i = 1; //argv index
@@ -163,13 +164,19 @@ namespace ext {
             p = fs::path(arg_buf_ptr);
 
             try {
-                if (fs::exists(p))    // does p actually exist?
-                {
-                    p_form_args->push_back(p);
-                } else
-                    cout << p << endl << " does not exist\n";
-            }
 
+                if (fs::exists(p))    // does p actually exist?
+                    p_form_args->push_back(p);
+                else{
+                    fs::path absolutePath = fs::current_path() / p;
+                    if (fs::exists(absolutePath) )
+                        p_form_args->push_back(absolutePath);
+                    else{
+                        cout << p << endl << " does not exist\n";
+                        //should I report failure here?
+                        }
+                }
+            }
             catch (const fs::filesystem_error &ex) {
                 cout << ex.what() << '\n';
             }
@@ -177,7 +184,7 @@ namespace ext {
             arg_buf_ptr = argv[i];
         }
 
-        return 0; //number of OK pathes
+        return 0;
     }
 
 
@@ -289,15 +296,13 @@ namespace ext {
     };
 
 
-    int ExternLS::doLsJobWithVector(
+    int ExternLS::doLsJobWithVector(vector<fs::path> *p_from_args,const int rec_depth) {
             /*made not const in order to be sorted inside*/
-            vector<fs::path> *p_from_args,
-            const int rec_depth) {
 
         applySorting(p_from_args);
-        // ===============INIT===========
+
         using vect = vector<fs::path>;
-        // ===============INIT END===========
+
 
         if (ls_flags.detailed_listing_) {
             performTimeCorrection();
@@ -306,9 +311,6 @@ namespace ext {
         //iterate list of arguments get
         for (fs::path p:*p_from_args) {
 
-            try {
-                if (fs::exists(p))    // does p actually exist?
-                {
                     if (is_directory(p)) {
 
                         if (!ls_flags.recursive_ && rec_depth != 0) {
@@ -327,14 +329,9 @@ namespace ext {
                         }
                     } else
                         printAllAboutFile(&p, rec_depth);
-                } else
-                    cout << p << endl << " does not exist\n"; //yes doublecheck
-            }
+                }
 
-            catch (fs::filesystem_error &ex) {
-                cout << ex.what() << '\n';
-            }
-        }
+
         return 0;
     }
 

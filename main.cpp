@@ -2,32 +2,19 @@
 
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <sys/wait.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <vector>
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <pwd.h>
-#include <map>
-#include <fstream>
-#include <cstring>
 
 
 //========================CLASSES IMPORT==================
 
 #include "Env/ConsoleView.h"
-#include "Env/User.h"
-#include "Env/Directory.h"
 #include "Shell_core/EmbeddedFunc.h"
 #include "Shell_core/Utils/LineSplitter.h"
-#include "Shell_core/LaneInterpreter.h"
-#include "Shell_core/Utils/FileLaneIterator.h"
-#include "ExternalFunc.h"
-#include "ExternLS.h"
-#include "Env/Env.h"
 #include "Shell_core/LaneInterpreter.h"
 //====================CLASSES IMPORT END=====================
 
@@ -119,13 +106,6 @@ void my_loop()
 
 int main(int argc, char **argv)
 {
-
-
-
-//TODO ASK HOW IT WORKS
-    //Function_options *ls_func_opts = new Function_options(ls_func_opts_map_ptr);
-
-
 
 
     sh_core::environment =  new env::Env();

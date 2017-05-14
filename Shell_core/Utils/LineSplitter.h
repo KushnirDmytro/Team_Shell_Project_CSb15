@@ -8,9 +8,13 @@
 #include <array>
 #include <cstring>
 #include <vector>
+#include <boost/filesystem.hpp>
+#include "../EmbeddedFunc.h"
 
 using std::vector;
 using std::string;
+using std::vector;
+namespace fs = boost::filesystem;
 
 namespace sh_core {
 
@@ -24,6 +28,7 @@ namespace sh_core {
 
 //produced Kovalchuk, Refactored & extracted by Kushnir
             int convertStrVectorToChars(const vector<string> *args, char **cargs) const;
+
 
             ~LineSplitter();
         };

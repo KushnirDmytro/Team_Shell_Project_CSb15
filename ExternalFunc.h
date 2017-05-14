@@ -13,13 +13,14 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/range/iterator_range.hpp>
 
+#include <vector>
 #include <queue>
 #include <map>
 #include <iostream>
 #include <string.h>
+
 #include "Env/Env.h"
 #include "Shell_core/EmbeddedFunc.h"
-
 
 
 // =====================>class OPTIONS  DECLARATION
@@ -27,9 +28,12 @@
 namespace ext {
 
 
+    using std::vector;
     using std::string;
     using std::map;
     class DefaultOptionsManager;
+
+
 
 //takes some arguments and checks are they in valid list (or of valid kind)
 
@@ -99,7 +103,6 @@ namespace ext {
 
         DefaultOptionsManager *func_opts_;
 
-        bool isValidDirectory(size_t nargs, char **vargs);
 
         void clearFlags(DefaultOptionsManager* opt_to_clear);
 

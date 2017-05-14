@@ -15,10 +15,13 @@
 #include "ExternalFunc.h"
 #include "ctime"
 
-#include "Shell_core/EmbeddedFunc.h"
-
 
 namespace ext {
+
+    class LaneInterpreter;
+
+    extern LaneInterpreter *interpreter;
+
 
     using std::map;
     using std::cout;
@@ -28,6 +31,8 @@ namespace ext {
     using std::string;
 
     namespace fs = boost::filesystem;
+
+
 
 //==================DECLARATIONS of defaults ==============
     enum ls_sorts {
@@ -46,10 +51,6 @@ namespace ext {
 
 //==================DECLARATIONS of defaults ==============
 
-
-    class ExternLS;
-    class LS_OptsManager;
-    class LsSortOptsManager;
 
 
     class ExternLS : public ExternalFunc {
