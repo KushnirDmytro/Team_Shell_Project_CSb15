@@ -23,9 +23,9 @@ namespace sh_core {
     class LaneInterpreter {
     private:
 
-        std::map<string, EmbeddedFunc *> embedded_lib;
+        std::map<string, EmbeddedFunc *> embedded_lib_;
 
-        //TODO make the same map for externals register
+        std::map<string, fs::path*> external_lib_;
 
         utils::LineSplitter *splitter;
 
@@ -34,9 +34,13 @@ namespace sh_core {
 
         int getNumOfMyBuiltins() const;
 
-        int myExecute(const vector<string> *const args) const;
+        int myExecute(const vector<string>  *const args) const;
 
         bool doesAllPathesValidAndRefineToAbsolute(vector <fs::path> *args) const;
+
+        bool hasSuchEmbedded(const string * const arg) const;
+
+        bool hasSuchExternal(const string * const arg) const;
 
     public:
 

@@ -13,7 +13,8 @@ using std::string;
 namespace sh_core{
 
 
-    string cd_help_msg = "to change directory type in: cd <directory option_name_> \n"
+    string cd_help_msg = "function CD requires argument after it\n"
+            "to change directory type in: cd <directory option_name_> \n"
             "<~> = 'HOME' dirrectory if one defined \n"
             "<.> = current dirrectory  \n"
             "<..> = 'parrent directory'  ";

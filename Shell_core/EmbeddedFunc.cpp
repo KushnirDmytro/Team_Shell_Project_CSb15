@@ -31,7 +31,6 @@ namespace sh_core {
             if ((strcmp(argvector[i], "--help") == 0) || (strcmp(argvector[i], "-h") == 0)) {
                 return 1;
             }
-
         }
         return 0;
     }
@@ -41,15 +40,30 @@ namespace sh_core {
     }
 
 
+    inline void EmbeddedFunc::cleanAfterExecution(){
+        initialVargs_ = NULL;
+        initialNargs_ = 0;
+    }
+
     int EmbeddedFunc::call(size_t nargs, char **args) {
+        bool was_initializer = false;
         if (initialVargs_ == NULL) { //only when it had not been initialized before in call-stack
             initialNargs_ = nargs;
             initialVargs_ = args;
+            was_initializer = true;
         }
+
+        int result;
+
         if (needToPrintHelp(initialNargs_, initialVargs_)) {
             outputHelp(help_info_);
-            return 1;
+            result = 1;
+        } else{
+            result = func_(initialNargs_, initialVargs_);
         }
-        return func_(initialNargs_, initialVargs_);
+
+        if (was_initializer)
+            cleanAfterExecution();
+        return result;
     }
 }

@@ -38,14 +38,18 @@ namespace sh_core {
         callable_function func_;
         bool noargs_allowed_ = true;
 
+
+        int needToPrintHelp(const size_t nargs, char **&argvector);
+
+        void outputHelp(const string &helpMsg) const;
+
+        void cleanAfterExecution();
+
     public:
         EmbeddedFunc(const string &name, callable_function funct_to_assign,
                      const string &help_msg,
                      bool noargs_allowed = true);
 
-        int needToPrintHelp(const size_t nargs, char **&argvector);
-
-        void outputHelp(const string &helpMsg) const;
 
         virtual int call(size_t nargs, char **args);
 
