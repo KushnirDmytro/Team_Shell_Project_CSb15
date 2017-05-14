@@ -5,16 +5,12 @@
 #ifndef LAB_2_SHELL_EXTERNMKDIR_H
 #define LAB_2_SHELL_EXTERNMKDIR_H
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
+#include <string.h>
 #include <boost/filesystem.hpp>
 #include <map>
 #include <iostream>
 
 #include "../ExternalFunc.h"
-#include "ctime"
 
 
 namespace ext {
