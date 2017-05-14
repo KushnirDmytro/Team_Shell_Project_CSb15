@@ -144,9 +144,6 @@ namespace sh_core {
             }
         else{ // CALLING EXTERN FUNC <======================
             if (hasSuchExternal(&possibleFunc)){
-                //string *buffer = new string(external_lib_.at(possibleFunc)->string().c_str());
-                //strcpy(cargs[0], external_lib_.at(possibleFunc)->string().c_str());
-                //I know it is not safe but in some reason strcpy_s does not want to import
                 result = myExternLauncher(cargs, external_lib_.at(possibleFunc)->string().c_str());
                 //using full pathname instead of just local one
             }
@@ -180,9 +177,11 @@ int mySh(size_t nargs, char **args)
 {
     if (nargs > 1){
         string file_path;
+
         file_path = environment->dir_->getActualPath().string();
         file_path.append("/");
         file_path.append(args[1]);
+
         if (fs::is_regular_file(args[1]) ){
             sh_core::utils::FileLaneIterator *iter = new sh_core::utils::FileLaneIterator(args[1]);
             string st;

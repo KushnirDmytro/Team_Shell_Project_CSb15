@@ -59,7 +59,7 @@ namespace sh_core {
             outputHelp(help_info_);
             result = 1;
         } else{
-            result = func_(initialNargs_, initialVargs_);
+            result = func_(nargs, args);
         }
 
         if (was_initializer)
