@@ -13,8 +13,8 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
-        Env/shell_environment.h)
-add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h Env/shell_environment.h)
+        )
+add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
 
 
 set(SOURCE_FILES my_ls/main_ls.cpp
@@ -28,7 +28,7 @@ set(SOURCE_FILES my_ls/main_ls.cpp
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
-        Env/shell_environment.h )
+        )
 add_executable(ls ${SOURCE_FILES})
 
 

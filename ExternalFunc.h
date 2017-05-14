@@ -43,9 +43,6 @@ namespace ext {
 
     protected:
 
-        //TODO MAKE PROTECTED WHEN SOLVE INIT PROBLEM
-    public:
-
         string option_name_;
 
         std::map<string, DefaultOptionsManager *> *opts_map_;
@@ -54,6 +51,10 @@ namespace ext {
         bool noargs_allowed_ = true;
 
         bool *default_state_to_write;
+        DefaultOptionsManager *getSuboptionFromMap(const string potential_arg) const;
+
+        // NO need to make them protected, class is inner private
+    public:
 
         DefaultOptionsManager(string name,
                               bool * state_of_success  = nullptr,
@@ -62,7 +63,6 @@ namespace ext {
 
         virtual ~DefaultOptionsManager();
 
-        DefaultOptionsManager *getSuboptionFromMap(const string potential_arg) const;
 
         virtual bool suboptionsAreValid(size_t nargs, char **argv);
 

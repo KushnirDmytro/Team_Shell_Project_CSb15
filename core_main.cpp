@@ -6,8 +6,6 @@
 #include <string.h>
 #include <vector>
 #include <iostream>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 
 
 //========================CLASSES IMPORT==================
@@ -27,7 +25,7 @@ using  callable_function =  int (*)(size_t, char **);
 
 
 
-
+/*
 
 // HOW TO CURE SPACED FILENAMES???
 void cure_spaced_filenemas(size_t nargs,char* vargs[]){
@@ -46,13 +44,12 @@ vector<boost::filesystem::path> regex_match_directories(string regex){
     vector<boost::filesystem::path> directories;
     return directories;
 }
-
+*/
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
 
 namespace sh_core {
-//TODO ask how to place it inside other namespace
     env::Env *environment;
     sh_core::LaneInterpreter *interpreter;
 }
@@ -65,7 +62,6 @@ string my_read_line(void)
 {
     string buffer;
     getline(std::cin,buffer);
-    //buffer+=" ";
     return buffer;
 }
 
@@ -85,8 +81,6 @@ void my_loop()
             continue;
         }
         status = sh_core::interpreter->processSting(&line);
-        //args = mySplitLine(line);
-        //status = my_execute(args); //if 0 - finished, exited
 
     } while (status);
 }
@@ -103,17 +97,12 @@ void my_loop()
 int main(int argc, char **argv)
 {
 
-
     sh_core::environment =  new env::Env();
     sh_core::interpreter = new sh_core::LaneInterpreter();
-
-
     //===================DYNAMIC INITIALISATION END======================
 
     // Run command loop.
     my_loop();
-
-    // Perform any shutdown/cleanup.
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
 

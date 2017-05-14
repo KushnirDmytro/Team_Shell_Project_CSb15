@@ -4,11 +4,7 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <string>
 #include "deleter.h"
-#include <type_traits>
-#include <vector>
-#include <algorithm>
 #include <boost/filesystem.hpp>
 using namespace std;
 

@@ -2,19 +2,15 @@
 
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <sys/wait.h>
-#include <stdlib.h>
-#include <string.h>
 #include <vector>
 #include <iostream>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 
 
 //========================CLASSES IMPORT==================
 #include "../Env/ConsoleView.h"
 #include "../Shell_core/EmbeddedFunc.h"
 #include "../Shell_core/Utils/LineSplitter.h"
-#include "../Shell_core/LaneInterpreter.h"
+#include "ExternLS.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -23,82 +19,13 @@
 
 using  callable_function =  int (*)(size_t, char **);
 
-//============================DEFINITIONS END======================
-
-
-
-
-
-// HOW TO CURE SPACED FILENAMES???
-void cure_spaced_filenemas(size_t nargs,char* vargs[]){
-    for (size_t i = 0; i < nargs; ++i){
-        //TODO
-        //USE BOOST::FILESYSTEM::PATH to recognise start, mid, end of directory
-    }
-}
-
-
-
-vector<boost::filesystem::path> regex_match_directories(string regex){
-    //TODO
-    //process via iterators all possible pathes that match such expression
-    vector<boost::filesystem::path> proceed_buffer;
-    vector<boost::filesystem::path> directories;
-    return directories;
-}
-
-
-//=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
-
-
 namespace sh_core {
-//TODO ask how to place it inside other namespace
     env::Env *environment;
-    sh_core::LaneInterpreter *interpreter;
 }
-
-
-//=============ASSIST FUNCTIONS============
-
-
-string my_read_line(void)
-{
-    string buffer;
-    getline(std::cin,buffer);
-    //buffer+=" ";
-    return buffer;
-}
-
-
-//execuion loop
-void my_loop()
-{
-    string line;
-    vector<string> args;
-    int status;
-
-
-    do {
-        sh_core::environment->console_->displayPromptMsg();
-        line = my_read_line();
-        if (strlen(line.c_str()) == 0){
-            continue;
-        }
-        status = sh_core::interpreter->processSting(&line);
-        //args = mySplitLine(line);
-        //status = my_execute(args); //if 0 - finished, exited
-
-    } while (status);
-}
-
-
-//=============ASSIST FUNCTIONS END============
-
-
 
 
 namespace ext{
-   // int myLsStaticLauncher(size_t nargs, char **args);
+    int myLsStaticLauncher(size_t nargs = 0, char **args = nullptr);
 
     ext::ExternLS *LsObject; //forvard static declaration
 
@@ -126,19 +53,14 @@ int main(int argc, char **argv)
 
     int result = ext::LsObject->call(static_cast<size_t >(argc), argv);
 
+    //=====================MEMORY CLEAN / SHUTDOWN==========================
     delete ext::LsObject;
     delete sh_core::environment;
+    //=====================MEMORY CLEAN SHUTDOWN END==========================
 
     return result;
 
-
     //===================DYNAMIC INITIALISATION END======================
 
-    // Run command loop.
-
-    // Perform any shutdown/cleanup.
-    //=====================MEMORY CLEAN / SHUTDOWN==========================
-
-    //=====================MEMORY CLEAN SHUTDOWN END==========================
 
 }

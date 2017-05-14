@@ -13,7 +13,6 @@
 #include <pwd.h>
 
 
-#include "shell_environment.h"
 
 using std::string;
 namespace fs = boost::filesystem;
@@ -71,6 +70,5 @@ namespace env {
     };
 
 }
-//extern User * default_user;
 
 #endif //LAB_2_SHELL_USER_H

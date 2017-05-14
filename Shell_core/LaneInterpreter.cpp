@@ -9,23 +9,6 @@
 
 namespace fs = boost::filesystem;
 
-/*
- *
-
-namespace ext{
-    int my_ls(size_t nargs, char **args);
-   // ext::ExternLS *extern_ls_obj;
-
-    //TODO solve it when splitting onto several EXEs
-//just activator-function
-    int myLsStaticLauncher(size_t nargs, char **argv) {
-        return sh_core::interpreter->extern_ls_obj->my_ls_inner(nargs, argv);
-        //my_ls_inner(initialNargs_, argv);
-    }
-
-}
-*/
-
 namespace sh_core {
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
 
@@ -58,8 +41,7 @@ namespace sh_core {
 
         //=========================ATTENTION!!!==========++++++!!!!!
 
-       // extern_ls_obj = new ext::ExternLS("MY_EXT_LS", ext::myLsStaticLauncher , cd_help_msg);
-
+      
         embedded_lib= {
                 {"cd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, cd_help_msg)},
                 {"pwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, pwd_help_msg)},
@@ -67,8 +49,7 @@ namespace sh_core {
                 {"exit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, exit_help_msg)},
                 {"mysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
                                                    sh_core::mySh,
-                                                   shell_script_interpreter_help_msg)},
-               // {"ls", extern_ls_obj}
+                                                   shell_script_interpreter_help_msg)}
         };
 
         splitter = new utils::LineSplitter();
