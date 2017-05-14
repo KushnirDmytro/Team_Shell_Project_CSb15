@@ -13,7 +13,7 @@ set(SOURCE_FILES main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         ExternLS.cpp ExternLS.h
-        Environment_objects.cpp Env/shell_environment.h)
+        Env/shell_environment.h)
 add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h Env/shell_environment.h)
 
 
