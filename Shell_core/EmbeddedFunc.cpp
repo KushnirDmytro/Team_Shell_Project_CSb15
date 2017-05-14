@@ -18,7 +18,7 @@ namespace sh_core {
     }
 
 
-    int EmbeddedFunc::searchForHelp(const size_t nargs, char **&argvector) {
+    int EmbeddedFunc::needToPrintHelp(const size_t nargs, char **&argvector) {
 
         bool argumentsAreEmpty = (nargs == 0) ||
                 ( (nargs == 1) &&  ( !noargs_allowed_ )  ) ;
@@ -40,12 +40,14 @@ namespace sh_core {
 
 
     int EmbeddedFunc::call(size_t nargs, char **args) {
-        nargs_ = nargs;
-        vargs_ = args;
-        if (searchForHelp(nargs_, vargs_)) {
+        if (initialVargs_ == NULL) { //only when it had not been initialized before in call-stack
+            initialNargs_ = nargs;
+            initialVargs_ = args;
+        }
+        if (needToPrintHelp(initialNargs_, initialVargs_)) {
             outputHelp(help_info_);
             return 1;
         }
-        return func_(nargs_, vargs_);
+        return func_(initialNargs_, initialVargs_);
     }
 }

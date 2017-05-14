@@ -34,7 +34,6 @@ namespace ext {
                     {"-F",  new DefaultOptionsManager("-F", &ls_flags->show_file_type)}
             }) {
         ls_flags_ = ls_flags;
-        noargs_allowed_ = false;
 
     };
 
@@ -123,7 +122,7 @@ namespace ext {
                          funct_to_assign,
                          help_msg,
                          new LS_OptsManager("LS_opts_object",  &ls_flags)) {
-        noargs_allowed_ = false;
+        cout << "hello from constructor \n";
     };
 
 
@@ -349,14 +348,20 @@ namespace ext {
         return 1;
     }
 
+
 //Overriding
     int ExternLS::call(size_t nargs, char **argv) {
+        if (initialVargs_ == NULL) { //only when it had not been initialized before in call-stack
+            initialNargs_ = nargs;
+            initialVargs_ = argv;
+        }
 
-        if (searchForHelp(nargs, argv)) {
+/*
+        if (needToPrintHelp(nargs, argv)) {
             outputHelp(help_info_);
             return 1;
         }
-
+*/
         extractPassesFromArgs(nargs, argv, &passes_to_apply_);
 
         if (passes_to_apply_.size() == 0) {

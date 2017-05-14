@@ -43,7 +43,7 @@ FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 target_link_libraries( Lab_2_shell  ${Boost_LIBRARIES} )
-#target_link_libraries( my_ls ${Boost_LIBRARIES} )
+#target_link_libraries( myLsStaticLauncher ${Boost_LIBRARIES} )
 target_link_libraries( rm ${Boost_LIBRARIES} )
 target_link_libraries( ls ${Boost_LIBRARIES} )
 

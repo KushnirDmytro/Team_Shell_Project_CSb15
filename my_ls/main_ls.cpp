@@ -98,14 +98,16 @@ void my_loop()
 
 
 namespace ext{
-    int my_ls(size_t nargs, char **args);
+    int myLsStaticLauncher(size_t nargs, char **args);
     // ext::ExternLS *extern_ls_obj;
+
+    ext::ExternLS *LsObject; //forvard static declaration
 
     //TODO solve it when splitting onto several EXEs
 //just activator-function
-    int my_ls(size_t nargs, char **argv) {
-        return sh_core::interpreter->extern_ls_obj->my_ls_inner(nargs, argv);
-        //my_ls_inner(nargs_, argv);
+    int myLsStaticLauncher(size_t nargs, char **argv) {
+        return ext::LsObject->my_ls_inner(nargs, argv);
+        //my_ls_inner(initialNargs_, argv);
     }
 
 }
@@ -118,14 +120,14 @@ int main(int argc, char **argv)
     string ls_help = "PRINT HELP HERE";
 
 
-    ext::ExternLS *LsObject = new ext::ExternLS( "EXTERN_LS", ext::my_ls , ls_help);
+    ext::LsObject = new ext::ExternLS("EXTERN_LS", ext::myLsStaticLauncher, ls_help);
 
     printf("HELLO LSOBJECT!!!\n");
 
-    return LsObject->call(argc, argv);
-
     sh_core::environment =  new env::Env();
     sh_core::interpreter = new sh_core::LaneInterpreter();
+
+    return ext::LsObject->call(argc, argv);
 
 
     //===================DYNAMIC INITIALISATION END======================

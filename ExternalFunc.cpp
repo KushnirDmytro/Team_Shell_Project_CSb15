@@ -68,8 +68,12 @@ namespace ext {
         }
 
         std::queue<string> ls_argumens_queue;
-        for (size_t i = 0; i < nargs; ++i)
+        for (size_t i = 0; i < nargs; ++i) {
             ls_argumens_queue.push(string(argv[i]));
+            printf("arg# %d  is %s\n", (int)i, string(argv[i]).c_str() );
+        }
+
+
 
         DefaultOptionsManager *option_to_check = nullptr;
         std::queue<string> arg_buf;

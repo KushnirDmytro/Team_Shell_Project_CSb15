@@ -32,8 +32,8 @@ namespace sh_core {
     protected:
 
         string name_;
-        char **vargs_;
-        size_t nargs_;
+        char **initialVargs_;
+        size_t initialNargs_;
         string help_info_;
         callable_function func_;
         bool noargs_allowed_ = true;
@@ -41,7 +41,7 @@ namespace sh_core {
     public:
         EmbeddedFunc(const string &name, callable_function funct_to_assign,const string &help_msg);
 
-        int searchForHelp(const size_t nargs, char **&argvector);
+        int needToPrintHelp(const size_t nargs, char **&argvector);
 
         void outputHelp(const string &helpMsg) const;
 

@@ -18,9 +18,9 @@ namespace ext{
 
     //TODO solve it when splitting onto several EXEs
 //just activator-function
-    int my_ls(size_t nargs, char **argv) {
+    int myLsStaticLauncher(size_t nargs, char **argv) {
         return sh_core::interpreter->extern_ls_obj->my_ls_inner(nargs, argv);
-        //my_ls_inner(nargs_, argv);
+        //my_ls_inner(initialNargs_, argv);
     }
 
 }
@@ -58,7 +58,7 @@ namespace sh_core {
 
         //=========================ATTENTION!!!==========++++++!!!!!
 
-       // extern_ls_obj = new ext::ExternLS("MY_EXT_LS", ext::my_ls , cd_help_msg);
+       // extern_ls_obj = new ext::ExternLS("MY_EXT_LS", ext::myLsStaticLauncher , cd_help_msg);
 
         embedded_lib= {
                 {"cd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, cd_help_msg)},

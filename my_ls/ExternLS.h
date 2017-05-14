@@ -20,7 +20,7 @@ namespace ext {
 
     class LaneInterpreter;
 
-    extern LaneInterpreter *interpreter;
+  //  extern LaneInterpreter *interpreter;
 
 
     using std::map;
@@ -114,6 +114,8 @@ namespace ext {
 
 //Overriding
         int call(size_t nargs, char **argv) override;
+
+       // int static statCallAdapter(size_t nargs, char **argv);
 
     private:
         int doLsJobWithVector(std::vector<fs::path> *p_from_args, const int rec_depth = 0);
