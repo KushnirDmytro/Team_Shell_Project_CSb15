@@ -39,7 +39,9 @@ namespace sh_core {
         bool noargs_allowed_ = true;
 
     public:
-        EmbeddedFunc(const string &name, callable_function funct_to_assign,const string &help_msg);
+        EmbeddedFunc(const string &name, callable_function funct_to_assign,
+                     const string &help_msg,
+                     bool noargs_allowed = true);
 
         int needToPrintHelp(const size_t nargs, char **&argvector);
 

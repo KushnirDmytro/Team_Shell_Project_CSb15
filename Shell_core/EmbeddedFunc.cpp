@@ -11,10 +11,12 @@
 namespace sh_core {
 
 
-    EmbeddedFunc::EmbeddedFunc(const string &name, callable_function funct_to_assign, const string &help_msg) {
+    EmbeddedFunc::EmbeddedFunc(const string &name, callable_function funct_to_assign,
+                               const string &help_msg, const bool noargs_allowed) {
         name_ = name;
         func_ = funct_to_assign;
         help_info_ = help_msg;
+        noargs_allowed_ = noargs_allowed;
     }
 
 

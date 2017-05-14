@@ -120,7 +120,6 @@ namespace ext {
                          funct_to_assign,
                          help_msg,
                          new LS_OptsManager("LS_opts_object",  &ls_flags)) {
-        cout << "hello from constructor \n";
     };
 
 
@@ -339,12 +338,11 @@ namespace ext {
             initialVargs_ = argv;
         }
 
-/*
         if (needToPrintHelp(nargs, argv)) {
             outputHelp(help_info_);
             return 1;
         }
-*/
+
         extractPassesFromArgs(nargs, argv, &passes_to_apply_);
 
         if (passes_to_apply_.size() == 0) {

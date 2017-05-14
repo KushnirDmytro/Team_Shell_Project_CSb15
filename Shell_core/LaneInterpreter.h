@@ -12,9 +12,8 @@
 #include <boost/filesystem.hpp>
 
 #include "Utils/LineSplitter.h"
+#include "coreFuncLib.h"
 
-
-#define  home_dir_call  "~"
 
 namespace sh_core {
 
