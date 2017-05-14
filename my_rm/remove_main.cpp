@@ -12,20 +12,22 @@ int main(int argc, char **argv) {
     while(argv[args_size] != NULL) {
         args_size += 1;
     }
-    vector<string> vector_two_strings(argv, argv + args_size);
-    istringstream iss(vector_two_strings[1]);
-    vector<string> tokens;
-    copy(istream_iterator<string>(iss),
-         istream_iterator<string>(),
-         back_inserter(tokens));
     bool is_R = false;
     bool is_f = false;
     bool is_help = false;
+    vector<string> tokens;
+    vector<string> vector_two_strings(argv, argv + args_size);
+    if(args_size == 1)
+        return deleter(tokens, true, is_R, is_f);
+    istringstream iss(vector_two_strings[1]);
+    copy(istream_iterator<string>(iss),
+         istream_iterator<string>(),
+         back_inserter(tokens));
+
 
     if(find(tokens.begin(), tokens.end(), "-f") != tokens.end()) {
         is_f = true;
         tokens.erase(remove(tokens.begin(), tokens.end(),"-f")), tokens.end();
-
     }
     if(find(tokens.begin(), tokens.end(), "-R") != tokens.end()) {
         is_R = true;
@@ -38,5 +40,6 @@ int main(int argc, char **argv) {
         is_help = true;
         tokens.erase(remove(tokens.begin(), tokens.end(),"--help")), tokens.end();
     }
-    deleter(tokens, is_help, is_R, is_f);
+
+    return deleter(tokens, is_help, is_R, is_f);
 }

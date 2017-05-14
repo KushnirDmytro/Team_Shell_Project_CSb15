@@ -3,7 +3,7 @@ project(Lab_2_shell)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
+set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Env/ConsoleView.cpp Env/ConsoleView.h
         Env/User.cpp Env/User.h
         Env/Env.cpp Env/Env.h
@@ -12,8 +12,8 @@ set(SOURCE_FILES main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Shell_core/LaneInterpreter.cpp Shell_core/LaneInterpreter.h
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
-        ExternLS.cpp ExternLS.h
-        Env/shell_environment.h)
+        my_ls/ExternLS.cpp my_ls/ExternLS.h
+        Env/shell_environment.h my_ls/main_ls.cpp)
 add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h Env/shell_environment.h)
 
 

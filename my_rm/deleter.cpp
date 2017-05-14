@@ -19,11 +19,13 @@ int deleter(vector<string> args, bool is_help, bool is_R, bool is_f)
         cout << "    " << "-h, --help                  show help to the function"<< endl;
         cout << "    " << "-f                          deletes files silently"<< endl;
         cout << "    " << "-R                          deletes directories"<< endl;
+        return 0;
     }
     char confirm;
     if(is_f) {
         confirm = 'y';
     } else {
+        cout << "wish to Delete " << args[0].c_str() << " ?"<<endl;
         cout << "Confirm your choice (y/[n]): ";
         cin >> confirm;
     }

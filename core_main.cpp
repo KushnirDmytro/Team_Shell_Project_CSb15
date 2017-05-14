@@ -11,7 +11,6 @@
 
 
 //========================CLASSES IMPORT==================
-
 #include "Env/ConsoleView.h"
 #include "Shell_core/EmbeddedFunc.h"
 #include "Shell_core/Utils/LineSplitter.h"
@@ -21,7 +20,7 @@
 
 //==============================DEFINITIONS====================
 
-using namespace std;
+//using namespace std;
 
 
 
@@ -68,7 +67,7 @@ namespace sh_core {
 string my_read_line(void)
 {
     string buffer;
-    getline(cin,buffer);
+    getline(std::cin,buffer);
     //buffer+=" ";
     return buffer;
 }

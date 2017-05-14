@@ -12,7 +12,7 @@
 #include <boost/filesystem.hpp>
 
 #include "Utils/LineSplitter.h"
-#include "../ExternLS.h"
+#include "../my_ls/ExternLS.h"
 
 
 #define  home_dir_call  "~"
@@ -31,11 +31,6 @@ namespace sh_core {
 
         utils::LineSplitter *splitter;
 
-    public:
-        ext::ExternLS *extern_ls_obj;
-
-        LaneInterpreter();
-
 
         // launcher for custom modules
         int myExternLauncher(char **args) const;
@@ -44,9 +39,15 @@ namespace sh_core {
 
         int myExecute(const vector<string> *const args) const;
 
-        int processSting(string * values) const;
-
         bool doesAllPathesValidAndRefineToAbsolute(vector <fs::path> *args) const;
+
+    public:
+        ext::ExternLS *extern_ls_obj;
+
+        LaneInterpreter();
+
+
+        int processSting(string * values) const;
 
         ~LaneInterpreter();
         //TODO filemasks

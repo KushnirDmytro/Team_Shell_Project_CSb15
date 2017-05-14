@@ -12,7 +12,7 @@
 #include <map>
 #include <iostream>
 
-#include "ExternalFunc.h"
+#include "../ExternalFunc.h"
 #include "ctime"
 
 
