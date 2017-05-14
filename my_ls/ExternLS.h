@@ -107,9 +107,6 @@ namespace ext {
 
         void setCurrentDirectoryAsPassToApply();
 
-//show current directory
-        int my_ls_inner(size_t nargs, char **argv);
-
 //Overriding
         int call(size_t nargs, char **argv) override;
 

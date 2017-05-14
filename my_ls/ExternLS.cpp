@@ -331,21 +331,6 @@ namespace ext {
     }
 
 
-//show current directory
-    //TODO GET IT OUT
-    int ExternLS::my_ls_inner(size_t nargs, char **argv) {
-        for (fs::path p : (passes_to_apply_)) {
-            //passes are there from argument line
-            cout << "FOUND PATH TO APPLY" << p << endl;
-        }
-
-        doLsJobWithVector(&passes_to_apply_);
-
-        cleanUpAllAfterExecution();
-
-        return 1;
-    }
-
 
 //Overriding
     int ExternLS::call(size_t nargs, char **argv) {
