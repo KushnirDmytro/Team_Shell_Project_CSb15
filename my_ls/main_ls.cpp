@@ -44,7 +44,24 @@ namespace ext{
 int main(int argc, char **argv)
 {
 
-    string ls_help = "PRINT HELP HERE";
+    string ls_help = "LS help:\n"
+            "ls <directories/filenames> to perform analysis of argument address\n"
+            "(by default set as current directory)\n"
+            "ls <...> <flags> to set special options of execution. \n Options:\n"
+            "'-R' perform recursive analysis of directory \n"
+            "'-r' reverse output results\n"
+            "'-l' list detailed data-report about files and dirs\n"
+            "'-F' add additional signs to filenames: \n"
+            "\t'*' - executable\n"
+            "\t'@' - symlink\n"
+            "\t'|' - named channel\n"
+            "\t'=' - socket\n"
+            "--sort <sorting way> chooses sorting way:\n"
+            "\t'N' - sort by filename(default)\n"
+            "\t'U' - do not sort\n"
+            "\t'S' - size sort\n"
+            "\t't' - last modification time\n"
+            "\t'X' - extension sort\n";
 
 
     ext::LsObject = new ext::ExternLS("EXTERN_LS", ext::myLsStaticLauncher, ls_help);
