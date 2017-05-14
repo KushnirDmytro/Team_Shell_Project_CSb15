@@ -23,8 +23,7 @@ namespace ext {
 
     ExternLS::LS_OptsManager::
     LS_OptsManager(string name,
-                     LsFlagsStruct *ls_flags,
-                     bool noargs_allowed) :
+                     LsFlagsStruct *ls_flags) :
             DefaultOptionsManager(name,
                                   new bool,
                                   new std::map<string, DefaultOptionsManager *>{
@@ -35,7 +34,7 @@ namespace ext {
                     {"-F",  new DefaultOptionsManager("-F", &ls_flags->show_file_type)}
             }) {
         ls_flags_ = ls_flags;
-        noargs_allowed_ = noargs_allowed;
+        noargs_allowed_ = false;
 
     };
 
@@ -124,7 +123,7 @@ namespace ext {
                          funct_to_assign,
                          help_msg,
                          new LS_OptsManager("LS_opts_object",  &ls_flags)) {
-
+        noargs_allowed_ = false;
     };
 
 
@@ -188,8 +187,7 @@ namespace ext {
     }
 
 
-    inline void ExternLS::
-    performTimeCorrection() const{
+    inline void ExternLS::performTimeCorrection() const{
         //for first file not to have empty time-data
         struct tm time_struct;
         const std::time_t raw_time = timezone;

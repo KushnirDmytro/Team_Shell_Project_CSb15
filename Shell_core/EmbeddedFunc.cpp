@@ -19,10 +19,17 @@ namespace sh_core {
 
 
     int EmbeddedFunc::searchForHelp(const size_t nargs, char **&argvector) {
+
+        bool argumentsAreEmpty = (nargs == 0) ||
+                ( (nargs == 1) &&  ( !noargs_allowed_ )  ) ;
+
+        if (argumentsAreEmpty) return 1;
+
         for (int i = 0; i < nargs; ++i) {
             if ((strcmp(argvector[i], "--help") == 0) || (strcmp(argvector[i], "-h") == 0)) {
                 return 1;
             }
+
         }
         return 0;
     }

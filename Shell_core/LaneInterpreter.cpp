@@ -9,6 +9,8 @@
 
 namespace fs = boost::filesystem;
 
+/*
+ *
 
 namespace ext{
     int my_ls(size_t nargs, char **args);
@@ -22,7 +24,7 @@ namespace ext{
     }
 
 }
-
+*/
 
 namespace sh_core {
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
@@ -56,7 +58,7 @@ namespace sh_core {
 
         //=========================ATTENTION!!!==========++++++!!!!!
 
-        extern_ls_obj = new ext::ExternLS("MY_EXT_LS", ext::my_ls , cd_help_msg);
+       // extern_ls_obj = new ext::ExternLS("MY_EXT_LS", ext::my_ls , cd_help_msg);
 
         embedded_lib= {
                 {"cd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, cd_help_msg)},
@@ -66,7 +68,7 @@ namespace sh_core {
                 {"mysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
                                                    sh_core::mySh,
                                                    shell_script_interpreter_help_msg)},
-                {"ls", extern_ls_obj}
+               // {"ls", extern_ls_obj}
         };
 
         splitter = new utils::LineSplitter();

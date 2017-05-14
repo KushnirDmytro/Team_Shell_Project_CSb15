@@ -36,6 +36,7 @@ namespace sh_core {
         size_t nargs_;
         string help_info_;
         callable_function func_;
+        bool noargs_allowed_ = true;
 
     public:
         EmbeddedFunc(const string &name, callable_function funct_to_assign,const string &help_msg);

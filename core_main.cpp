@@ -20,9 +20,6 @@
 
 //==============================DEFINITIONS====================
 
-//using namespace std;
-
-
 
 using  callable_function =  int (*)(size_t, char **);
 
@@ -84,7 +81,7 @@ void my_loop()
     do {
         sh_core::environment->console_->displayPromptMsg();
         line = my_read_line();
-        if (strlen(line.c_str()) == 0){
+        if (strlen(line.c_str()) == 0){ //handling situation of empty line been red
             continue;
         }
         status = sh_core::interpreter->processSting(&line);

@@ -13,8 +13,24 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
-        Env/shell_environment.h my_ls/main_ls.cpp)
+        Env/shell_environment.h)
 add_executable(Lab_2_shell ${SOURCE_FILES} Env/Env.cpp Env/Env.h Env/shell_environment.h)
+
+
+set(SOURCE_FILES my_ls/main_ls.cpp
+        Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
+        Env/ConsoleView.cpp Env/ConsoleView.h
+        Env/User.cpp Env/User.h
+        Env/Env.cpp Env/Env.h
+        Env/Directory.cpp Env/Directory.h
+        Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
+        Shell_core/LaneInterpreter.cpp Shell_core/LaneInterpreter.h
+        Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
+        ExternalFunc.cpp ExternalFunc.h
+        my_ls/ExternLS.cpp my_ls/ExternLS.h
+        Env/shell_environment.h )
+add_executable(ls ${SOURCE_FILES})
+
 
 
 set(SOURCE_FILES my_rm/remove_main.cpp my_rm/deleter.cpp my_rm/deleter.h)
@@ -29,6 +45,7 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 target_link_libraries( Lab_2_shell  ${Boost_LIBRARIES} )
 #target_link_libraries( my_ls ${Boost_LIBRARIES} )
 target_link_libraries( rm ${Boost_LIBRARIES} )
+target_link_libraries( ls ${Boost_LIBRARIES} )
 
 
 

@@ -82,8 +82,7 @@ namespace ext {
 
         public:
             LS_OptsManager(string name,
-                           LsFlagsStruct *ls_flags,
-                           bool noargs_allowed = true);
+                           LsFlagsStruct *ls_flags);
 
             ~LS_OptsManager();
 
