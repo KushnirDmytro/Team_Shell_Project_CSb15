@@ -19,7 +19,7 @@ namespace ext{
     int  ExternMkdir::call(size_t nargs, char **argv){
         initialNargs_ = nargs;
         initialVargs_ = argv;
-        return sh_core::EmbeddedFunc::call(0, nullptr);
+        return sh_core::EmbeddedFunc::call(nargs, argv);
     };
 
     ExternMkdir::~ExternMkdir(){};

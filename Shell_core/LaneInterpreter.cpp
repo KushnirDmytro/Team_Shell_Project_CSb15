@@ -44,7 +44,8 @@ namespace sh_core {
                 {"ls", absPathTo("ls") },
                 {"rm", absPathTo("rm")},
                 {"cp", absPathTo("cp")},
-                {"mv", absPathTo("mv")}
+                {"mv", absPathTo("mv")},
+                {"mkdir", absPathTo("mkdir")}
         };
 
         splitter = new utils::LineSplitter();
