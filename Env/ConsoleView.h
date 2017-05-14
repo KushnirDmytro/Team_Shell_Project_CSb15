@@ -14,6 +14,14 @@
 
 namespace env {
 
+    struct variables{
+
+    };
+
+    struct sessionIDAndMetadata{
+        // unique ID and metadata, like time spent, traffic, etc.
+    };
+
     class ConsoleView {
     private:
         Directory *current_directory_;
