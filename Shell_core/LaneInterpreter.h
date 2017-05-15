@@ -28,7 +28,7 @@ namespace sh_core {
 
         std::map<string, fs::path*> external_lib_;
 
-        utils::LineSplitter *splitter;
+        utils::LineSplitter splitter;
 
         // launcher for custom modules
         int myExternLauncher(char **args, const char* dest = nullptr) const;

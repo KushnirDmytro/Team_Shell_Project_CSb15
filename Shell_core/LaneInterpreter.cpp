@@ -48,7 +48,7 @@ namespace sh_core {
                 {"mkdir", absPathTo("mkdir")}
         };
 
-        splitter = new utils::LineSplitter();
+        splitter = utils::LineSplitter();
     }
 
     LaneInterpreter::~LaneInterpreter() {
@@ -57,7 +57,6 @@ namespace sh_core {
         }
         for (auto i: external_lib_)
             delete i.second;
-        delete splitter;
     }
 //TODO filemasks
 
@@ -134,7 +133,7 @@ namespace sh_core {
 
         // we'll need this debugging part 2
         //std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
-        splitter->convertStrVectorToChars(args, cargs);
+        splitter.convertStrVectorToChars(args, cargs);
 
         string possibleFunc = string(cargs[0]);
 
@@ -159,7 +158,7 @@ namespace sh_core {
 
     int LaneInterpreter::processSting(string *values) const{
 
-        const vector<string> args = splitter->mySplitLine(values);
+        const vector<string> args = splitter.mySplitLine(values);
 
         return myExecute(&args);
     }
