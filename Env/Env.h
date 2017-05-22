@@ -15,7 +15,6 @@ namespace env {
         ConsoleView *console_;
         Directory *dir_;
         User *user_;
-        //LaneInterpreter *interpreter_;
 
         Env();
 

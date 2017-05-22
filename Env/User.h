@@ -19,9 +19,28 @@ namespace fs = boost::filesystem;
 
 namespace env {
 
+    // just ideas for future realisation
     struct rights {
         //markup
     };
+
+    struct priorities{
+
+    };
+
+    struct console_saved_sessions{
+
+    };
+
+    struct prefeared_console_style{
+
+    };
+
+    struct inslalled_programs{
+
+    };
+
+
 
     class User {
     private:
