@@ -22,7 +22,7 @@ namespace sh_core{
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
     string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
-            " 'mysh' <filename> to execurte script file";
+            " 'mmysh' <filename> to execurte script file";
 
 
 
@@ -73,21 +73,21 @@ namespace sh_core{
         printf("Write command and arguments, if needed, then press 'Enter'\n");
         printf("To get detailed information, write <command option_name_> --help or <command option_name_> -h:\n");
         printf("List of Commands:\n");
-        printf(" 'pwd' -- > returns current directory | arguments <NULL>\n");
-        printf(" 'cd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
-        printf(" 'mysh' <script_filename>.sh can launch *.msh scripts interpreting them\n");
+        printf(" 'mpwd' -- > returns current directory | arguments <NULL>\n");
+        printf(" 'mcd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
+        printf(" 'mmysh' <script_filename>.sh can launch *.msh scripts interpreting them\n");
 
         printf(" Registered external functions:\n");
 
-        printf(" 'ls' (detailed options ls -h) to list directory contain\n");
+        printf(" 'mls' (detailed options ls -h) to list directory contain\n");
 
-        printf(" 'mv' <filename> <directory>  moves <filename> to <directory> \n");
-        printf(" 'rm' FULL filename removes selected file\n");
-        printf(" 'cp' <from> <to> copies one file  to another\n");
+        printf(" 'mmv' <filename> <directory>  moves <filename> to <directory> \n");
+        printf(" 'mrm' FULL filename removes selected file\n");
+        printf(" 'mcp' <from> <to> copies one file  to another\n");
 
         printf(" In case of external function option_name_ inputed (some Shell extentions) it will be executed if founded\n");
 
-        printf(" 'exit' terminates executions of Shell program\n");
+        printf(" 'mexit' terminates executions of Shell program\n");
 
         printf("\n");
 

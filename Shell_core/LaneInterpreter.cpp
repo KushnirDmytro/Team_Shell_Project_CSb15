@@ -31,21 +31,21 @@ namespace sh_core {
 
 
         embedded_lib_= {
-                {"cd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, sh_core::cd_help_msg, false)},
-                {"pwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, sh_core::pwd_help_msg)},
-                {"help", new sh_core::EmbeddedFunc("MY_HELP", sh_core::myHelp, sh_core::help_help_msg)},
-                {"exit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, sh_core::exit_help_msg)},
-                {"mysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
+                {"mcd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, sh_core::cd_help_msg, false)},
+                {"mpwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, sh_core::pwd_help_msg)},
+                {"mhelp", new sh_core::EmbeddedFunc("MY_HELP", sh_core::myHelp, sh_core::help_help_msg)},
+                {"mexit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, sh_core::exit_help_msg)},
+                {"mmysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
                                                    sh_core::mySh,
                                                    shell_script_interpreter_help_msg)}
         };
 
         external_lib_  = { //initializing full pathnames
-                {"ls", absPathTo("ls") },
-                {"rm", absPathTo("rm")},
-                {"cp", absPathTo("cp")},
-                {"mv", absPathTo("mv")},
-                {"mkdir", absPathTo("mkdir")}
+                {"mls", absPathTo("mls") },
+                {"mrm", absPathTo("mrm")},
+                {"mcp", absPathTo("mcp")},
+                {"mmv", absPathTo("mmv")},
+                {"mmkdir", absPathTo("mmkdir")}
         };
 
         splitter = new utils::LineSplitter();
