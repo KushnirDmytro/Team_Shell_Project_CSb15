@@ -41,11 +41,11 @@ namespace sh_core {
         };
 
         external_lib_  = { //initializing full pathnames
-                {"ls", absPathTo("ls") },
-                {"rm", absPathTo("rm")},
-                {"cp", absPathTo("cp")},
-                {"mv", absPathTo("mv")},
-                {"mkdir", absPathTo("mkdir")}
+                {"mls", absPathTo("mls") },
+                {"mrm", absPathTo("mrm")},
+                {"mcp", absPathTo("mcp")},
+                {"mmv", absPathTo("mmv")},
+                {"mmkdir", absPathTo("mmkdir")}
         };
 
         splitter = new utils::LineSplitter();
