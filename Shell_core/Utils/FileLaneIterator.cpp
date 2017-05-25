@@ -19,7 +19,7 @@ namespace sh_core {
 
                 if (infile.is_open()) {
                     isGood = true;
-                    printf("FILE {%s} IS OPENED\n", filename.c_str());
+                    //printf("FILE {%s} IS OPENED\n", filename.c_str());
                 } else {
                     printf("%s Could not be open\n", filename.c_str());
                 }

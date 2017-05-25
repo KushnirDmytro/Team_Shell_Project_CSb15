@@ -39,7 +39,7 @@ namespace ext {
 
 //checks for crossvalidations of flags setting
     bool DefaultOptionsManager::areOptionsCrossValid() {
-        printf("Purely default crosscheck, no aditional restrictions set\n");
+       // printf("Purely default crosscheck, no aditional restrictions set\n");
         return true;
     }
 
@@ -70,7 +70,7 @@ namespace ext {
         std::queue<string> ls_argumens_queue;
         for (size_t i = 0; i < nargs; ++i) {
             ls_argumens_queue.push(string(argv[i]));
-            printf("arg# %d  is %s\n", (int)i, string(argv[i]).c_str() );
+        //    printf("arg# %d  is %s\n", (int)i, string(argv[i]).c_str() );
         }
 
 
@@ -128,10 +128,10 @@ namespace ext {
 
         }
 
-        std::cout << "CROSS_VALIDATION" << std::endl;
+        //std::cout << "CROSS_VALIDATION" << std::endl;
 
         if (areOptionsCrossValid()) {
-            printf("ARGUMENT CHECK DONE \n");
+            //printf("ARGUMENT CHECK DONE \n");
             return true;
         }
         else return false;

@@ -76,8 +76,8 @@ namespace ext {
 // suboptions validator
     bool  ExternLS::LS_OptsManager::LsSortOptsManager::
     suboptionsAreValid(size_t nargs, char **argv) {
-        cout << "ENTERED SORT_OPTIONS" << endl;
-        cout << nargs << " Args number" << endl;
+      //  cout << "ENTERED SORT_OPTIONS" << endl;
+       // cout << nargs << " Args number" << endl;
 
         if (nargs == 0) {
             // setting default sorting scheme
@@ -85,7 +85,7 @@ namespace ext {
             return true;
         } else {
 
-            cout << argv[0] << " RECEIVED AS ARG" << endl;
+        //    cout << argv[0] << " RECEIVED AS ARG" << endl;
 
             if (nargs == 1) {
 
@@ -96,7 +96,7 @@ namespace ext {
                     return false;
                 } else {
 
-                    printf("found option %d\n ", sort_opts_map_->at(argument));
+                //    printf("found option %d\n ", sort_opts_map_->at(argument));
 
                     *soring_should_be_applied_ = sort_opts_map_->at(argument);
                     return true;
@@ -133,7 +133,7 @@ namespace ext {
 
         sh_core::environment->dir_->refreshPath();
         passes_to_apply_.push_back(sh_core::environment->dir_->getActualPath());
-        cout << "set path to apply as  ==>" << sh_core::environment->dir_->getActualPath() << endl;
+     //   cout << "set path to apply as  ==>" << sh_core::environment->dir_->getActualPath() << endl;
         args_start_position_offset_ -= 1; //counting this data modification
 
     }
@@ -315,7 +315,6 @@ namespace ext {
                             applySorting(&subdir_contain);
                             for (int i = 0; i < rec_depth; ++i)
                                 printf("   ");
-                            cout << p << " is a directory containing:\n";
                             if (ls_flags.recursive_)//recursive_ dive into directory
                                 doLsJobWithVector(&subdir_contain, rec_depth + 1);
                             else
@@ -370,9 +369,11 @@ namespace ext {
 
         stringstream *result = new stringstream;
 
-        *result << " Usr:"
+        *result
+                //<< " Usr:"
                 << (getpwuid(fileStat->st_uid)->pw_name)
-                << " Gr:"
+                << " "
+                //<< " Gr:"
                 << (getpwuid(fileStat->st_gid)->pw_name)
                 << " "
                 << ((fileStat->st_mode & S_IRUSR) ? "r" : "-")
@@ -411,13 +412,13 @@ namespace ext {
         *ss << "" << 1900 + time_struct.tm_year
             << "-" << 1 + time_struct.tm_mon
             << "-" << time_struct.tm_mday
-            << "  " << time_struct.tm_hour + time_struct.tm_isdst + 1
+            << " " << time_struct.tm_hour + time_struct.tm_isdst + 1
             << ":" << time_struct.tm_min
             << ":" << time_struct.tm_sec
             << time_struct.tm_zone
-            << " (dst " << time_struct.tm_isdst << ')'
-            << " correction " << 1 << "H"
-            << endl;
+        //    << " (dst " << time_struct.tm_isdst << ')'
+        //    << " correction " << 1 << "H"
+            ;
 
         return ss;
     }
@@ -425,8 +426,10 @@ namespace ext {
 
     inline void ExternLS::
     printAllAboutFile(const fs::path *path_to_print, const int depth) const {
-        for (int i = 0; i <= depth; ++i)
-            printf("    ");
+        if (!ls_flags.detailed_listing_)
+            for (int i = 0; i <= depth; ++i)
+                printf("    ");
+
         char filemark = ' ';
 
         //didn't find the way to make it const
@@ -450,10 +453,12 @@ namespace ext {
                 filemark = '*'; //executable
         }
 
-        printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
         if (ls_flags.detailed_listing_)
             printFileAbout(path_to_print, &fileStat);
+
+
+        printf("%c%s \n", filemark, path_to_print->filename().c_str());
 
     }
 
@@ -466,11 +471,15 @@ namespace ext {
         const stringstream *time_stream = formTimereportForFile(path_to_print);
         const stringstream *permissions_stream = formPermissionReportForFile( file_Stat);
 
-        printf(" Perm: %s Ext: [%s] size%lu B  time_written  %s\n",
+
+        stringstream ext;
+        ext << "[" << path_to_print->extension().c_str() << "]";
+
+        printf(" %s %9.lu %s %s ",
                permissions_stream->str().c_str(),
-               path_to_print->extension().c_str(),
                file_Stat->st_size,
-               time_stream->str().c_str());
+               time_stream->str().c_str(),
+                ext.str().c_str());
 
         delete permissions_stream;
         delete time_stream;

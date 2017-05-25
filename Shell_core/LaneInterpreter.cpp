@@ -187,13 +187,13 @@ int mySh(size_t nargs, char **args)
         if (fs::is_regular_file(args[1]) ){
             sh_core::utils::FileLaneIterator *iter = new sh_core::utils::FileLaneIterator(args[1]);
             string st;
-            std::cout << "------------FILE READING IN PROCESS------------------" << std::endl;
+            //std::cout << "------------FILE READING IN PROCESS------------------" << std::endl;
             int i =0;
             int status;
             while(iter->fileIsReady()){
                 iter->getNextString(&st);
-                printf("String #%d red \n", i++);
-                std::cout << st << std::endl;
+                //printf("String #%d red \n", i++);
+                std::cout << st << std::endl; //left only this echo
                 if (st.length() == 0)
                     continue;
                 status = interpreter->processSting(&st);
@@ -207,10 +207,10 @@ int mySh(size_t nargs, char **args)
         else if (fs::is_regular_file(file_path) ){
             utils::FileLaneIterator *iter = new utils::FileLaneIterator(file_path);
             string st;
-            std::cout << "------------FILE READING IN PROCESS------------------" << std::endl;
+            //std::cout << "------------FILE READING IN PROCESS------------------" << std::endl;
             if(iter->fileIsReady()){
                 iter->getNextString(&st);
-                std::cout << st << std::endl;
+                //std::cout << st << std::endl;
                 delete iter;
                 return interpreter->processSting(&st);
             }

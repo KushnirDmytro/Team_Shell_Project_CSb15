@@ -50,7 +50,6 @@ namespace env {
     }
 
     inline void ConsoleView::displayHost() const {
-        printf("\n");
         if (current_user_->getName().length() > 0 || current_user_->getHostname().length() > 0) {
             //TODO refactor to stringbuilder
             if (current_user_->getName().length() > 0) {
@@ -75,7 +74,7 @@ namespace env {
     void ConsoleView::displayPath(){
 
         string prefix = "";
-        string postf = "$";
+        string postf = "$ ";
         string temp_console_disp_buf;
         size_t n_chars_trimmed = 0;
 

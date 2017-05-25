@@ -2,7 +2,6 @@
 #include <vector>
 #include "deleter.h"
 #include <boost/filesystem.hpp>
-#include <sstream>
 
 using namespace std;
 int main(int argc, char **argv) {
@@ -13,17 +12,10 @@ int main(int argc, char **argv) {
     bool is_R = false;
     bool is_f = false;
     bool is_help = false;
-    //vector<string> tokens;
 
     vector<string> tokens(argv, argv + args_size);
     if(args_size == 1)
         return deleter(tokens, true, is_R, is_f);
-
-   // istringstream iss(vector_two_strings[1]);
-   // copy(istream_iterator<string>(iss),
-   //      istream_iterator<string>(),
-    //     back_inserter(tokens));
-
 
 
     if(find(tokens.begin(), tokens.end(), "-f") != tokens.end()) {
