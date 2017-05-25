@@ -12,7 +12,6 @@ using std::string;
 //test
 namespace sh_core{
 
-
     string cd_help_msg = "function CD requires argument after it\n"
             "to change directory type in: cd <directory option_name_> \n"
             "<~> = 'HOME' dirrectory if one defined \n"
@@ -23,7 +22,6 @@ namespace sh_core{
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
     string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
             " 'mmysh' <filename> to execurte script file";
-
 
 
 //====================BUILT-IN COMMANDS ============

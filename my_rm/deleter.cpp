@@ -27,18 +27,18 @@ int deleter(vector<string> args, bool is_help, bool is_R, bool is_f)
     }
     if(is_R && confirm == 'y') {
         cout << "Hi!";
-        for (size_t i = 0; i < args.size(); i++) {
+        for (size_t i = 1; i < args.size(); i++) {
             boost::filesystem::remove_all(args[i]);
         }
-
         return 1;
     }
     if (confirm == 'y') {
-        if(remove( args[0].c_str() ) != 0 )
-
-            perror( "Error deleting file" );
-        else
-            puts( "File successfully deleted" );
+        for (size_t i = 1; i < args.size(); i++) {
+            if (remove(args[i].c_str()) != 0)
+                perror("Error deleting file");
+            else
+                puts("File successfully deleted");
+        }
     } else {
         return 0;
     }
