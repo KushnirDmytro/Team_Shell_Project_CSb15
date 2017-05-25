@@ -9,7 +9,6 @@
 
 namespace fs = boost::filesystem;
 
-
 namespace sh_core {
 
 #include <string.h>
