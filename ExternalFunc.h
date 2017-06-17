@@ -5,19 +5,8 @@
 #ifndef LAB_2_SHELL_EXTERNAL_FUNC_H
 #define LAB_2_SHELL_EXTERNAL_FUNC_H
 
-#include <cstddef>
-#include <string>
-#include <vector>
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/range/iterator_range.hpp>
-
-#include <vector>
 #include <queue>
 #include <map>
-#include <iostream>
-#include <string.h>
 
 #include "Env/Env.h"
 #include "Shell_core/EmbeddedFunc.h"
@@ -25,7 +14,7 @@
 
 // =====================>class OPTIONS  DECLARATION
 
-namespace ext {
+namespace extrn {
 
 
     using std::vector;

@@ -5,10 +5,12 @@
 // Created by d1md1m on 14.05.17.
 //
 
+
+#include <string>
 #include "ExternMkdir.h"
 
 
-namespace ext{
+namespace extrn{
     ExternMkdir::ExternMkdir(const string &name,
                 sh_core::callable_function funct_to_assign,
                 string &help_msg):ExternalFunc(name,
@@ -22,7 +24,8 @@ namespace ext{
     int  ExternMkdir::call(size_t nargs, char **argv){
         initialNargs_ = nargs;
         initialVargs_ = argv;
-        return sh_core::EmbeddedFunc::call(nargs, argv);
+        int result_code = sh_core::EmbeddedFunc::call(nargs, argv);
+        return result_code;
     };
 
     ExternMkdir::~ExternMkdir(){};

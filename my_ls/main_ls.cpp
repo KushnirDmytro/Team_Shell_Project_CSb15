@@ -24,10 +24,10 @@ namespace sh_core {
 }
 
 
-namespace ext{
+namespace extrn{
     int myLsStaticLauncher(size_t nargs = 0, char **args = nullptr);
 
-    ext::ExternLS *LsObject; //forvard static declaration
+    extrn::ExternLS *LsObject; //forvard static declaration
 
 //just activator-function
     int myLsStaticLauncher(size_t nargs, char **argv) {
@@ -35,7 +35,7 @@ namespace ext{
         // I just decide not to get behaviour out of class in generic case
 
         //printf("Initialization and checks performed successfully\n");
-        return 1;
+        return 0;
     }
 
 }
@@ -64,14 +64,14 @@ int main(int argc, char **argv)
             "\t'X' - extension sort\n";
 
 
-    ext::LsObject = new ext::ExternLS("EXTERN_LS", ext::myLsStaticLauncher, ls_help);
+    extrn::LsObject = new extrn::ExternLS("EXTERN_LS", extrn::myLsStaticLauncher, ls_help);
 
     sh_core::environment =  new env::Env();
 
-    int result = ext::LsObject->call(static_cast<size_t >(argc), argv);
+    int result = extrn::LsObject->call(static_cast<size_t >(argc), argv);
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
-    delete ext::LsObject;
+    delete extrn::LsObject;
     delete sh_core::environment;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 

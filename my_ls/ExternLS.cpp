@@ -8,6 +8,15 @@
 #include <pwd.h>
 
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <map>
+#include <iostream>
+
+
 #include "ExternLS.h"
 
 
@@ -24,7 +33,7 @@ using LS = ExternLS;
 */
 
 
-namespace ext {
+namespace extrn {
 
     ExternLS::LS_OptsManager::
     LS_OptsManager(string name,
@@ -362,6 +371,11 @@ namespace ext {
         nargs -= args_start_position_offset_;
 
         int result =  ExternalFunc::call(nargs, argv);
+
+        if (result) {
+            printf("Funciton call failed\n");
+            return result;
+        }
 
         doLsJobWithVector(&passes_to_apply_);
 

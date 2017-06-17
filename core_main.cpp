@@ -30,7 +30,7 @@ using  callable_function =  int (*)(size_t, char **);
 
 //TODO REMASTER mpwd
 // TODO REMASTER mexit
-// TODO debug LS (wrong argument should fail)
+// TODO make auto_call embedded interpreter if argument is [.msh] script
 namespace sh_core {
     env::Env *environment;
     sh_core::LaneInterpreter *interpreter;

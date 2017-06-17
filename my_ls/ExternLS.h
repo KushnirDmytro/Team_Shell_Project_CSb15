@@ -3,20 +3,20 @@
 //
 #ifndef LAB_2_SHELL_EXTERN_LS_H
 #define LAB_2_SHELL_EXTERN_LS_H
-
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <map>
-#include <iostream>
+//
+//#include <sys/stat.h>
+//#include <sys/types.h>
+//#include <boost/lexical_cast.hpp>
+//#include <boost/algorithm/string.hpp>
+//#include <boost/filesystem.hpp>
+//#include <map>
+//#include <iostream>
 
 #include "../ExternalFunc.h"
 #include "ctime"
 
 
-namespace ext {
+namespace extrn {
 
     class LaneInterpreter;
 

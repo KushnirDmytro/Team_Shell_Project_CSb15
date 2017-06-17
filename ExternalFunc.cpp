@@ -5,10 +5,20 @@
 // Created by d1md1m on 29.03.17.
 //
 
+#include <vector>
+#include <queue>
+#include <map>
+#include <iostream>
+#include <string.h>
+#include <cstddef>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+
+
 
 #include "ExternalFunc.h"
 
-namespace ext {
+namespace extrn {
 
 
     DefaultOptionsManager::DefaultOptionsManager(string name_,
@@ -219,7 +229,7 @@ namespace ext {
         }
         else{
             std::cout << "Opts check failed in function " << name_ <<std::endl;
-            return false;
+            return 1;
         }
 
     };

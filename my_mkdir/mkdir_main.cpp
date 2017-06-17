@@ -28,10 +28,10 @@ namespace sh_core {
 }
 
 
-namespace ext{
+namespace extrn{
     int myMkdirStaticLauncher(size_t nargs, char **args);
 
-    ext::ExternMkdir *MkdirObject; //forvard static declaration
+    extrn::ExternMkdir *MkdirObject; //forvard static declaration
 
 //just activator-function
     int myMkdirStaticLauncher(size_t nargs, char **argv) {
@@ -44,17 +44,17 @@ namespace ext{
             pathBuf = fs::current_path() ;
             pathBuf /= fs::path(argv[i]);
             if (fs::exists(pathBuf)){
-                printf("%s already exists, skipping it\n", pathBuf.c_str());
+                printf("[%s] already exists, skipping it\n", pathBuf.c_str());
                 continue;
             }
             if ( ! fs::create_directory(pathBuf, error_code)) {
                 perror(error_code.message().c_str());
             }else{
-                printf("directory %s successfully created \n", pathBuf.c_str());
+                printf("directory [%s] successfully created \n", pathBuf.c_str());
             }
         }
 
-        return 1;
+        return 0;
     }
 
 }
@@ -67,12 +67,12 @@ int main(int argc, char **argv)
             "input mkdir <directoryName>  to create your directory (or directories)\n";
 
 
-    ext::MkdirObject = new ext::ExternMkdir("EXTERN_MKDIR", ext::myMkdirStaticLauncher, mkdir_help);
+    extrn::MkdirObject = new extrn::ExternMkdir("EXTERN_MKDIR", extrn::myMkdirStaticLauncher, mkdir_help);
 
-    int result = ext::MkdirObject->call(static_cast<size_t >(argc), argv);
+    int result = extrn::MkdirObject->call(static_cast<size_t >(argc), argv);
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
-    delete ext::MkdirObject;
+    delete extrn::MkdirObject;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 
     return result;

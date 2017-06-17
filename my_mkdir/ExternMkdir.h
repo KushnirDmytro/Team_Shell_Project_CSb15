@@ -13,7 +13,7 @@
 #include "../ExternalFunc.h"
 
 
-namespace ext {
+namespace extrn {
 
     class ExternMkdir : public ExternalFunc {
 
