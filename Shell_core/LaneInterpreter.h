@@ -41,7 +41,11 @@ namespace sh_core {
 
         bool hasSuchExternal(const string * const arg) const;
 
+
     public:
+        bool hasMyshExtention(const string *const arg) const;
+
+        int interpetScriptFile(const string * const arg) const;
 
         LaneInterpreter();
 

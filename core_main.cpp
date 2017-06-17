@@ -28,9 +28,7 @@ using  callable_function =  int (*)(size_t, char **);
 
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS END =============
 
-//TODO REMASTER mpwd
-// TODO REMASTER mexit
-// TODO make auto_call embedded interpreter if argument is [.msh] script
+
 namespace sh_core {
     env::Env *environment;
     sh_core::LaneInterpreter *interpreter;
@@ -74,7 +72,8 @@ void my_loop()
 
 
 
-
+// TODO REMASTER mpwd
+// TODO REMASTER mexit
 
 int main(int argc, char **argv)
 {
@@ -83,7 +82,15 @@ int main(int argc, char **argv)
     sh_core::interpreter = new sh_core::LaneInterpreter();
     //===================DYNAMIC INITIALISATION END======================
 
-    // Run command loop.
+
+    if (argc == 2){
+        string *line = new string(argv[1]);
+        int result = sh_core::interpreter->processSting(line);
+        return result;
+    }
+
+
+        // Run command loop.
     my_loop();
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================

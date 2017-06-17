@@ -137,6 +137,18 @@ namespace sh_core {
         return (int) embedded_lib_.size();
     }
 
+
+    int LaneInterpreter::interpetScriptFile(const string * const scriptName) const{
+        const int supposedArgsNumber = 2;
+        vector<string> *argsBuf = new vector<string>;
+        argsBuf->push_back("mysh");
+        argsBuf->push_back(*scriptName);
+        char **charArgsBuf = new char *[argsBuf[0].size() + (*scriptName).length() + 1];
+        sh_core::interpreter->splitter->convertStrVectorToChars(argsBuf, charArgsBuf);
+        int result = embedded_lib_.at("mmysh")->call(supposedArgsNumber, charArgsBuf);
+        return result;
+    };
+
     int LaneInterpreter::myExecute(const vector<string> *const args) const{
 
         char **cargs = new char *[args->size() + 1];
@@ -154,13 +166,25 @@ namespace sh_core {
                 //=============CALLING INNER FUNCTION <=======================
                 result = embedded_lib_.at(possibleFunc)->call(args_number, cargs);
             }
-        else{ // CALLING EXTERN FUNC <======================
-            if (hasSuchExternal(&possibleFunc)){
-                result = myExternLauncher(cargs, external_lib_.at(possibleFunc)->string().c_str());
-                //using full pathname instead of just local one
+            else {
+            if (hasMyshExtention(&possibleFunc)) {
+
+                result = interpetScriptFile(&possibleFunc);
+//                vector<string> *argsBuf = new vector<string>;
+//                argsBuf->push_back("mysh");
+//                argsBuf->push_back(possibleFunc);
+//                char **charArgsBuf = new char *[argsBuf[0].size() + possibleFunc.length() + 1];
+//                sh_core::interpreter->splitter->convertStrVectorToChars(argsBuf, charArgsBuf);
+//                result = embedded_lib_.at("mmysh")->call(args_number + 1, charArgsBuf);
+
             }
-            else
-                result = myExternLauncher(cargs);
+            else{ // CALLING EXTERN FUNC <======================
+                if (hasSuchExternal(&possibleFunc)) {
+                    result = myExternLauncher(cargs, external_lib_.at(possibleFunc)->string().c_str());
+                    //using full pathname instead of just local one
+                } else
+                    result = myExternLauncher(cargs);
+            }
         }
 
         delete cargs;
@@ -177,6 +201,20 @@ namespace sh_core {
     inline bool LaneInterpreter::hasSuchEmbedded(const string *const arg) const{
         auto search_iter = embedded_lib_.find(*arg);
         return  (search_iter != embedded_lib_.end() );
+    }
+
+    inline bool LaneInterpreter::hasMyshExtention(const string *const arg) const{
+        string atrg1 = *arg;
+
+        fs::path thisFile = fs::path(*arg);
+
+//        std::cout << "Extention: [" << fs::extension(thisFile) << "]" << std::endl;
+
+        if ((fs::exists(thisFile))
+            && (strcmp(fs::extension(thisFile).c_str(), ".msh") == 0))
+            return true;
+        else return false;
+
     }
 
     inline bool LaneInterpreter::hasSuchExternal(const string *const arg) const {
