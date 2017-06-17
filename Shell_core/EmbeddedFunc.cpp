@@ -25,19 +25,19 @@ namespace sh_core {
     }
 
 
-    int EmbeddedFunc::needToPrintHelp(const size_t nargs, char **&argvector) {
+    bool EmbeddedFunc::needToPrintHelp(const size_t nargs, char **&argvector) {
 
         bool argumentsAreEmpty = (nargs == 0) ||
                 ( (nargs == 1) &&  ( !noargs_allowed_ )  ) ;
 
-        if (argumentsAreEmpty) return 1;
+        if (argumentsAreEmpty) return true;
 
         for (int i = 0; i < nargs; ++i) {
             if ((strcmp(argvector[i], "--help") == 0) || (strcmp(argvector[i], "-h") == 0)) {
-                return 1;
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     void EmbeddedFunc::outputHelp(const string &helpMsg) const {
@@ -62,7 +62,7 @@ namespace sh_core {
 
         if (needToPrintHelp(initialNargs_, initialVargs_)) {
             outputHelp(help_info_);
-            result = 1;
+            result = EXIT_SUCCESS;
         } else{
             result = func_(nargs, args);
         }

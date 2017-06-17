@@ -35,7 +35,7 @@ namespace sh_core {
         bool noargs_allowed_ = true;
 
 
-        int needToPrintHelp(const size_t nargs, char **&argvector);
+        bool needToPrintHelp(const size_t nargs, char **&argvector);
 
         void outputHelp(const string &helpMsg) const;
 

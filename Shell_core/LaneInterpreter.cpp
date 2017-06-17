@@ -7,13 +7,12 @@
 
 #include "LaneInterpreter.h"
 
-#include <zconf.h>
 #include <wait.h>
 #include <iostream>
 #include <vector>
-#include <boost/filesystem.hpp>
 #include <string.h>
 
+#include <boost/filesystem.hpp>
 #include "Utils/LineSplitter.h"
 #include "coreFuncLib.h"
 #include "Utils/FileLaneIterator.h"
@@ -86,7 +85,7 @@ namespace sh_core {
             if (execvp(dest, args) == -1) {
                 perror("my_Shell failed to launch this file");
             }
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         } else if (pid < 0) {
             // Error forking
             perror("my_Shell failed to fork");
@@ -108,7 +107,7 @@ namespace sh_core {
                      !WIFSIGNALED(status)); //checks for valid scenarios of exiting (we borrowed it)
         }
 
-        return 1;
+        return EXIT_SUCCESS;
     }
 
     bool LaneInterpreter::doesAllPathesValidAndRefineToAbsolute(vector <fs::path> *args) const{
@@ -170,12 +169,6 @@ namespace sh_core {
             if (hasMyshExtention(&possibleFunc)) {
 
                 result = interpetScriptFile(&possibleFunc);
-//                vector<string> *argsBuf = new vector<string>;
-//                argsBuf->push_back("mysh");
-//                argsBuf->push_back(possibleFunc);
-//                char **charArgsBuf = new char *[argsBuf[0].size() + possibleFunc.length() + 1];
-//                sh_core::interpreter->splitter->convertStrVectorToChars(argsBuf, charArgsBuf);
-//                result = embedded_lib_.at("mmysh")->call(args_number + 1, charArgsBuf);
 
             }
             else{ // CALLING EXTERN FUNC <======================
@@ -245,9 +238,9 @@ int mySh(size_t nargs, char **args)
                 if (st.length() == 0)
                     continue;
                 status = interpreter->processSting(&st);
-                if (!status){
+                if (status){
                     delete iter;
-                    return 0;
+                    return status;
                 };
             }
             delete iter;

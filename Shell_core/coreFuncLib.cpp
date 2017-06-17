@@ -2,6 +2,7 @@
 // Created by d1md1m on 14.05.17.
 //
 
+#include <climits>
 #include "coreFuncLib.h"
 #include "../Env/Env.h"
 #include "EmbeddedFunc.h"
@@ -39,8 +40,8 @@ namespace sh_core{
 //show current directory
     int myPwd(size_t nargs, char **args) {
         environment->dir_->refreshPath();
-        printf("%s", environment->dir_->getActualPath().c_str());
-        return 1;
+        printf("%s\n", environment->dir_->getActualPath().c_str());
+        return  EXIT_SUCCESS;
     }
 
 //changes directory
@@ -72,7 +73,7 @@ namespace sh_core{
 
         environment->dir_->setActualPath(fs::current_path());
         environment->dir_->setPathWasChanged(true);
-        return 1;
+        return EXIT_SUCCESS;
     }
 
 //shows help info
@@ -99,13 +100,47 @@ namespace sh_core{
 
         printf("\n");
 
-        return 1;
+        return EXIT_SUCCESS;
     }
 
 //just exits, that is it
     int myExit(size_t nargs, char **args) {
-        printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
-        return 0;
+
+        if (nargs == 1) {
+            printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
+            return EXIT_FAILURE;
+        }
+
+        if (nargs == 2) {
+            size_t numberLen = strlen(args[1]);
+            int valueBuf = 0;
+            if (numberLen > 4) {
+                printf("RETURN CODE NUMBER SEEMS TOO BIG [%s], consider max possible %d\n", args[1], 255);
+                return  EXIT_SUCCESS;
+            }
+            for (int symbolIndx = 0; symbolIndx < numberLen; ++symbolIndx){
+                char currentSymbol = args[1][symbolIndx];
+
+                if (!isdigit(currentSymbol)){
+                    printf("Unrecognised EXIT return code (suppose positive integer) : [%s]\n", args[1]);
+                    return EXIT_SUCCESS;
+                }
+                valueBuf += atoi(&currentSymbol) * pow(10, numberLen - 1 - symbolIndx) ;
+                if (valueBuf > 255) {
+                    printf("RETURN CODE NUMBER SEEMS TOO BIG [%s], consider max possible %d\n", args[1], 255);
+                    return  EXIT_SUCCESS;
+                }
+            }
+            printf("my_Shell says GoodBye to You and wishes a good day ;O) ");
+
+            return valueBuf;
+        }
+
+        else {
+            printf("unknown arguments pattern on EXIT [%s]\n  try 'mexit --help' for instructions\n", *args);
+            return EXIT_SUCCESS;
+        }
+
     }
 
 }

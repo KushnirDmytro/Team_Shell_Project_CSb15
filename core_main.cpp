@@ -47,7 +47,7 @@ string my_read_line(void)
 
 
 //execuion loop
-void my_loop()
+int my_loop()
 {
     string line;
     vector<string> args;
@@ -62,7 +62,8 @@ void my_loop()
         }
         status = sh_core::interpreter->processSting(&line);
 
-    } while (status);
+    } while (!status);
+    return status;
 }
 
 
@@ -71,9 +72,8 @@ void my_loop()
 
 
 
-
-// TODO REMASTER mpwd
-// TODO REMASTER mexit
+// TODO EXIT problem : impossible to return 0
+// TODO other problem : trouble with concept of multythread execution (pass env as a var)
 
 int main(int argc, char **argv)
 {
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
 
         // Run command loop.
-    my_loop();
+    int execution_result_code = my_loop();
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
 
@@ -99,5 +99,5 @@ int main(int argc, char **argv)
     delete sh_core::environment;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 
-    return EXIT_SUCCESS;
+    return execution_result_code;
 }
