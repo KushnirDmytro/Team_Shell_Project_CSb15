@@ -5,6 +5,12 @@
 // Created by d1md1m on 26.03.17.
 //
 
+
+#include <string>
+
+#include "User.h"
+#include "Directory.h"
+
 #include "ConsoleView.h"
 
 namespace env {

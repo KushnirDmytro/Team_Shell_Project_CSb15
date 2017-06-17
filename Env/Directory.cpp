@@ -5,6 +5,11 @@
 // Created by d1md1m on 26.03.17.
 //
 
+#include <string>
+#include <iostream>
+#include <boost/filesystem/path.hpp>
+
+
 #include "Directory.h"
 
 namespace env {

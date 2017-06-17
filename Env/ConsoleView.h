@@ -5,9 +5,7 @@
 #ifndef LAB_2_SHELL_PROMPTCONSOLEINTERFACE_H
 #define LAB_2_SHELL_PROMPTCONSOLEINTERFACE_H
 
-#include <boost/filesystem/path.hpp>
 #include <string>
-
 #include "User.h"
 #include "Directory.h"
 

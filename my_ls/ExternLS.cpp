@@ -5,6 +5,9 @@
 // Created by d1md1m on 31.03.17.
 //
 
+#include <pwd.h>
+
+
 #include "ExternLS.h"
 
 

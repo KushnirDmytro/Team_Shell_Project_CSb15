@@ -6,8 +6,17 @@
 // Created by d1md1m on 26.03.17.
 //
 
+
+#include <stdlib.h>
+//#include <stdio.h>
+#include <string>
+#include <pwd.h>
+#include <climits>
+//#include <boost/filesystem.hpp>
+
+
 #include "User.h"
-#include "Env.h"
+//#include "Env.h"
 
 
 namespace env {

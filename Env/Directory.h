@@ -5,9 +5,8 @@
 #ifndef LAB_2_SHELL_DIRECTORY_H
 #define LAB_2_SHELL_DIRECTORY_H
 
-#include <boost/filesystem/path.hpp>
-#include <iostream>
 #include <string>
+#include <boost/filesystem/path.hpp>
 
 #include "User.h"
 

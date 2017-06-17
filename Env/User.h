@@ -5,12 +5,8 @@
 #ifndef LAB_2_SHELL_USER_H
 #define LAB_2_SHELL_USER_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
+
 #include <boost/filesystem.hpp>
-#include <climits>
-#include <pwd.h>
 
 
 
