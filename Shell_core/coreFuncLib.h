@@ -5,13 +5,6 @@
 #ifndef LAB_2_SHELL_EMBBEDDEDLIB_H
 #define LAB_2_SHELL_EMBBEDDEDLIB_H
 
-
-#include <zconf.h>
-#include <wait.h>
-#include <iostream>
-#include <vector>
-#include <boost/filesystem.hpp>
-#include <boost/mpl/size_t.hpp>
 #include <string>
 
 using std::string;

@@ -5,15 +5,13 @@
 #ifndef LAB_2_SHELL_INTERPRETER_H
 #define LAB_2_SHELL_INTERPRETER_H
 
-#include <zconf.h>
-#include <wait.h>
-#include <iostream>
 #include <vector>
-#include <boost/filesystem.hpp>
 #include <string.h>
+#include <map>
 
 #include "Utils/LineSplitter.h"
 #include "coreFuncLib.h"
+#include "EmbeddedFunc.h"
 
 
 namespace sh_core {

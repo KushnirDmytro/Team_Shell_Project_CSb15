@@ -5,16 +5,14 @@
 #ifndef LAB_2_SHELL_LINE_SPLITTER_H
 #define LAB_2_SHELL_LINE_SPLITTER_H
 
-#include <array>
 #include <cstring>
 #include <vector>
-#include <boost/filesystem.hpp>
-#include "../EmbeddedFunc.h"
+#include <string>
+//#include <boost/filesystem.hpp>
 
 using std::vector;
 using std::string;
 using std::vector;
-namespace fs = boost::filesystem;
 
 namespace sh_core {
 

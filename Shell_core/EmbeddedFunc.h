@@ -7,14 +7,10 @@
 
 
 #include  <string>
-#include <map>
 #include <cstring>
-#include <boost/filesystem/operations.hpp>
-
-
+#include <boost/filesystem.hpp>
 #include "../Env/Env.h"
-#include "Utils/FileLaneIterator.h"
-
+// TODO make environment as an variable being passed
 
 namespace fs = boost::filesystem;
 

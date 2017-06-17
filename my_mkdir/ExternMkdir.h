@@ -5,10 +5,10 @@
 #ifndef LAB_2_SHELL_EXTERNMKDIR_H
 #define LAB_2_SHELL_EXTERNMKDIR_H
 
-#include <string.h>
-#include <boost/filesystem.hpp>
-#include <map>
-#include <iostream>
+#include <string>
+//#include <boost/filesystem.hpp>
+//#include <map>
+//#include <iostream>
 
 #include "../ExternalFunc.h"
 
@@ -19,9 +19,9 @@ namespace ext {
 
         bool allGoingFine = true;
     public:
-        ExternMkdir(const string &name,
+        ExternMkdir(const std::string &name,
                     sh_core::callable_function funct_to_assign,
-                    string &help_msg);
+                    std::string &help_msg);
 
         int call(size_t nargs, char **argv) override;
 

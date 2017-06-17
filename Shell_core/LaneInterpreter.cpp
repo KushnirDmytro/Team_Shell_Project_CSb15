@@ -7,6 +7,17 @@
 
 #include "LaneInterpreter.h"
 
+#include <zconf.h>
+#include <wait.h>
+#include <iostream>
+#include <vector>
+#include <boost/filesystem.hpp>
+#include <string.h>
+
+#include "Utils/LineSplitter.h"
+#include "coreFuncLib.h"
+#include "Utils/FileLaneIterator.h"
+
 namespace fs = boost::filesystem;
 
 namespace sh_core {

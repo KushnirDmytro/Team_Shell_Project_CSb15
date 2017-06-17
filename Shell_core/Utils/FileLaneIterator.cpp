@@ -6,7 +6,8 @@
 //
 
 #include "FileLaneIterator.h"
-
+#include <array>
+#include <boost/filesystem/operations.hpp>
 
 namespace sh_core {
 

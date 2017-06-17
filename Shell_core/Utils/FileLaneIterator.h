@@ -5,9 +5,8 @@
 #ifndef LAB_2_SHELL_FILEITERATOR_H
 #define LAB_2_SHELL_FILEITERATOR_H
 
-#include <array>
 #include <fstream>
-#include <boost/filesystem/operations.hpp>
+#include <string>
 
 using std::string;
 

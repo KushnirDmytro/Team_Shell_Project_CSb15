@@ -6,6 +6,16 @@
 #include "../Env/Env.h"
 #include "EmbeddedFunc.h"
 
+//
+//#include <zconf.h>
+//#include <wait.h>
+//#include <iostream>
+//#include <vector>
+//#include <boost/filesystem.hpp>
+//#include <boost/mpl/size_t.hpp>
+//#include <string>
+
+
 using std::string;
 
 #define  home_dir_call  "~"
