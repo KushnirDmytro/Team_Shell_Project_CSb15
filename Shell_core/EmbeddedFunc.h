@@ -49,6 +49,10 @@ namespace sh_core {
 
         virtual int call(size_t nargs, char **args);
 
+//        struct Printer { // nested class
+//            static int fd[2]; // files descriptor array for pipeline
+//        };
+
     };
 
     extern env::Env *environment;

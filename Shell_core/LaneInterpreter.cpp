@@ -77,13 +77,30 @@ namespace sh_core {
             dest = args[0];
 
         pid_t pid, wpid;
-        int status;
+        int status, fd[2];
 
 // initial commit
 
         pid = fork();
         if (pid == 0) {
             //  we are in Child process
+
+//            if(p[0] != -1  )
+//            {
+//                close(p[1]);  /* first close the write end of the pipe */
+//                if(dup2(p[0], 0) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
+//                    perror( "dup2 failed" );
+//                    _exit(1);
+//                }
+//            }
+//            if(p[1] != -1 ) /* stdout == write end of the pipe */
+//            {
+//                close(p[0]); /* first close the read end of the pipe */
+//                if(dup2(p[1], 1) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
+//                    perror( "dup2 failed" );
+//                    _exit(1);
+//                }
+//            }
             if (execvp(dest, args) == -1) {
                 perror("my_Shell failed to launch this file");
             }
