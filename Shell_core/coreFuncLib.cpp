@@ -2,20 +2,22 @@
 // Created by d1md1m on 14.05.17.
 //
 
+
+#include <boost/mpl/size_t.hpp>
+#include <string>
+#include <stdlib.h>
+#include <math.h>
+#include <iostream>
+#include <vector>
+#include <boost/filesystem.hpp>
+
+
 #include <climits>
 #include "coreFuncLib.h"
 #include "../Env/Env.h"
 #include "EmbeddedFunc.h"
 
 //
-//#include <zconf.h>
-//#include <wait.h>
-//#include <iostream>
-//#include <vector>
-//#include <boost/filesystem.hpp>
-//#include <boost/mpl/size_t.hpp>
-//#include <string>
-
 
 using std::string;
 
@@ -138,7 +140,7 @@ namespace sh_core{
 
         else {
             printf("unknown arguments pattern on EXIT [%s]\n  try 'mexit --help' for instructions\n", *args);
-            return EXIT_SUCCESS;
+            return EXIT_SUCCESS;а
         }
 
     }
