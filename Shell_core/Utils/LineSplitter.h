@@ -21,7 +21,7 @@ namespace sh_core {
         public:
             LineSplitter();
 
-            // left it here = line delimiters " \t\r\n\a"
+            // left it here = line delimiters_ " \t\r\n\a"
             const vector<string> mySplitLine(string *input_str) const;
 
 //produced Kovalchuk, Refactored & extracted by Kushnir
