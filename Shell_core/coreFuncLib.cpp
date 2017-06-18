@@ -140,7 +140,7 @@ namespace sh_core{
 
         else {
             printf("unknown arguments pattern on EXIT [%s]\n  try 'mexit --help' for instructions\n", *args);
-            return EXIT_SUCCESS;а
+            return EXIT_SUCCESS;
         }
 
     }
