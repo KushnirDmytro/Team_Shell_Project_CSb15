@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <boost/filesystem.hpp>
+#include <sstream>
 #include "../EmbeddedFunc.h"
 
 
@@ -26,7 +27,108 @@ namespace sh_core {
 
 
 // left it here = line delimiters " \t\r\n\a"
+
+
+
+        // left it here = line delimiters " \t\r\n\a"
+        // algorithm :
+        // /* step 1)divide by tokens (using stringstream)
+        // * 2) recognise special tokens and unpack them up to normal ones
+        // * (will take special procedures)
+        // * 3) markup system for tokens
+        // * */
+        // TODO finit state machine
+        // /*tokens to be decoded/unpacked and specified
+        //    * 's' - simple string
+        // * ''' - token in brace
+        //    * '"' - token in double brace
+        // * '`' - token in reverse brace
+        //      * 'a' - some argument for whatsoever (least semi-specified string)
+        //       * '%' - regexp
+        // * 't' - token in string format listing
+        // * 'v' - variable
+        //  * 'e' - external variable
+        //     * 'p' - file_pass
+        //   * '/' - dir_pass
+        //    * 'i' - inner command
+        //    * 'o' - outer command
+        // * 'm' - myshell script
+        //   * '#' - comment
+        //    * '|' - pipeCommand
+        //    * '>' - file to output redirrect
+        //       * '2' - file to Err redirect
+        //    * '<' - file to input redirrect
+        //    * '.' - last tokeb
+        //    * '=' - setting variable
+        //     * */
+        //    /** 't' - token in string format listing formating
+        //     *  '[text|token]' -- should be ok, token can't finish and text couldn't start from []
+        //       * */
+
+
+        struct machine_state{
+            bool isComment = false;
+            bool isDoubleBrace = false;
+            bool isBrace = false;
+            bool isReverceBrace = false;
+            bool isRegexp = false;
+
+            void clean_all(){
+                isComment = false;
+                isDoubleBrace = false;
+                isBrace = false;
+                isReverceBrace = false;
+                isRegexp = false;
+            }
+
+            bool isInAnyBrace(){
+                return  (isDoubleBrace || isBrace || isReverceBrace);
+            }
+
+            bool isIndependant(){
+                return !(isComment||isDoubleBrace || isBrace || isReverceBrace);
+            }
+        };
+
         const vector<string> LineSplitter::mySplitLine( string *input_str) const {
+
+
+            /*
+            std::vector <std::pair<std::string, char>> *processing_buffer = new std::vector <std::pair<std::string, char>>;
+
+            const std::string special_symbols = "'\"`%/#|><._* &=";
+
+            machine_state mst ;
+
+            std::stringstream building_block;// = new std::stringstream;
+            for (char ch : *input_str){
+                size_t pos = special_symbols.find_first_of(ch);
+                if (pos != std::string::npos){ //if among special symbols
+                    switch (ch){
+                        case '#': {
+                            if ( !(mst.isBrace || mst.isDoubleBrace || mst.isReverceBrace) )
+                                mst.isComment = true;
+                            else
+                                building_block<<ch;
+                            break;
+                        }
+                        case ' ':{
+                            if
+                        }
+                        default: printf("Error matching pattern occured\n");
+                    }
+                }
+                else{
+                    building_block << ch;
+                }
+
+
+
+
+            }
+            */
+
+
             input_str->append(" ");
             vector<string> args;
 
