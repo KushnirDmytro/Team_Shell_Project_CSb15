@@ -24,13 +24,20 @@ namespace sh_core {
             bool isBrace = false;
             bool isReverceBrace = false;
             bool isRegexp = false;
+            bool isVariableCall = false;
+            bool isVariableAssignment = false;
+
+//            bool isGlobalVar = false;
 
             void clean_all(){
+                isVariableCall = false;
+                isVariableAssignment = false;
                 isComment = false;
                 isDoubleBrace = false;
                 isBrace = false;
                 isReverceBrace = false;
                 isRegexp = false;
+//                isGlobalVar = false;
             }
 
             bool isInAnyBrace(){
@@ -47,6 +54,9 @@ namespace sh_core {
                 if (isBrace) return '\'';
                 if (isReverceBrace) return '`';
                 if (isRegexp) return '%';
+                //if (isGlobalVar) return 'G';
+                if (isVariableCall) return '$';
+                if (isVariableAssignment) return '=';
                 else return 's';
             }
 
@@ -56,7 +66,7 @@ namespace sh_core {
         private:
             machine_state mst;
 
-            const std::string special_symbols_ = "'\"`%/#|><._*&=";
+            const std::string special_symbols_ = "%_*/|><.&=\\";
             const std::string open_pair_symbols_ = "'\"`#";
             const std::string delimiters_ = " \t\r\n\a";
 
@@ -64,6 +74,10 @@ namespace sh_core {
             vector<token> *tokens_vector_;
             int solve_pairwise_token(std::stringstream *source,
                                                 std::stringstream *workBuf);
+
+            int serch_for_comment_end(std::stringstream *source,
+                                      std::stringstream *workBuf);
+            bool lastTokenEquals(const std::string *compare) const;
 
         public:
             Tokenizer();

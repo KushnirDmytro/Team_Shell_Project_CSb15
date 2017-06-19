@@ -40,6 +40,7 @@ namespace extrn {
         bool noargs_allowed_ = true;
 
         bool *default_state_to_write;
+
         DefaultOptionsManager *getSuboptionFromMap(const string potential_arg) const;
 
         // NO need to make them protected, class is inner private

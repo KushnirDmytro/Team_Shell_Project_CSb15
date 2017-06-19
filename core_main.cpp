@@ -53,12 +53,13 @@ int my_loop()
     vector<string> args;
     int status;
 
-
     do {
         sh_core::environment->console_->displayPromptMsg();
         line = my_read_line();
         if (strlen(line.c_str()) == 0){ //handling situation of empty line been red
             continue;
+
+            //TODO handler for returning "0"
         }
         status = sh_core::interpreter->processSting(&line);
 
@@ -78,18 +79,25 @@ int my_loop()
 int main(int argc, char **argv)
 {
 
+    // TODO download old Env if User is registered
     sh_core::environment =  new env::Env();
     sh_core::interpreter = new sh_core::LaneInterpreter();
     //===================DYNAMIC INITIALISATION END======================
 
 
+    //TODO restyle external sriptFile analysys
     if (argc == 2){
         string *line = new string(argv[1]);
         int result = sh_core::interpreter->processSting(line);
         return result;
     }
+    if (argc > 2){
+        printf("Too many arguments (one script-file name at time pls)!\n");
+        return EXIT_FAILURE;
+    }
 
 
+    //TODO Returning ZERO
         // Run command loop.
     int execution_result_code = my_loop();
 

@@ -59,7 +59,7 @@ namespace sh_core {
 
     namespace utils {
         Tokenizer::Tokenizer() {
-           this->tokens_vector_ = new std::vector <token>;
+            this->tokens_vector_ = new std::vector<token>;
 
         }
 
@@ -68,28 +68,64 @@ namespace sh_core {
         }
 
 
-        inline void Tokenizer::flush_buf_to_token (std::stringstream* workBuffer){
+        inline void Tokenizer::flush_buf_to_token(std::stringstream *workBuffer) {
             if (workBuffer->rdbuf()->in_avail() != 0) {
                 tokens_vector_->push_back(std::pair<string, char>(workBuffer->str(), mst.getToken()));
+                std::cout << "Flushing buf [" << (*workBuffer).str() << "]" <<std::endl;
+                std::cout << "Vector NOW :" << std::endl;
+                for (auto el: *tokens_vector_){
+                    std::cout << "str: [" << el.first << "]" << "ch: {"<<  el.second << "}" << std::endl;
+                }
                 workBuffer->str("");
                 mst.clean_all();
             }
         }
 
-        inline vector<token>* Tokenizer::form_result(){
+        inline vector<token> *Tokenizer::form_result() {
             vector<token> *result_vector = new vector<token>();
             std::swap(result_vector, tokens_vector_); // < ============= not sure here
             return result_vector;
         }
+        
+        inline bool Tokenizer::lastTokenEquals(const std::string *compare) const{
+            bool result;
+            if ((tokens_vector_->size() > 0))
+                result = strcmp( (tokens_vector_->end())->first.c_str(), (*compare).c_str()) == 0;
+            else
+                result = false;
+            return result;
+        }
+
+        inline int Tokenizer::serch_for_comment_end(std::stringstream *source,
+                                                    std::stringstream *workBuf) {
+            char ch;
+            if (source->good()) {
+                ch = static_cast<char> (source->get());
+
+                while (ch != '\n' && ch != '\r' && ch!= '\\' && source->good()) { //seek for ending of comment
+                    (*workBuf) << ch;
+                    ch = static_cast<char> (source->get());
+                };
+
+                if (!source->good()) { // comment is up to the end of executable string
+                    std::cout << "Can't find closing comment statement" << std::endl;
+                }
+                 else {
+                    std::cout << "comment closed" << std::endl;
+                }
+                    flush_buf_to_token(workBuf); //flushing value to continue work
+                    return EXIT_SUCCESS;
+            }
+            perror("Reading buffer errror\n");
+            return EXIT_FAILURE;
+        }
 
         inline int Tokenizer::solve_pairwise_token(std::stringstream *source,
-                                                              std::stringstream *workBuf){
+                                                   std::stringstream *workBuf) {
             char ch;
             char tokenState = mst.getToken();
-            if (tokenState == '#')
-                // TODO consider multilinear comments proceeding
-               printf("comment occuerd\n");
-            else if (source->good()) {
+
+            if (source->good()) {
                 ch = static_cast<char> (source->get());
 
                 while (ch != tokenState && source->good()) {
@@ -98,92 +134,203 @@ namespace sh_core {
                 };
             }
 
-            if (source->bad()) {
-                std::cout << "ERROR, can't find closing pair for opening char!" << std::endl;
+            if (!(source->good())) {
+                perror("ERROR, can't find closing pair for opening char\n");
                 return EXIT_FAILURE;
-            }
-
-            else  {
+            } else {
                 flush_buf_to_token(workBuf);
                 return EXIT_SUCCESS;
             }
         }
 
 
-        vector<token> * Tokenizer::tokenize(const string * input_str) {
+        vector<token> *Tokenizer::tokenize(const string *input_str) {
 
             std::stringstream ss(*input_str);
             std::stringstream workBuffer;
             char ch;
 
             // preliminar preparetion
-            if (ss.good()) ch = (char)ss.get();
+            if (ss.good()) ch = (char) ss.get();
             else {
-                std::cout<< "EMPTY STRING "<<std::endl;
+                std::cout << "EMPTY STRING " << std::endl;
                 return form_result();
             }
 
-            while (ss.good()){
+            while (ss.good()) {
                 //check for braces
                 size_t founded_char_position = open_pair_symbols_.find_first_of(ch);
                 if (founded_char_position != std::string::npos) {
 
                     flush_buf_to_token(&workBuffer);
 
+
                     switch (ch) {
 
-                        case '"':{
+                        // =======================checking pairwise tokens ======================
+                        case '"': {
                             mst.isDoubleBrace = true;
                             if (solve_pairwise_token(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
-                        case '\'':{
+                        case '\'': {
                             mst.isBrace = true;
                             if (solve_pairwise_token(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
-                        case '`':{
+                        case '`': {
                             mst.isReverceBrace = true;
                             if (solve_pairwise_token(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
-                        case '#':{
+                        case '#': {
                             mst.isComment = true;
-                            if (solve_pairwise_token(&ss, &workBuffer))
+                            if (serch_for_comment_end(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
 
-                        default: std::cout << "ERROR DECODING TOKENS" << std::endl;
+                        default:
+                            std::cout << "ERROR DECODING TOKENS" << std::endl;
 
                     }
+                    //   workBuffer.str("");
+                } else { //===========================================delimiters check
+
+                    founded_char_position = delimiters_.find_first_of(ch);
+                    if (founded_char_position != std::string::npos) {
+
+                        flush_buf_to_token(&workBuffer);
+
+                        if (ss.good()) {
+                            //ch = static_cast<char> (ss.get());
+                            //TODO use tellg() and seekg()
+
+
+                            bool isDelimiter = delimiters_.find(ch) != std::string::npos;
+
+                            std::stringstream::pos_type previuos_position = ss.tellg();
+
+                            while (isDelimiter
+                                   && ss.good()) {
+                                previuos_position = ss.tellg();
+                                ch = static_cast<char> (ss.get());
+                                isDelimiter = delimiters_.find(ch) != std::string::npos;
+                            };
+                            if (ss.good())
+                                ss.seekg(previuos_position);
+                        }
+
+                        if (!ss.good()) {
+                            std::cout << "ERROR, can't find closing pair for opening char!" << std::endl;
+                            return form_result();
+                        }
+
+
+
+
+                    } else {
+
+                        founded_char_position = special_symbols_.find_first_of(ch);
+                        if (founded_char_position != std::string::npos) {
+
+                            flush_buf_to_token(&workBuffer);
+
+                            switch (ch) {
+
+                                case '_': {
+                                }
+                                case '*': {
+                                }
+                                case '%': {
+                                    mst.isRegexp = true;
+                                    break;
+                                }
+                                case '\\': { //actually doing nothing
+                                    break;
+                                }
+
+                                    //=========================+EXECUTION REDIRECTION BLOCK
+                                case '>': {
+                                    if (strcmp(workBuffer.str().c_str(), "2") == 0) {
+                                        tokens_vector_->push_back(token("", '2')); //STD ERR
+                                        workBuffer.str("");
+                                    } else
+                                        tokens_vector_->push_back(token("", '>')); // STD OUT
+                                    break;
+                                }
+                                case '<': {
+                                    tokens_vector_->push_back(token("", '<')); //STD IN
+                                    break;
+                                }
+                                case '&': {
+//
+//                                    if (lastTokenEquals(new string("<"))) TODO consider situation with double redirect
+                                    tokens_vector_->push_back(token("", '&')); //silent backstage mode for previous
+                                    break;
+                                } // TODO make silent mode
+                                case '|': {
+                                    tokens_vector_->push_back(token("", '|')); //conveyor
+                                    break;
+                                }
+
+                                    //=========================+EXECUTION REDIRECTION BLOCK =============END=============
+
+
+                                case '$': {
+                                    mst.isVariableCall = true;
+                                    break;
+                                }
+
+                                case '=': {
+                                    mst.isVariableAssignment = true;
+
+                                    if (lastTokenEquals(new string("export")))
+                                        tokens_vector_->push_back(
+                                                token("", 'G')); //shows that next one is global variable
+                                        // TODO REALIZE IDEA OF ENVIRONMENT
+                                     break;
+                                }
+
+                                case '#': {
+                                    mst.isComment = true;
+                                    if (solve_pairwise_token(&ss, &workBuffer))
+                                        return form_result();  // situation of error
+                                    break;
+                                }
+
+                                default:
+                                    std::cout << "ERROR DECODING TOKENS" << std::endl;
+
+                            }
+
+                        }
+                        else{
+
+                            workBuffer << ch;
+                            std::cout << (char)ch << std::endl;
+                        }
+
+                    }
+
                 }
-                else { //not braces
 
-                    workBuffer << ch;
-                    std::cout << (int)ch << std::endl;
-
+                ch = static_cast<char> (ss.get());
                 }
-
-                ch = static_cast<char> (ss.get()) ;
-
-            }
 
             flush_buf_to_token(&workBuffer);
 
-
-            for (auto toks: *tokens_vector_){
-                std::cout << "[" <<toks.first << "]" << " <" << toks.second << "> " << std::endl;
+            for (auto toks: *tokens_vector_) {
+                std::cout << "[" << toks.first << "]" << " <" << toks.second << "> " << std::endl;
             }
             return form_result();
         }
 
-        }
-
     }
+}
 
 
 

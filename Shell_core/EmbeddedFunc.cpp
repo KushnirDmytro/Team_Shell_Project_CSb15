@@ -40,6 +40,7 @@ namespace sh_core {
         return false;
     }
 
+
     void EmbeddedFunc::outputHelp(const string &helpMsg) const {
         printf("%s\n", help_info_.c_str());
     }
