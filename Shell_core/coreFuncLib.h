@@ -23,7 +23,7 @@ namespace sh_core {
 
     int mySh(size_t nargs, char **args);
 
-    int myEcho(size_t nargs, char **args);
+    int mEcho(size_t nargs, char **args);
 }
 
 #endif //LAB_2_SHELL_EMBBEDDEDLIB_H

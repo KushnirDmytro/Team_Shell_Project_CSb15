@@ -147,8 +147,8 @@ namespace sh_core{
     }
 
     ///
-    int myEcho(size_t nargs, char **args) {
-        printf("%s\n", args);
+    int mEcho(size_t nargs, char **args) {
+    //    printf("%s\n", args);
         return EXIT_SUCCESS;
     }
 

@@ -9,7 +9,9 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
         Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
-        Shell_core/Utils/Tokenizer.cpp Shell_core/Utils/Tokenizer.h
+        Shell_core/Utils/Tokenizer.cpp
+
+        Shell_core/Utils/Tokenizer.h
         Shell_core/LaneInterpreter.cpp Shell_core/LaneInterpreter.h
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h

@@ -19,6 +19,7 @@ namespace sh_core {
     namespace utils {
 
         struct machine_state{
+            bool ERROR_STATE = false;
             bool isComment = false;
             bool isDoubleBrace = false;
             bool isBrace = false;
@@ -28,11 +29,11 @@ namespace sh_core {
             bool isVariableName = false;
             bool isVariableValue = false;
             bool isGlobal = false;
-            bool ERROR_STATE = false;
 
 //            bool isGlobalVar = false;
 
             void clean_all(){
+                ERROR_STATE = false;
                 isVariableCall = false;
                 isVariableName = false;
                 isVariableValue = false;
@@ -42,7 +43,6 @@ namespace sh_core {
                 isReverceBrace = false;
                 isRegexp = false;
                 isGlobal = false;
-                ERROR_STATE = false;
 //                isGlobalVar = false;
             }
 
@@ -91,10 +91,9 @@ namespace sh_core {
                                 std::stringstream *workBuf);
             bool lastTokenEquals(const std::string *compare) const;
 
+
+
         public:
-
-            bool isBadVarName(std::stringstream* candidate) const;
-
             Tokenizer();
 
             vector<token> * tokenize(const string *str);
