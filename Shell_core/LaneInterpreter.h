@@ -64,19 +64,19 @@ namespace sh_core {
 
         bool doesAllPathesValidAndRefineToAbsolute(vector <fs::path> *args) const;
 
+
+        int myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const;
+    public:
+
         bool hasSuchEmbedded(const string * const arg) const;
 
         bool hasSuchExternal(const string * const arg) const;
 
-
-        int myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const;
-    public:
         bool hasMyshExtention(const string *const arg) const;
 
         int interpretScriptFile(const string *const arg) const;
 
         LaneInterpreter();
-
 
         int processSting(string * values) const;
 

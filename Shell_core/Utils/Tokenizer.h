@@ -96,6 +96,7 @@ namespace sh_core {
             bool lastTokenCharEquals(const char compare) const;
 
             bool canBeVariableName(string* to_check);
+            int concretize_attempt(std::stringstream *workBuffer);
 
         public:
             Tokenizer();

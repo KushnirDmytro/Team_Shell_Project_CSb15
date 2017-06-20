@@ -52,6 +52,7 @@
 //
 //    * '<' - file to input redirrect
 //   'f' -file itself
+//   'd'
 //    * '.' - last tokeb
 //    * '=' - setting variable
 //     * */
@@ -64,7 +65,6 @@ namespace sh_core {
     namespace utils {
         Tokenizer::Tokenizer() {
             this->tokens_vector_ = new std::vector<token>;
-
         }
 
         Tokenizer::~Tokenizer() {
@@ -97,9 +97,16 @@ namespace sh_core {
         }
 
 
+        inline int Tokenizer::concretize_attempt(std::stringstream *workBuffer){
+            if ()
+        }
+
         inline void Tokenizer::flush_buf_to_tokens(std::stringstream *workBuffer) {
             if (workBuffer->rdbuf()->in_avail() != 0) {
                 char tokenChar = mst.getToken();
+                if (tokenChar == 's')
+                    concretize_attempt(workBuffer);
+
 
                 if (tokenChar =='v' || tokenChar == 'e' )
                     if (!canBeVariableName(( new string(workBuffer->str().c_str())) ) ){
@@ -323,6 +330,7 @@ namespace sh_core {
                                     break;
                                 }
                                 case '&': {
+                                    flush_buf_to_tokens(&workBuffer);
                                     if ((lastTokenCharEquals('2')  || lastTokenCharEquals('>')) ){
                                         mst.isFile = true; // while proceeding throu tokens we'll get its meaning
                                     }
@@ -428,6 +436,13 @@ namespace sh_core {
             }
             return form_result();
         }
+
+
+
+
+
+
+
 
     }
 }
