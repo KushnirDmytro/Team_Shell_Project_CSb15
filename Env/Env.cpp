@@ -53,9 +53,9 @@ namespace env {
         else return nullptr;
     }
 
-    int Env::VarManager::declareVariableGlobally(const std::string* varName, const std::string* varValue, bool overrite ) const{
+    int Env::VarManager::declareVariableGlobally(const std::string* varName, const std::string* varValue, bool toOverride ) const{
         if (env_->user_->getUser_rights().toChangaGlobalVariables ) {
-            if (!setenv(varName->c_str(), varValue->c_str(), overrite)){
+            if (setenv(varName->c_str(), varValue->c_str(), toOverride)){
                 perror("failed to write system variable");
                 return EXIT_FAILURE;
             }

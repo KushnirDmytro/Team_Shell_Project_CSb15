@@ -301,16 +301,35 @@ namespace sh_core {
                                     mst.isGlobal = isGlobal;
 
 
+                                    const bool rewriting = true;
+                                    const bool not_rewriting = false;
                                     // TESTBLOCK
 
-                                    environment->varManager_->declareVariableLocally(new string ("_a"), new string ("b"));
+                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+                                    environment->varManager_->declareVariableLocally(new string ("_a"),
+                                                                                     new string ("b"));
+                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a")) << std::endl;
+
+
+                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
                                     environment->varManager_->declareVariableGlobally(new string("_a"),
-                                    new string("testVal1"), false);
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal2"), true);
+                                                                                      new string("testVal1"),
+                                                                                      false);
+                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
 
                                     environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal3"), false);
+                                                                                      new string("testVal2"),
+                                                                                      true);
+                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+
+                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+                                                                                      new string("testVal3"),
+                                                                                      false);
+                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
 
 
                                     std::cout << environment->varManager_->getGlobalVar(new string("_a"))->c_str() << std::endl;

@@ -37,7 +37,7 @@ namespace env {
 
             bool doesVariableDeclaredGlobaly(const std::string* compare) const;
 
-            int declareVariableGlobally(const std::string* varName, const std::string* varValue, bool overrite ) const;
+            int declareVariableGlobally(const std::string* varName, const std::string* varValue, bool toOverride ) const;
 
             bool declareVariableLocally(const std::string* varName, const std::string* varValue);
 

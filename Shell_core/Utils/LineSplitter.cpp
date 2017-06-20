@@ -69,8 +69,6 @@ namespace sh_core {
         const vector<string> LineSplitter::mySplitLine( string *input_str) const {
 
 
-
-
             Tokenizer *toker = new Tokenizer();
 
             toker->tokenize(input_str);
