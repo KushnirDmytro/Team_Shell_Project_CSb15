@@ -95,6 +95,7 @@ namespace sh_core {
                 args.push_back(tok);
                 input_str->erase(0, pos + delim.length());
             }
+            delete toker;
             return args;
         }
 

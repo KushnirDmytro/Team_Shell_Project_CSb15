@@ -33,6 +33,7 @@ namespace sh_core{
     string pwd_help_msg = "displays fullname of current execution directory";
     string help_help_msg = "just type 'help' to get info about my_Shell help instructions";
     string exit_help_msg = "function 'exit' terminates My_Shell execution";
+    string echo_help_msg = "retrns value of next argument from input\n";
     string shell_script_interpreter_help_msg = "file interpreter to execute env scripts \n"
             " 'mmysh' <filename> to execurte script file";
 
@@ -143,6 +144,12 @@ namespace sh_core{
             return EXIT_SUCCESS;
         }
 
+    }
+
+    ///
+    int myEcho(size_t nargs, char **args) {
+        printf("%s\n", args);
+        return EXIT_SUCCESS;
     }
 
 }

@@ -28,6 +28,7 @@ namespace sh_core {
             bool isVariableName = false;
             bool isVariableValue = false;
             bool isGlobal = false;
+            bool ERROR_STATE = false;
 
 //            bool isGlobalVar = false;
 
@@ -41,6 +42,7 @@ namespace sh_core {
                 isReverceBrace = false;
                 isRegexp = false;
                 isGlobal = false;
+                ERROR_STATE = false;
 //                isGlobalVar = false;
             }
 
@@ -53,6 +55,7 @@ namespace sh_core {
             }
 
             char getToken(){
+                if (ERROR_STATE) return 'X';
                 if (isComment) return '#';
                 if (isDoubleBrace) return '"';
                 if (isBrace) return '\'';
@@ -89,6 +92,9 @@ namespace sh_core {
             bool lastTokenEquals(const std::string *compare) const;
 
         public:
+
+            bool isBadVarName(std::stringstream* candidate) const;
+
             Tokenizer();
 
             vector<token> * tokenize(const string *str);

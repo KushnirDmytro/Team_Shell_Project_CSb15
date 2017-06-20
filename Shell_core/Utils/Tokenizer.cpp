@@ -69,9 +69,49 @@ namespace sh_core {
             delete tokens_vector_;
         }
 
+        inline bool Tokenizer::isBadVarName(std::stringstream* canidate) const {
+            string BufSower_____________________________________ = canidate->str();
+            /////////////////////////////////
+            // ATTENTION: INVERTED LOGIC!!!
+/////////////////////////////////////////////////////////
+
+            if (canidate->good()) {
+                BufSower_____________________________________ = canidate->str();
+                char ch = static_cast<char>(canidate->get());
+                BufSower_____________________________________ = canidate->str();
+                //first can't be number
+                if (!((isalpha(ch)) || (ch == '_'))) {
+                    printf("ERROR assignment of impossible variable name %s", canidate->str().c_str());
+                    return true;
+                }
+                while (canidate->good()) {
+                    if (!(isdigit(ch) || (isalpha(ch)) || (ch == '_') )){
+                        printf("ERROR assignment of impossible variable name %s", canidate->str().c_str());
+                        return true;
+                    }
+                    BufSower_____________________________________ = canidate->str();
+                    ch = static_cast<char>(canidate->get());
+                    BufSower_____________________________________ = canidate->str();
+                }
+                return false;
+            }
+            else {
+                printf("ERROR assignment of impossible variable name %s", canidate->str().c_str());
+                return true;
+            }
+        }
+
 
         inline void Tokenizer::flush_buf_to_tokens(std::stringstream *workBuffer) {
+            std::string BufShower__________________________________________________________ = workBuffer->str();
             if (workBuffer->rdbuf()->in_avail() != 0) {
+                char tockenMark = mst.getToken();
+
+                if (tockenMark == 'v' || tockenMark=='e'){
+                    if (isBadVarName(workBuffer)){
+                        mst.ERROR_STATE = true;
+                    }
+                }
                 tokens_vector_->push_back(std::pair<string, char>(workBuffer->str(), mst.getToken()));
                 std::cout << "Flushing buf [" << (*workBuffer).str() << "]" <<std::endl;
                 std::cout << "Vector NOW :" << std::endl;
@@ -148,8 +188,13 @@ namespace sh_core {
 
         vector<token> *Tokenizer::tokenize(const string *input_str) {
 
+            std::string ssShower___________________________________________________________;
+            std::string BufShower__________________________________________________________;
+
             std::stringstream ss(*input_str);
+            ssShower___________________________________________________________ = ss.str();
             std::stringstream workBuffer;
+            BufShower__________________________________________________________ = workBuffer.str();
             char ch;
 
             // preliminar preparetion
@@ -159,7 +204,7 @@ namespace sh_core {
                 return form_result();
             }
 
-            while (ss.good()) {
+            while (ss.good() && !mst.ERROR_STATE) {
                 //check for braces
                 size_t founded_char_position = open_pair_symbols_.find_first_of(ch);
                 if (founded_char_position != std::string::npos) {
@@ -196,8 +241,10 @@ namespace sh_core {
                             break;
                         }
 
-                        default:
+                        default: {
                             std::cout << "ERROR DECODING TOKENS" << std::endl;
+                            mst.ERROR_STATE = true;
+                        }
 
                     }
                     //   workBuffer.str("");
@@ -247,6 +294,7 @@ namespace sh_core {
                                 case '%': {
                                     mst.isRegexp = true;
                                     workBuffer << ch; // we will need this char
+                                    BufShower__________________________________________________________ = workBuffer.str();
                                     break;
                                 }
                                 case '\\': { //actually doing nothing, just
@@ -256,9 +304,11 @@ namespace sh_core {
                                     //=========================+EXECUTION REDIRECTION BLOCK
                                 case '>': {
                                     flush_buf_to_tokens(&workBuffer);
+                                    BufShower__________________________________________________________ = workBuffer.str();
                                     if (strcmp(workBuffer.str().c_str(), "2") == 0) {
                                         tokens_vector_->push_back(token("", '2')); //STD ERR
                                         workBuffer.str("");
+                                        BufShower__________________________________________________________ = workBuffer.str();
                                     } else
                                         tokens_vector_->push_back(token("", '>')); // STD OUT
                                     break;
@@ -296,6 +346,7 @@ namespace sh_core {
                                     mst.isVariableName = true;
                                     isGlobal = lastTokenEquals(new string("export"));
                                     mst.isGlobal = isGlobal;
+                                    BufShower__________________________________________________________ = workBuffer.str();
                                     flush_buf_to_tokens(&workBuffer); //previous token part proceeded
                                     mst.isVariableValue = true;
                                     mst.isGlobal = isGlobal;
@@ -305,34 +356,34 @@ namespace sh_core {
                                     const bool not_rewriting = false;
                                     // TESTBLOCK
 
-                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
-                                    environment->varManager_->declareVariableLocally(new string ("_a"),
-                                                                                     new string ("b"));
-                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a")) << std::endl;
-
-
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal1"),
-                                                                                      false);
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
-
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal2"),
-                                                                                      true);
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
-
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal3"),
-                                                                                      false);
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
-
-
-                                    std::cout << environment->varManager_->getGlobalVar(new string("_a"))->c_str() << std::endl;
+//                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+//                                    environment->varManager_->declareVariableLocally(new string ("_a"),
+//                                                                                     new string ("b"));
+//                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a")) << std::endl;
+//
+//
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+//                                                                                      new string("testVal1"),
+//                                                                                      false);
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+//
+//                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+//                                                                                      new string("testVal2"),
+//                                                                                      true);
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+//
+//                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+//                                                                                      new string("testVal3"),
+//                                                                                      false);
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+//
+//
+//                                    std::cout << environment->varManager_->getGlobalVar(new string("_a"))->c_str() << std::endl;
 
                                     environment->varManager_->show_local_variables();
 
@@ -340,8 +391,10 @@ namespace sh_core {
                                      break;
                                 }
 
-                                default:
+                                default: {
                                     std::cout << "ERROR DECODING TOKENS" << std::endl;
+                                    mst.ERROR_STATE = true;
+                                }
 
                             }
 
@@ -349,8 +402,13 @@ namespace sh_core {
                         else{
                             // ============================== unspecified symbols processing=======================
 
-                            workBuffer << ch;
+
+                            BufShower__________________________________________________________ = workBuffer.str();
+                            std::cout << workBuffer.str().c_str() << std::endl;
+                            workBuffer.put(ch) ;
+                            BufShower__________________________________________________________ = workBuffer.str();
                             std::cout << (char)ch << std::endl;
+                            std::cout << workBuffer.str().c_str() << std::endl;
                         }
 
                     }
@@ -359,6 +417,7 @@ namespace sh_core {
 
                 ch = static_cast<char> (ss.get());
                 }
+
 
             flush_buf_to_tokens(&workBuffer);
 

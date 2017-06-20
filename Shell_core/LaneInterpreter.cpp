@@ -28,6 +28,7 @@ namespace sh_core {
     extern string pwd_help_msg;
     extern string help_help_msg;
     extern string exit_help_msg;
+    extern string echo_help_msg;
 
     //===================DYNAMIC INITIALISATION ======================
 
@@ -44,10 +45,12 @@ namespace sh_core {
                 {"mpwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, sh_core::pwd_help_msg)},
                 {"mhelp", new sh_core::EmbeddedFunc("MY_HELP", sh_core::myHelp, sh_core::help_help_msg)},
                 {"mexit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, sh_core::exit_help_msg)},
+                {"mecho", new sh_core::EmbeddedFunc("MY_ECHO", sh_core::myEcho, sh_core::echo_help_msg)},
                 {"mmysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
                                                    sh_core::mySh,
                                                    shell_script_interpreter_help_msg)}
         };
+
 
         external_lib_  = { //initializing full pathnames
                 {"mls", absPathTo("mls") },
@@ -260,7 +263,7 @@ namespace sh_core {
     int LaneInterpreter::processSting(string *values) const{
 
 
-
+// ==================== testing module ===============
         int file_desk[2];
 
         pipe(file_desk);
@@ -290,6 +293,9 @@ namespace sh_core {
         std::cout << "test_result_wc :"<< test_result_wc<< std::endl;
 
 
+// ==================== testing module ===============
+
+        // TODO change for tokenizer
         const vector<string> args = splitter->mySplitLine(values);
 
         // TODO check this place

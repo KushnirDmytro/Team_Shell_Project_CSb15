@@ -22,6 +22,8 @@ namespace sh_core {
     int myExit(size_t nargs, char **args);
 
     int mySh(size_t nargs, char **args);
+
+    int myEcho(size_t nargs, char **args);
 }
 
 #endif //LAB_2_SHELL_EMBBEDDEDLIB_H
