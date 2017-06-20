@@ -17,6 +17,7 @@
 
 
 #include "Tokenizer.h"
+#include "../LaneInterpreter.h"
 
 
 
@@ -98,14 +99,37 @@ namespace sh_core {
 
 
         inline int Tokenizer::concretize_attempt(std::stringstream *workBuffer){
-            if ()
+            std::string str = workBuffer->str();
+            if (sh_core::interpreter->hasSuchExternal(&str)){
+                mst.isOuterCommand = true;
+                return EXIT_SUCCESS;
+            }
+            if (sh_core::interpreter->hasSuchEmbedded(&str)){
+                mst.isInnerCommand = true;
+                return EXIT_SUCCESS;
+            }
+            if (sh_core::interpreter->hasMyshExtention(&str)){
+                mst.isMshScript = true;
+                return EXIT_SUCCESS;
+            }
+            if (boost::filesystem::is_directory(str)){
+                mst.isDirectory = true;
+                return EXIT_SUCCESS;
+            }
+            if (boost::filesystem::is_regular_file(str)){
+                mst.isFile = true;
+                return EXIT_SUCCESS;
+            }
+            else return EXIT_FAILURE;
         }
 
         inline void Tokenizer::flush_buf_to_tokens(std::stringstream *workBuffer) {
             if (workBuffer->rdbuf()->in_avail() != 0) {
                 char tokenChar = mst.getToken();
                 if (tokenChar == 's')
-                    concretize_attempt(workBuffer);
+                    if (!concretize_attempt(workBuffer)) // if some improvement made
+                        tokenChar = mst.getToken();
+
 
 
                 if (tokenChar =='v' || tokenChar == 'e' )

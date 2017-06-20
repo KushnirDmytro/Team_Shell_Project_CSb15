@@ -22,6 +22,8 @@ namespace sh_core {
             bool ERROR_STATE = false;
             bool isComment = false;
             bool isDoubleBrace = false;
+            bool isInnerCommand = false;
+            bool isOuterCommand = false;
             bool isBrace = false;
             bool isReverceBrace = false;
             bool isRegexp = false;
@@ -30,6 +32,8 @@ namespace sh_core {
             bool isVariableValue = false;
             bool isGlobal = false;
             bool isFile = false;
+            bool isDirectory = false;
+            bool isMshScript = false;
 
 //            bool isGlobalVar = false;
 
@@ -45,6 +49,10 @@ namespace sh_core {
                 isRegexp = false;
                 isGlobal = false;
                 isFile = false;
+                isDirectory = false;
+                isInnerCommand = false;
+                isOuterCommand = false;
+                isMshScript = false;
 //                isGlobalVar = false;
             }
 
@@ -59,6 +67,10 @@ namespace sh_core {
             char getToken(){
                 if (ERROR_STATE) return 'X';
                 if (isFile) return 'f';
+                if (isMshScript) return 'm';
+                if (isDirectory) return 'd';
+                if (isInnerCommand) return 'i';
+                if (isOuterCommand) return 'o';
                 if (isComment) return '#';
                 if (isDoubleBrace) return '"';
                 if (isBrace) return '\'';

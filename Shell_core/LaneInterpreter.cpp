@@ -231,7 +231,7 @@ namespace sh_core {
         {
             //=============CALLING INNER FUNCTION <=======================
             if (chenaler(ch_str)){
-                perror("failed on channal switch");
+                perror("failed on channel switch");
                 return EXIT_FAILURE;
             }
             result = embedded_lib_.at(possibleFunc)->call(args_number, cargs);
@@ -261,7 +261,6 @@ namespace sh_core {
 
 
     int LaneInterpreter::processSting(string *values) const{
-
 
 // ==================== testing module ===============
         int file_desk[2];
@@ -298,7 +297,7 @@ namespace sh_core {
         // TODO change for tokenizer
         const vector<string> args = splitter->mySplitLine(values);
 
-        // TODO check this place
+        // TODO check this suspicious place for bugs
 
         return myExecute2(&args, &defaultDescriptors);
     }
@@ -318,7 +317,6 @@ namespace sh_core {
             && (strcmp(fs::extension(thisFile).c_str(), ".msh") == 0))
             return true;
         else return false;
-
     }
 
     inline bool LaneInterpreter::hasSuchExternal(const string *const arg) const {
