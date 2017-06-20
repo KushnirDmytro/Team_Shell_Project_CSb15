@@ -17,6 +17,7 @@ namespace env {
 
     // just ideas for future realisation
     struct rights {
+        bool toChangaGlobalVariables = true;
         //markup
     };
 

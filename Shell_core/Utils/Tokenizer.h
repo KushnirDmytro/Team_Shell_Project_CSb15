@@ -25,18 +25,22 @@ namespace sh_core {
             bool isReverceBrace = false;
             bool isRegexp = false;
             bool isVariableCall = false;
-            bool isVariableAssignment = false;
+            bool isVariableName = false;
+            bool isVariableValue = false;
+            bool isGlobal = false;
 
 //            bool isGlobalVar = false;
 
             void clean_all(){
                 isVariableCall = false;
-                isVariableAssignment = false;
+                isVariableName = false;
+                isVariableValue = false;
                 isComment = false;
                 isDoubleBrace = false;
                 isBrace = false;
                 isReverceBrace = false;
                 isRegexp = false;
+                isGlobal = false;
 //                isGlobalVar = false;
             }
 
@@ -56,7 +60,12 @@ namespace sh_core {
                 if (isRegexp) return '%';
                 //if (isGlobalVar) return 'G';
                 if (isVariableCall) return '$';
-                if (isVariableAssignment) return '=';
+                if (isVariableName) {
+                    if (isGlobal) return 'e' ;
+                    else return 'v';}
+                if (isVariableValue) {
+                    if (isGlobal) return 'E' ;
+                    else return 'V';}
                 else return 's';
             }
 
@@ -72,11 +81,11 @@ namespace sh_core {
 
 
             vector<token> *tokens_vector_;
-            int solve_pairwise_token(std::stringstream *source,
-                                                std::stringstream *workBuf);
+            int pairwise_token_proceed(std::stringstream *source,
+                                       std::stringstream *workBuf);
 
-            int serch_for_comment_end(std::stringstream *source,
-                                      std::stringstream *workBuf);
+            int comment_proceed(std::stringstream *source,
+                                std::stringstream *workBuf);
             bool lastTokenEquals(const std::string *compare) const;
 
         public:
@@ -85,7 +94,7 @@ namespace sh_core {
             vector<token> * tokenize(const string *str);
 
             ~Tokenizer();
-            void flush_buf_to_token (std::stringstream* workBuffer);
+            void flush_buf_to_tokens(std::stringstream *workBuffer);
             inline vector<token>* form_result();
 
             };

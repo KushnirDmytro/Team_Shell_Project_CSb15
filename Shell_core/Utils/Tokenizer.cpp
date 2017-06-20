@@ -36,8 +36,10 @@
 //      * 'a' - some argument for whatsoever (least semi-specified string)
 //       * '%' - regexp
 // * 't' - token in string format listing
-// * 'v' - variable
-//  * 'e' - external variable
+// * 'v' - variable name
+//  'V' -variable value
+//  * 'e' - external variable name
+//    'E' external variable value
 //     * 'p' - file_pass
 //   * '/' - dir_pass
 //    * 'i' - inner command
@@ -68,7 +70,7 @@ namespace sh_core {
         }
 
 
-        inline void Tokenizer::flush_buf_to_token(std::stringstream *workBuffer) {
+        inline void Tokenizer::flush_buf_to_tokens(std::stringstream *workBuffer) {
             if (workBuffer->rdbuf()->in_avail() != 0) {
                 tokens_vector_->push_back(std::pair<string, char>(workBuffer->str(), mst.getToken()));
                 std::cout << "Flushing buf [" << (*workBuffer).str() << "]" <<std::endl;
@@ -96,8 +98,8 @@ namespace sh_core {
             return result;
         }
 
-        inline int Tokenizer::serch_for_comment_end(std::stringstream *source,
-                                                    std::stringstream *workBuf) {
+        inline int Tokenizer::comment_proceed(std::stringstream *source,
+                                              std::stringstream *workBuf) {
             char ch;
             if (source->good()) {
                 ch = static_cast<char> (source->get());
@@ -113,15 +115,15 @@ namespace sh_core {
                  else {
                     std::cout << "comment closed" << std::endl;
                 }
-                    flush_buf_to_token(workBuf); //flushing value to continue work
+                flush_buf_to_tokens(workBuf); //flushing value to continue work
                     return EXIT_SUCCESS;
             }
             perror("Reading buffer errror\n");
             return EXIT_FAILURE;
         }
 
-        inline int Tokenizer::solve_pairwise_token(std::stringstream *source,
-                                                   std::stringstream *workBuf) {
+        inline int Tokenizer::pairwise_token_proceed(std::stringstream *source,
+                                                     std::stringstream *workBuf) {
             char ch;
             char tokenState = mst.getToken();
 
@@ -138,7 +140,7 @@ namespace sh_core {
                 perror("ERROR, can't find closing pair for opening char\n");
                 return EXIT_FAILURE;
             } else {
-                flush_buf_to_token(workBuf);
+                flush_buf_to_tokens(workBuf);
                 return EXIT_SUCCESS;
             }
         }
@@ -162,7 +164,8 @@ namespace sh_core {
                 size_t founded_char_position = open_pair_symbols_.find_first_of(ch);
                 if (founded_char_position != std::string::npos) {
 
-                    flush_buf_to_token(&workBuffer);
+                    flush_buf_to_tokens(&workBuffer);
+
 
 
                     switch (ch) {
@@ -170,25 +173,25 @@ namespace sh_core {
                         // =======================checking pairwise tokens ======================
                         case '"': {
                             mst.isDoubleBrace = true;
-                            if (solve_pairwise_token(&ss, &workBuffer))
+                            if (pairwise_token_proceed(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
                         case '\'': {
                             mst.isBrace = true;
-                            if (solve_pairwise_token(&ss, &workBuffer))
+                            if (pairwise_token_proceed(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
                         case '`': {
                             mst.isReverceBrace = true;
-                            if (solve_pairwise_token(&ss, &workBuffer))
+                            if (pairwise_token_proceed(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
                         case '#': {
                             mst.isComment = true;
-                            if (serch_for_comment_end(&ss, &workBuffer))
+                            if (comment_proceed(&ss, &workBuffer))
                                 return form_result();  // situation of error
                             break;
                         }
@@ -203,12 +206,9 @@ namespace sh_core {
                     founded_char_position = delimiters_.find_first_of(ch);
                     if (founded_char_position != std::string::npos) {
 
-                        flush_buf_to_token(&workBuffer);
+                        flush_buf_to_tokens(&workBuffer);
 
                         if (ss.good()) {
-                            //ch = static_cast<char> (ss.get());
-                            //TODO use tellg() and seekg()
-
 
                             bool isDelimiter = delimiters_.find(ch) != std::string::npos;
 
@@ -225,19 +225,18 @@ namespace sh_core {
                         }
 
                         if (!ss.good()) {
-                            std::cout << "ERROR, can't find closing pair for opening char!" << std::endl;
+                          //  std::cout << "ERROR, can't find closing pair for opening char!" << std::endl;
                             return form_result();
                         }
 
 
 
-
                     } else {
-
+// ==============================proceed other special tokens ===============================
                         founded_char_position = special_symbols_.find_first_of(ch);
                         if (founded_char_position != std::string::npos) {
 
-                            flush_buf_to_token(&workBuffer);
+                            //flush_buf_to_tokens(&workBuffer);
 
                             switch (ch) {
 
@@ -247,14 +246,16 @@ namespace sh_core {
                                 }
                                 case '%': {
                                     mst.isRegexp = true;
+                                    workBuffer << ch; // we will need this char
                                     break;
                                 }
-                                case '\\': { //actually doing nothing
+                                case '\\': { //actually doing nothing, just
                                     break;
                                 }
 
                                     //=========================+EXECUTION REDIRECTION BLOCK
                                 case '>': {
+                                    flush_buf_to_tokens(&workBuffer);
                                     if (strcmp(workBuffer.str().c_str(), "2") == 0) {
                                         tokens_vector_->push_back(token("", '2')); //STD ERR
                                         workBuffer.str("");
@@ -263,6 +264,7 @@ namespace sh_core {
                                     break;
                                 }
                                 case '<': {
+                                    flush_buf_to_tokens(&workBuffer);
                                     tokens_vector_->push_back(token("", '<')); //STD IN
                                     break;
                                 }
@@ -281,25 +283,42 @@ namespace sh_core {
 
 
                                 case '$': {
+                                    flush_buf_to_tokens(&workBuffer); //proved
+
+                                    // TODO check if such a variable is defined
                                     mst.isVariableCall = true;
                                     break;
                                 }
 
                                 case '=': {
-                                    mst.isVariableAssignment = true;
 
-                                    if (lastTokenEquals(new string("export")))
-                                        tokens_vector_->push_back(
-                                                token("", 'G')); //shows that next one is global variable
-                                        // TODO REALIZE IDEA OF ENVIRONMENT
+                                    bool isGlobal = false;
+                                    mst.isVariableName = true;
+                                    isGlobal = lastTokenEquals(new string("export"));
+                                    mst.isGlobal = isGlobal;
+                                    flush_buf_to_tokens(&workBuffer); //previous token part proceeded
+                                    mst.isVariableValue = true;
+                                    mst.isGlobal = isGlobal;
+
+
+                                    // TESTBLOCK
+
+                                    environment->varManager_->declareVariableLocally(new string ("_a"), new string ("b"));
+                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+                                    new string("testVal1"), false);
+                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+                                                                                      new string("testVal2"), true);
+
+                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+                                                                                      new string("testVal3"), false);
+
+
+                                    std::cout << environment->varManager_->getGlobalVar(new string("_a"))->c_str() << std::endl;
+
+                                    environment->varManager_->show_local_variables();
+
+                                    // TODO REALIZE IDEA OF ENVIRONMENT
                                      break;
-                                }
-
-                                case '#': {
-                                    mst.isComment = true;
-                                    if (solve_pairwise_token(&ss, &workBuffer))
-                                        return form_result();  // situation of error
-                                    break;
                                 }
 
                                 default:
@@ -309,6 +328,7 @@ namespace sh_core {
 
                         }
                         else{
+                            // ============================== unspecified symbols processing=======================
 
                             workBuffer << ch;
                             std::cout << (char)ch << std::endl;
@@ -321,7 +341,7 @@ namespace sh_core {
                 ch = static_cast<char> (ss.get());
                 }
 
-            flush_buf_to_token(&workBuffer);
+            flush_buf_to_tokens(&workBuffer);
 
             for (auto toks: *tokens_vector_) {
                 std::cout << "[" << toks.first << "]" << " <" << toks.second << "> " << std::endl;
