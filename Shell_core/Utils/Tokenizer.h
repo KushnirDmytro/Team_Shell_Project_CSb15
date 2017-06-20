@@ -92,6 +92,7 @@ namespace sh_core {
             bool lastTokenEquals(const std::string *compare) const;
 
 
+            bool canBeVariableName(string* to_check);
 
         public:
             Tokenizer();

@@ -70,9 +70,41 @@ namespace sh_core {
         }
 
 
+        inline bool Tokenizer::canBeVariableName(string* to_check){
+            if (!(to_check->empty()) ){
+
+                char firts = to_check->at(0);
+                if (!(isalpha(firts) || (firts == '_'))){
+                    mst.ERROR_STATE = true;
+                    return false;
+                }
+                char ch_arr[to_check->length()] ;
+                strcpy(ch_arr, to_check->c_str());
+                for (size_t i = 1; i<to_check->length(); ++i){
+                    if ((isalpha(ch_arr[i]) || (ch_arr[i] == '_') || (isdigit(ch_arr[i])))){
+
+                    } else{
+                        mst.ERROR_STATE = true;
+                        return false;
+                    }
+                }
+                return true;
+            }
+            mst.ERROR_STATE = true;
+            return false;
+        }
+
+
         inline void Tokenizer::flush_buf_to_tokens(std::stringstream *workBuffer) {
             if (workBuffer->rdbuf()->in_avail() != 0) {
-                tokens_vector_->push_back(std::pair<string, char>(workBuffer->str(), mst.getToken()));
+                char tokenChar = mst.getToken();
+
+                if (tokenChar =='v' || tokenChar == 'e' )
+                    if (!canBeVariableName(( new string(workBuffer->str().c_str())) ) ){
+                        mst.ERROR_STATE = true;
+                    }
+
+                tokens_vector_->push_back(std::pair<string, char>(workBuffer->str(), tokenChar));
                 std::cout << "Flushing buf [" << (*workBuffer).str() << "]" <<std::endl;
                 std::cout << "Vector NOW :" << std::endl;
                 for (auto el: *tokens_vector_){
@@ -150,6 +182,7 @@ namespace sh_core {
 
 
 
+
         vector<token> *Tokenizer::tokenize(const string *input_str) {
 
             std::stringstream ss(*input_str);
@@ -157,13 +190,14 @@ namespace sh_core {
             char ch;
 
             // preliminar preparetion
-            if (ss.good()) ch = (char) ss.get();
+            if (ss.good()) ch = static_cast<char> (ss.get());
             else {
                 std::cout << "EMPTY STRING " << std::endl;
+                mst.ERROR_STATE = true;
                 return form_result();
             }
 
-            while (ss.good()) {
+            while (ss.good() && !mst.ERROR_STATE) {
 
 
                 //check for braces
@@ -201,9 +235,9 @@ namespace sh_core {
                             break;
                         }
 
-                        default:
+                        default:{
                             std::cout << "ERROR DECODING TOKENS" << std::endl;
-
+                            mst.ERROR_STATE = true;}
                     }
                     //   workBuffer.str("");
                 } else { //===========================================delimiters check
@@ -306,48 +340,49 @@ namespace sh_core {
                                     mst.isGlobal = isGlobal;
 
 
-                                    const bool rewriting = true;
-                                    const bool not_rewriting = false;
-                                    // TESTBLOCK
-
-                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
-                                    environment->varManager_->declareVariableLocally(new string ("_a"),
-                                                                                     new string ("b"));
-                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a")) << std::endl;
-
-
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal1"),
-                                                                                      false);
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
-
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal2"),
-                                                                                      true);
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
-
-                                    environment->varManager_->declareVariableGlobally(new string("_a"),
-                                                                                      new string("testVal3"),
-                                                                                      false);
-                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
-                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
-
-
-                                    std::cout << environment->varManager_->getGlobalVar(new string("_a"))->c_str() << std::endl;
-
-                                    environment->varManager_->show_local_variables();
+//                                    const bool rewriting = true;
+//                                    const bool not_rewriting = false;
+//                                    // TESTBLOCK
+//
+//                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+//                                    environment->varManager_->declareVariableLocally(new string ("_a"),
+//                                                                                     new string ("b"));
+//                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a")) << std::endl;
+//
+//
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+//                                                                                      new string("testVal1"),
+//                                                                                      false);
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+//
+//                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+//                                                                                      new string("testVal2"),
+//                                                                                      true);
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+//
+//                                    environment->varManager_->declareVariableGlobally(new string("_a"),
+//                                                                                      new string("testVal3"),
+//                                                                                      false);
+//                                    std::cout << environment->varManager_->doesVariableDeclaredGlobaly(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a"))->c_str() << std::endl;
+//
+//
+//                                    std::cout << environment->varManager_->getGlobalVar(new string("_a"))->c_str() << std::endl;
+//
+//                                    environment->varManager_->show_local_variables();
 
                                     // TODO REALIZE IDEA OF ENVIRONMENT
                                      break;
                                 }
 
-                                default:
+                                default: {
                                     std::cout << "ERROR DECODING TOKENS" << std::endl;
-
+                                    mst.ERROR_STATE = true;
+                                }
                             }
 
                         }
@@ -356,6 +391,7 @@ namespace sh_core {
 
                             workBuffer << ch;
                             std::cout << (char)ch << std::endl;
+                            std::cout << workBuffer.str().c_str() << std::endl;
                         }
 
                     }
