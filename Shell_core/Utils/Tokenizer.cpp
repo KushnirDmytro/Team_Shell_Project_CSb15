@@ -49,7 +49,9 @@
 //    * '|' - pipeCommand
 //    * '>' - file to output redirrect
 //       * '2' - file to Err redirect
+//
 //    * '<' - file to input redirrect
+//   'f' -file itself
 //    * '.' - last tokeb
 //    * '=' - setting variable
 //     * */
@@ -121,7 +123,7 @@ namespace sh_core {
             return result_vector;
         }
         
-        inline bool Tokenizer::lastTokenEquals(const std::string *compare) const{
+        inline bool Tokenizer::lastTokenStringEquals(const std::string *compare) const{
             bool result;
             if ((tokens_vector_->size() > 0))
                 result = strcmp( (tokens_vector_->end())->first.c_str(), (*compare).c_str()) == 0;
@@ -129,6 +131,17 @@ namespace sh_core {
                 result = false;
             return result;
         }
+
+
+        inline bool Tokenizer::lastTokenCharEquals(const char compare) const{
+            bool result;
+            if ((tokens_vector_->size() > 0))
+                result = (compare == (tokens_vector_->end())->second);
+            else
+                result = false;
+            return result;
+        }
+
 
         inline int Tokenizer::comment_proceed(std::stringstream *source,
                                               std::stringstream *workBuf) {
@@ -297,21 +310,29 @@ namespace sh_core {
                                     flush_buf_to_tokens(&workBuffer);
                                     if (strcmp(workBuffer.str().c_str(), "2") == 0) {
                                         tokens_vector_->push_back(token("", '2')); //STD ERR
-                                        workBuffer.str("");
                                     } else
                                         tokens_vector_->push_back(token("", '>')); // STD OUT
+                                    mst.isFile = true;
+                                    workBuffer.str(""); //???
                                     break;
                                 }
                                 case '<': {
                                     flush_buf_to_tokens(&workBuffer);
                                     tokens_vector_->push_back(token("", '<')); //STD IN
+                                    mst.isFile = true;
                                     break;
                                 }
                                 case '&': {
-//
-//                                    if (lastTokenEquals(new string("<"))) TODO consider situation with double redirect
+                                    if ((lastTokenCharEquals('2')  || lastTokenCharEquals('>')) ){
+                                        mst.isFile = true; // while proceeding throu tokens we'll get its meaning
+                                    }
+
                                     tokens_vector_->push_back(token("", '&')); //silent backstage mode for previous
                                     break;
+
+
+
+
                                 } // TODO make silent mode
                                 case '|': {
                                     tokens_vector_->push_back(token("", '|')); //conveyor
@@ -323,7 +344,6 @@ namespace sh_core {
 
                                 case '$': {
                                     flush_buf_to_tokens(&workBuffer); //proved
-
                                     // TODO check if such a variable is defined
                                     mst.isVariableCall = true;
                                     break;
@@ -333,7 +353,7 @@ namespace sh_core {
 
                                     bool isGlobal = false;
                                     mst.isVariableName = true;
-                                    isGlobal = lastTokenEquals(new string("export"));
+                                    isGlobal = lastTokenStringEquals(new string("export"));
                                     mst.isGlobal = isGlobal;
                                     flush_buf_to_tokens(&workBuffer); //previous token part proceeded
                                     mst.isVariableValue = true;

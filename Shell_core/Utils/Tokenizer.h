@@ -29,6 +29,7 @@ namespace sh_core {
             bool isVariableName = false;
             bool isVariableValue = false;
             bool isGlobal = false;
+            bool isFile = false;
 
 //            bool isGlobalVar = false;
 
@@ -43,6 +44,7 @@ namespace sh_core {
                 isReverceBrace = false;
                 isRegexp = false;
                 isGlobal = false;
+                isFile = false;
 //                isGlobalVar = false;
             }
 
@@ -56,6 +58,7 @@ namespace sh_core {
 
             char getToken(){
                 if (ERROR_STATE) return 'X';
+                if (isFile) return 'f';
                 if (isComment) return '#';
                 if (isDoubleBrace) return '"';
                 if (isBrace) return '\'';
@@ -82,15 +85,15 @@ namespace sh_core {
             const std::string open_pair_symbols_ = "'\"`#";
             const std::string delimiters_ = " \t\r\n\a";
 
-
             vector<token> *tokens_vector_;
             int pairwise_token_proceed(std::stringstream *source,
                                        std::stringstream *workBuf);
 
             int comment_proceed(std::stringstream *source,
                                 std::stringstream *workBuf);
-            bool lastTokenEquals(const std::string *compare) const;
+            bool lastTokenStringEquals(const std::string *compare) const;
 
+            bool lastTokenCharEquals(const char compare) const;
 
             bool canBeVariableName(string* to_check);
 
