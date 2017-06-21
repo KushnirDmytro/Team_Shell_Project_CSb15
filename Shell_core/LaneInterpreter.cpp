@@ -62,7 +62,7 @@ namespace sh_core {
 
         splitter = new utils::LineSplitter();
     }
-//test
+//tests
     LaneInterpreter::~LaneInterpreter() {
         for(auto i: embedded_lib_){
            delete i.second;
@@ -155,7 +155,7 @@ namespace sh_core {
            closeParrentDescriptors(ch_str);
 
 
-            do { //TODO provide test for invalid scenarios of exec (a.e. failed launch file and stay in shell copy)
+            do { //TODO provide tests for invalid scenarios of exec (a.e. failed launch file and stay in shell copy)
                 wpid = waitpid(pid, &status, WUNTRACED);
                 /*
                  * WUNTRACED

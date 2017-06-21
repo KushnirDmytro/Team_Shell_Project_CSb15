@@ -22,7 +22,7 @@
 using std::string;
 
 #define  home_dir_call  "~"
-//test
+//tests
 namespace sh_core{
 
     string cd_help_msg = "function CD requires argument after it\n"
