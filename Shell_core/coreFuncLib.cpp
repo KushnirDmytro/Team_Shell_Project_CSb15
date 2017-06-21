@@ -152,4 +152,70 @@ namespace sh_core{
         return EXIT_SUCCESS;
     }
 
+    inline fs::path* absPathTo(string arg){
+        return  new fs::path (fs::path(environment->dir_->getActualPath()) / fs::path(arg) );
+    }
+
+    coreFuncLib::coreFuncLib() {
+
+        external_lib_  = { //initializing full pathnames
+                {"mls", absPathTo("mls") },
+                {"mrm", absPathTo("mrm")},
+                {"mcp", absPathTo("mcp")},
+                {"mmv", absPathTo("mmv")},
+                {"mmkdir", absPathTo("mmkdir")}
+        };
+
+        embedded_lib_= {
+                {"mcd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, sh_core::cd_help_msg, false)},
+                {"mpwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, sh_core::pwd_help_msg)},
+                {"mhelp", new sh_core::EmbeddedFunc("MY_HELP", sh_core::myHelp, sh_core::help_help_msg)},
+                {"mexit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, sh_core::exit_help_msg)},
+                {"mecho", new sh_core::EmbeddedFunc("MY_ECHO", sh_core::mEcho, sh_core::echo_help_msg)},
+                {"mmysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
+                                                    sh_core::mySh,
+                                                    shell_script_interpreter_help_msg)}
+        };
+
+
+    }
+    coreFuncLib::~coreFuncLib() {
+
+        for(auto i: embedded_lib_){
+            delete i.second;
+        }
+        for (auto i: external_lib_)
+            delete i.second;
+
+    }
+
+
+    int coreFuncLib::getNumOfMyBuiltins() const{
+        return (int) embedded_lib_.size();
+    }
+
+
+    bool coreFuncLib::hasSuchEmbedded(const string *const arg) const{
+        auto search_iter = embedded_lib_.find(*arg);
+        return  (search_iter != embedded_lib_.end() );
+    }
+
+    bool coreFuncLib::hasMyshExtention(const string *const arg) const{
+        string atrg1 = *arg;
+
+        fs::path thisFile = fs::path(*arg);
+
+//        std::cout << "Extention: [" << fs::extension(thisFile) << "]" << std::endl;
+
+        if ((fs::exists(thisFile))
+            && (strcmp(fs::extension(thisFile).c_str(), ".msh") == 0))
+            return true;
+        else return false;
+    }
+
+    bool coreFuncLib::hasSuchExternal(const string *const arg) const {
+        auto search_iter = external_lib_.find(*arg);
+        return  (search_iter != external_lib_.end() );
+    }
+
 }

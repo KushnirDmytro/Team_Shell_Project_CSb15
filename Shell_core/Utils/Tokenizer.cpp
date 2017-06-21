@@ -13,7 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include "../EmbeddedFunc.h"
-
+#include "../coreFuncLib.h"
 
 
 #include "Tokenizer.h"
@@ -100,15 +100,15 @@ namespace sh_core {
 
         inline int Tokenizer::concretize_attempt(std::stringstream *workBuffer){
             std::string str = workBuffer->str();
-            if (sh_core::interpreter->hasSuchExternal(&str)){
+            if (sh_core::interpreter->funcLib->hasSuchExternal(&str)){
                 mst.isOuterCommand = true;
                 return EXIT_SUCCESS;
             }
-            if (sh_core::interpreter->hasSuchEmbedded(&str)){
+            if (sh_core::interpreter->funcLib->hasSuchEmbedded(&str)){
                 mst.isInnerCommand = true;
                 return EXIT_SUCCESS;
             }
-            if (sh_core::interpreter->hasMyshExtention(&str)){
+            if (sh_core::interpreter->funcLib->hasMyshExtention(&str)){
                 mst.isMshScript = true;
                 return EXIT_SUCCESS;
             }

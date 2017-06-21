@@ -37,41 +37,20 @@ namespace sh_core {
     }
 
     LaneInterpreter::LaneInterpreter() {
-
-
-
-        embedded_lib_= {
-                {"mcd", new sh_core::EmbeddedFunc("MY_CD", sh_core::myCd, sh_core::cd_help_msg, false)},
-                {"mpwd", new sh_core::EmbeddedFunc("MY_PWD", sh_core::myPwd, sh_core::pwd_help_msg)},
-                {"mhelp", new sh_core::EmbeddedFunc("MY_HELP", sh_core::myHelp, sh_core::help_help_msg)},
-                {"mexit", new sh_core::EmbeddedFunc("MY_EXIT", sh_core::myExit, sh_core::exit_help_msg)},
-                {"mecho", new sh_core::EmbeddedFunc("MY_ECHO", sh_core::mEcho, sh_core::echo_help_msg)},
-                {"mmysh", new sh_core::EmbeddedFunc("MY_shell_script_interpreter",
-                                                   sh_core::mySh,
-                                                   shell_script_interpreter_help_msg)}
-        };
-
-
-        external_lib_  = { //initializing full pathnames
-                {"mls", absPathTo("mls") },
-                {"mrm", absPathTo("mrm")},
-                {"mcp", absPathTo("mcp")},
-                {"mmv", absPathTo("mmv")},
-                {"mmkdir", absPathTo("mmkdir")}
-        };
+        funcLib = new coreFuncLib();
 
         splitter = new utils::LineSplitter();
     }
 //tests
     LaneInterpreter::~LaneInterpreter() {
-        for(auto i: embedded_lib_){
-           delete i.second;
-        }
-        for (auto i: external_lib_)
-            delete i.second;
+        delete(funcLib);
+
         delete splitter;
     }
 //TODO filemasks
+
+
+
 
 
 
@@ -197,9 +176,6 @@ namespace sh_core {
     }
 
 
-    int LaneInterpreter::getNumOfMyBuiltins() const{
-        return (int) embedded_lib_.size();
-    }
 
 
     int LaneInterpreter::interpretScriptFile(const string *const scriptName) const{
@@ -209,7 +185,7 @@ namespace sh_core {
         argsBuf->push_back(*scriptName);
         char **charArgsBuf = new char *[argsBuf[0].size() + (*scriptName).length() + 1];
         sh_core::interpreter->splitter->convertStrVectorToChars(argsBuf, charArgsBuf);
-        int result = embedded_lib_.at("mmysh")->call(supposedArgsNumber, charArgsBuf);
+        int result = funcLib->embedded_lib_.at("mmysh")->call(supposedArgsNumber, charArgsBuf);
         return result;
     };
 
@@ -226,17 +202,17 @@ namespace sh_core {
         string possibleFunc = string(cargs[0]);
 
         int result;
-        if (hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
+        if (funcLib->hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
         {
             //=============CALLING INNER FUNCTION <=======================
             if (configureIOChannales(ch_str)){
                 perror("failed on channel switch");
                 return EXIT_FAILURE;
             }
-            result = embedded_lib_.at(possibleFunc)->call(args_number, cargs);
+            result = funcLib->embedded_lib_.at(possibleFunc)->call(args_number, cargs);
         }
         else {
-            if (hasMyshExtention(&possibleFunc)) {
+            if (funcLib->hasMyshExtention(&possibleFunc)) {
 
                 if (configureIOChannales(ch_str)){
                     perror("failed on channal switch");
@@ -246,8 +222,8 @@ namespace sh_core {
 
             }
             else{ // CALLING EXTERN FUNC <======================
-                if (hasSuchExternal(&possibleFunc)) {
-                    result = myExternLauncherChanneled(cargs, ch_str, external_lib_.at(possibleFunc)->string().c_str());
+                if (funcLib->hasSuchExternal(&possibleFunc)) {
+                    result = myExternLauncherChanneled(cargs, ch_str, funcLib->external_lib_.at(possibleFunc)->string().c_str());
                     //using full pathname instead of just local one
                 } else
                     result = myExternLauncherChanneled(cargs, ch_str );
@@ -300,28 +276,7 @@ namespace sh_core {
 
         return myExecute2(&args, &defaultDescriptors);
     }
-    inline bool LaneInterpreter::hasSuchEmbedded(const string *const arg) const{
-        auto search_iter = embedded_lib_.find(*arg);
-        return  (search_iter != embedded_lib_.end() );
-    }
 
-    inline bool LaneInterpreter::hasMyshExtention(const string *const arg) const{
-        string atrg1 = *arg;
-
-        fs::path thisFile = fs::path(*arg);
-
-//        std::cout << "Extention: [" << fs::extension(thisFile) << "]" << std::endl;
-
-        if ((fs::exists(thisFile))
-            && (strcmp(fs::extension(thisFile).c_str(), ".msh") == 0))
-            return true;
-        else return false;
-    }
-
-    inline bool LaneInterpreter::hasSuchExternal(const string *const arg) const {
-        auto search_iter = external_lib_.find(*arg);
-        return  (search_iter != external_lib_.end() );
-    }
 
 //executes in this env external ".msh" files
 int mySh(size_t nargs, char **args)

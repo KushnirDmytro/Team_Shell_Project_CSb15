@@ -45,10 +45,6 @@ namespace sh_core {
     class LaneInterpreter {
     private:
 
-        std::map<string, EmbeddedFunc *> embedded_lib_;
-
-        std::map<string, fs::path*> external_lib_;
-
         utils::LineSplitter *splitter;
 
         chennelDesriptStruct defaultDescriptors;
@@ -60,7 +56,7 @@ namespace sh_core {
 
         int myExternLauncherChanneled(char **args, const chennelDesriptStruct* ch_str, const char* destination = nullptr) const;
 
-        int getNumOfMyBuiltins() const;
+
 
 //        int myExecute(const vector<string>  *const args) const;
 
@@ -70,12 +66,8 @@ namespace sh_core {
         int myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const;
     public:
 
-        bool hasSuchEmbedded(const string * const arg) const;
 
-        bool hasSuchExternal(const string * const arg) const;
-
-        bool hasMyshExtention(const string *const arg) const;
-
+        coreFuncLib *funcLib;
         int interpretScriptFile(const string *const arg) const;
 
         LaneInterpreter();
@@ -83,7 +75,7 @@ namespace sh_core {
         int processSting(string * values) const;
 
         ~LaneInterpreter();
-        //TODO filemasks
+        //TODO filemasks via regexp
     };
 
     extern LaneInterpreter *interpreter;
