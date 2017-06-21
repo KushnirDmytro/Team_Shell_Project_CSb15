@@ -12,7 +12,6 @@ using std::string;
 namespace sh_core {
 //=============FUNCTIONS AND STRUCTURES DECLARATIONS=============
 
-
     int myCd(size_t nargs, char **args);
 
     int myPwd(size_t nargs, char **args);
@@ -24,6 +23,8 @@ namespace sh_core {
     int mySh(size_t nargs, char **args);
 
     int mEcho(size_t nargs, char **args);
+
+
 }
 
 #endif //LAB_2_SHELL_EMBBEDDEDLIB_H

@@ -29,10 +29,6 @@
      namespace utils {
 
 
-
-
-
-
          class Reducer {
          public:
              Reducer();
@@ -41,9 +37,11 @@
              std::vector<arg_desk_pair*>* reduce(const vector<token>* toks);
 
          private:
-
-             bool isConveyerOpened = false;
-
+             struct reducerState{
+                 bool isConveyerOpened = false;
+                 bool isFirstElement = true;
+             };
+             reducerState RS;
 
              bool closesExecutionUnit(const char ch) const;
 

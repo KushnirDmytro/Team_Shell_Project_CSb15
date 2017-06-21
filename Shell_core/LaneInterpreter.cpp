@@ -75,8 +75,7 @@ namespace sh_core {
 
 
 
-    int chenaler(const chennelDesriptStruct *ch_str){
-
+    int configureIOChannales(const chennelDesriptStruct *ch_str){
 
         if( *ch_str->indeskPtr != STANDART_DESK )
         {
@@ -137,7 +136,7 @@ namespace sh_core {
 
             //  we are in Child process
 
-            if (chenaler(ch_str)){
+            if (configureIOChannales(ch_str)){ // <= channeling here
                 return EXIT_FAILURE;
             }
 
@@ -230,7 +229,7 @@ namespace sh_core {
         if (hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
         {
             //=============CALLING INNER FUNCTION <=======================
-            if (chenaler(ch_str)){
+            if (configureIOChannales(ch_str)){
                 perror("failed on channel switch");
                 return EXIT_FAILURE;
             }
@@ -239,7 +238,7 @@ namespace sh_core {
         else {
             if (hasMyshExtention(&possibleFunc)) {
 
-                if (chenaler(ch_str)){
+                if (configureIOChannales(ch_str)){
                     perror("failed on channal switch");
                     return EXIT_FAILURE;
                 }
