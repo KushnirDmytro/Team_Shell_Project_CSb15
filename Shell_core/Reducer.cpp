@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include "Reducer.h"
-#include "Tokenizer.h"
-#include "../../Env/Env.h"
+#include "Utils/Tokenizer.h"
+#include "../Env/Env.h"
 
 
 #include <cstring>
@@ -14,15 +14,17 @@
 #include <boost/filesystem.hpp>
 #include <sstream>
 #include <iostream>
-#include "../EmbeddedFunc.h"
-#include "../coreFuncLib.h"
+#include "EmbeddedFunc.h"
+#include "coreFuncLib.h"
 
 
-#include "Tokenizer.h"
-#include "../LaneInterpreter.h"
+#include "Utils/Tokenizer.h"
+#include "LaneInterpreter.h"
 
 namespace shell_core {
-    namespace utils {
+
+    const bool DO_override_varaibles = true;
+    const bool DONT_override_variables = false;
 
         Reducer::Reducer() {}
 
@@ -31,21 +33,33 @@ namespace shell_core {
         }
 
 
-        inline int create_new_exec_unit(arg_desk_pair* unit_addr){
+        inline void Reducer::create_new_exec_unit(arg_desk_pair* unit_addr){
             unit_addr = new std::pair < std::vector < std::string * > *, chennelDesriptStruct * >;
             unit_addr->first = new std::vector < std::string * >;
             unit_addr->second = new chennelDesriptStruct;
-            return EXIT_SUCCESS;
         }
 
+    inline void Reducer::handle_variables_assignment(const token* elem,string* variableNameBuf){
+        sh_core::environment->varManager_->
+                declareVariableLocally(new string (elem->first),
+                                       new string (*variableNameBuf));
+        if (RS.waitingForGlobalVar){
+            sh_core::environment->varManager_->declareVariableGlobally(new string (elem->first),
+                                                                       new string (*variableNameBuf),
+                                                                       DO_override_varaibles);
+        }
+        RS.waitingForGlobalVar = false;
+        RS.waitingForVarValue = false;
+        *variableNameBuf = "";
+    }
+
         std::vector<arg_desk_pair*>* Reducer::reduce(const vector<token> *toks) {
+            std::string variableNameBuf;
 
             for(auto el: *toks){
                 std::cout<<"st[" <<el.first << "]---{" << el.second << "}\n";
             }
-
             std::vector<arg_desk_pair*> *res = new std::vector<arg_desk_pair* >;
-
 
             arg_desk_pair *new_execution_unit = nullptr;
             create_new_exec_unit(new_execution_unit);
@@ -70,9 +84,13 @@ namespace shell_core {
 
             for (auto el : *toks ){
 
+                if (RS.waitingForVarValue) {
+                    //TODO make unpacking of element value
+                    handle_variables_assignment(&el, &variableNameBuf);
+                }
+
                 if (first_node){
-                    if (el.second == '\n'){
-                        //Need to skip this step
+                    if (el.second == '\n'){//Need to skip this step, repeated spaces
                         continue;
                     }
 
@@ -90,11 +108,19 @@ namespace shell_core {
                         new_execution_unit->first->push_back(new string(el.first));
                         break;
                     }
+                    case 'e':{RS.waitingForGlobalVar = true;}
                     case 'v':{
-//                        environment->varManager_->declareVariableLocally(new string (el.first),
-//                                                                                     new string ("b"));
-
+                        RS.waitingForVarValue = true;
+                        if (el.first.empty()) { RS.ERROR_STATE = true;
+                            perror("UNKNOWN FILENAME\n");
+                        }
+                        variableNameBuf = el.first;
+                        break;
+                        sh_core::environment->varManager_->declareVariableLocally(new string (el.first),
+                                                                                     new string ("b"));
                     }
+
+
                     default: perror("unknown task token\n");
                 }
 
@@ -120,13 +146,6 @@ namespace shell_core {
 
 
 
-//                switch (el.second){
-//                    case '\n':      //just EOL
-//                    case '.' :      //time to sent result to executioner
-//                    case '|' :      // need to alter channelDescriptor
-//                }
-
-
 
             }
 
@@ -137,4 +156,4 @@ namespace shell_core {
         Reducer::~Reducer() {}
 
     }
-}
+

@@ -7,8 +7,8 @@
 
 #include <string>
 #include <vector>
-#include "Tokenizer.h"
-#include "../../Env/Env.h"
+#include "Utils/Tokenizer.h"
+#include "../Env/Env.h"
 
 namespace shell_core {
 
@@ -27,10 +27,10 @@ namespace shell_core {
      using arg_desk_pair = std::pair<vector<string*>*, chennelDesriptStruct*>;
 
 
-     namespace utils {
 
 
-         extern env::Env *environment;
+
+    extern env::Env *environment;
 
 
          class Reducer {
@@ -44,14 +44,19 @@ namespace shell_core {
              struct reducerState{
                  bool isConveyerOpened = false;
                  bool isFirstElement = true;
+                 bool waitingForVarValue = false;
+                 bool waitingForGlobalVar=false;
+                 bool ERROR_STATE = false;
              };
              reducerState RS;
+             void create_new_exec_unit(arg_desk_pair* unit_addr);
+             void handle_variables_assignment(const token* elem, string* variableNameBuf);
 
              bool closesExecutionUnit(const char ch) const;
 
          };
      }
- }
+
 
 
 #endif //MSHELL_REDUCER_H

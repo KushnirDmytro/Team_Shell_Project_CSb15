@@ -12,7 +12,7 @@
 #include "Utils/LineSplitter.h"
 #include "coreFuncLib.h"
 #include "EmbeddedFunc.h"
-#include "Utils/Reducer.h"
+#include "Reducer.h"
 
 
 // using token = std::pair<string, char>;

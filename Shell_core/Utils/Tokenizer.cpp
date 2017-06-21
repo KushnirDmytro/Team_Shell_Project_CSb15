@@ -151,6 +151,9 @@ namespace sh_core {
         inline vector<token> *Tokenizer::form_result() {
             tokens_vector_->push_back(std::pair<string, char>("", '.')); //finalizing statement
             vector<token> *result_vector = new vector<token>();
+            for (auto toks: *tokens_vector_) {
+                std::cout << "[" << toks.first << "]" << " <" << toks.second << "> " << std::endl;
+            }
             std::swap(result_vector, tokens_vector_); // < ============= not sure here
             return result_vector;
         }
@@ -460,9 +463,7 @@ namespace sh_core {
 
             flush_buf_to_tokens(&workBuffer);
 
-            for (auto toks: *tokens_vector_) {
-                std::cout << "[" << toks.first << "]" << " <" << toks.second << "> " << std::endl;
-            }
+
             return form_result();
         }
 
