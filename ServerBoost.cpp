@@ -3,6 +3,7 @@
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
+#include <boost/array.hpp>
 
 // forward declarations
 class serverUDP;
@@ -38,7 +39,12 @@ const std::string currentDate() {
 
 using boost::asio::ip::tcp;
 
-
+std::string my_read_line(void)
+{
+    std::string buffer;
+    getline(std::cin,buffer);
+    return buffer;
+}
 
 class session
 {
@@ -55,7 +61,8 @@ public:
 
     void start()
     {
-        socket_.async_read_some(boost::asio::buffer(data_, 1),
+        boost::array<char, 256> buf;
+        socket_.async_read_some(boost::asio::buffer(data_, max_length),
                                 boost::bind(&session::handle_read, this,
                                             boost::asio::placeholders::error,
                                             boost::asio::placeholders::bytes_transferred));
@@ -85,32 +92,32 @@ private:
             }
 
 
-            if (strcmp(data_, "m") == 0){
-
-                socket_.async_read_some(boost::asio::buffer(data_, 2),
-                                        boost::bind(&session::handle_read, this,
-                                                    boost::asio::placeholders::error,
-                                                    boost::asio::placeholders::bytes_transferred));
-
-                if (isdigit(data_[0]) && isdigit(data_[1]) ){
-                    printf("TCP got two digits %s\n", data_);
-
-                    bytes_transferred = atoi(data_);
-
-                    socket_.async_read_some(boost::asio::buffer(data_, atoi(data_)),
-                                            boost::bind(&session::handle_read, this,
-                                                        boost::asio::placeholders::error,
-                                                        boost::asio::placeholders::bytes_transferred));
-                    printf("TCP got following msg %s of len %u\n", data_, bytes_transferred );
-
-
-
-                }
-                else {
-                    printf("Two digits expected\n");
-                    delete this;
-                }
-            }
+//            if (strcmp(data_, "m") == 0){
+//
+//                socket_.async_read_some(boost::asio::buffer(data_, 2),
+//                                        boost::bind(&session::handle_read, this,
+//                                                    boost::asio::placeholders::error,
+//                                                    boost::asio::placeholders::bytes_transferred));
+//
+//                if (isdigit(data_[0]) && isdigit(data_[1]) ){
+//                    printf("TCP got two digits %s\n", data_);
+//
+//                    bytes_transferred = atoi(data_);
+//
+//                    socket_.async_read_some(boost::asio::buffer(data_, atoi(data_)),
+//                                            boost::bind(&session::handle_read, this,
+//                                                        boost::asio::placeholders::error,
+//                                                        boost::asio::placeholders::bytes_transferred));
+//                    printf("TCP got following msg %s of len %u\n", data_, bytes_transferred );
+//
+//
+//
+//                }
+//                else {
+//                    printf("Two digits expected\n");
+//                    delete this;
+//                }
+//            }
 
             if (strlen(data_) > 0)
             {

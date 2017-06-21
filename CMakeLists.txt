@@ -57,7 +57,7 @@ add_executable(mmkdir ${SOURCE_FILES})
 
 
 
-set(SOURCE_FILES Shell_core/clientTCP.cpp
+set(SOURCE_FILES clientTCP.cpp
         Env/User.cpp Env/User.h
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
@@ -67,7 +67,7 @@ set(SOURCE_FILES Shell_core/clientTCP.cpp
         ${GCC_COVERAGE_LINK_FLAGS})
 add_executable(clientTCP ${SOURCE_FILES})
 
-set(SOURCE_FILES Shell_core/ServerBoost.cpp ${GCC_COVERAGE_LINK_FLAGS})
+set(SOURCE_FILES ServerBoost.cpp ${GCC_COVERAGE_LINK_FLAGS})
 add_executable(serverBoost ${SOURCE_FILES})
 
 
