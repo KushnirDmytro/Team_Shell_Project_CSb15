@@ -12,26 +12,28 @@
 #include "Utils/LineSplitter.h"
 #include "coreFuncLib.h"
 #include "EmbeddedFunc.h"
+#include "Utils/Reducer.h"
 
 
-
-const int STANDART_DESK = -1;
-const int READ_SIDE = 0;
-const int WRITE_SIDE = 1;
 // using token = std::pair<string, char>;
 
 
-struct chennelDesriptStruct{
-    int indesk = STANDART_DESK;
-    int outdesk = STANDART_DESK;
-    int errdesk = STANDART_DESK;
-};
 
-using arg_desk_pair = std::pair<vector<string*>*, chennelDesriptStruct*>;
 
 
 namespace sh_core {
 
+    const int STANDART_DESK = -1;
+    const int READ_SIDE = 0;
+    const int WRITE_SIDE = 1;
+
+
+    struct chennelDesriptStruct{
+        int *indeskPtr = new int(STANDART_DESK);
+        int *outdeskPtr = new int(STANDART_DESK);
+        int *errdeskPtr = new int(STANDART_DESK);
+    };
+    using arg_desk_pair = std::pair<vector<string*>*, chennelDesriptStruct*>;
 
 
 

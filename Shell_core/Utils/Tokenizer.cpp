@@ -149,6 +149,7 @@ namespace sh_core {
         }
 
         inline vector<token> *Tokenizer::form_result() {
+            tokens_vector_->push_back(std::pair<string, char>("", '.')); //finalizing statement
             vector<token> *result_vector = new vector<token>();
             std::swap(result_vector, tokens_vector_); // < ============= not sure here
             return result_vector;
@@ -294,6 +295,7 @@ namespace sh_core {
                         if (ss.good()) {
 
                             bool isDelimiter = delimiters_.find(ch) != std::string::npos;
+                            bool isEOL = delimiters_.find(ch) != std::string::npos;
 
                             std::stringstream::pos_type previuos_position = ss.tellg();
 
@@ -302,9 +304,12 @@ namespace sh_core {
                                 previuos_position = ss.tellg();
                                 ch = static_cast<char> (ss.get());
                                 isDelimiter = delimiters_.find(ch) != std::string::npos;
+                                isEOL = EOL_.find(ch) != std::string::npos;
+                                if (isEOL)
+                                    tokens_vector_->push_back(token("", '\n'));
                             };
                             if (ss.good())
-                                ss.seekg(previuos_position);
+                                ss.seekg(previuos_position); //return 1 symbol back
                         }
 
                         if (!ss.good()) {

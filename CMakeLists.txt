@@ -17,7 +17,7 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
         Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h
-        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h)
+        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h Shell_core/Utils/Reducer.cpp Shell_core/Utils/Reducer.h)
 add_executable(mShell ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
 
 

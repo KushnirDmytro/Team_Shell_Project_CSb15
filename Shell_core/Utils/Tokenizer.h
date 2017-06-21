@@ -96,6 +96,8 @@ namespace sh_core {
             const std::string special_symbols_ = "%_*/|><.&=\\";
             const std::string open_pair_symbols_ = "'\"`#";
             const std::string delimiters_ = " \t\r\n\a";
+            const std::string EOL_ = "\r\n\a";
+
 
             vector<token> *tokens_vector_;
             int pairwise_token_proceed(std::stringstream *source,

@@ -78,48 +78,48 @@ namespace sh_core {
     int chenaler(const chennelDesriptStruct *ch_str){
 
 
-        if( ch_str->indesk != STANDART_DESK )
+        if( *ch_str->indeskPtr != STANDART_DESK )
         {
-            close(ch_str->outdesk);  /* first close the write end of the pipe */
-            if(dup2(ch_str->indesk, STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
+            close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
+            if(dup2(*(ch_str->indeskPtr), STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
                 perror( "dup2 failed on STD IN" );
                 return EXIT_FAILURE;
             }
-            close(ch_str->indesk);
+            close(*(ch_str->indeskPtr));
 
         }
-        if(ch_str->outdesk != STANDART_DESK) /* stdout == write end of the pipe */
+        if(*ch_str->outdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
         {
 
-            close(ch_str->indesk); /* first close the read end of the pipe */
-            if(dup2(ch_str->outdesk, STDOUT_FILENO) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
+            close(*ch_str->indeskPtr); /* first close the read end of the pipe */
+            if(dup2(*ch_str->outdeskPtr, STDOUT_FILENO) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
                 perror( "dup2 failed of STD OUT" );
                 return EXIT_FAILURE;
             }
-            close(ch_str->outdesk);
+            close(*ch_str->outdeskPtr);
 
         }
 
-        if(ch_str->errdesk != STANDART_DESK) /* stdout == write end of the pipe */
+        if(*ch_str->errdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
         {
             //close(p[0]); /* first close the read end of the pipe */
-            if(dup2(ch_str->errdesk, STDERR_FILENO) == -1){ /* stdERR == write end of the pipe (side of the pipe in which errordata is written)*/
+            if(dup2(*ch_str->errdeskPtr, STDERR_FILENO) == -1){ /* stdERR == write end of the pipe (side of the pipe in which errordata is written)*/
                 perror( "dup2 failed of STD ERR" );
                 return EXIT_FAILURE;
             }
-            close(ch_str->errdesk);
+            close(*ch_str->errdeskPtr);
 
         }
         return EXIT_SUCCESS;
     }
 
     inline void closeParrentDescriptors(const chennelDesriptStruct* ch_str ){
-        if (ch_str->indesk != STANDART_DESK)
-            close(ch_str->indesk);
-        if (ch_str->outdesk != STANDART_DESK)
-            close(ch_str->outdesk);
-        if (ch_str->errdesk != STANDART_DESK)
-            close(ch_str->errdesk);
+        if (*ch_str->indeskPtr != STANDART_DESK)
+            close(*ch_str->indeskPtr);
+        if (*ch_str->outdeskPtr != STANDART_DESK)
+            close(*ch_str->outdeskPtr);
+        if (*ch_str->errdeskPtr != STANDART_DESK)
+            close(*ch_str->errdeskPtr);
     }
 
 // launcher for custom modules
@@ -268,9 +268,9 @@ namespace sh_core {
         pipe(file_desk);
 
         chennelDesriptStruct *chdOUT_LS = new chennelDesriptStruct();
-        chdOUT_LS->outdesk = file_desk[WRITE_SIDE];
+        *(chdOUT_LS->outdeskPtr) = file_desk[WRITE_SIDE];
         chennelDesriptStruct *chdIN_WC = new chennelDesriptStruct();
-        chdIN_WC->indesk = file_desk[READ_SIDE];
+        *(chdIN_WC->indeskPtr) = file_desk[READ_SIDE];
 
         //arg_desk_pair *forLSout1 = new arg_desk_pair;
 
