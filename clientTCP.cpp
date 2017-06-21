@@ -43,6 +43,11 @@ int main(int argc, char* argv[])
                 std::string m_SendBuffer = argv[2];
 
                 string str = my_read_line();
+
+                printf("TCP CLIENT socket is open %d\n socket addr[%s]\n socket %d\n", socketTCP.is_open(),
+                socketTCP.remote_endpoint().address().to_string().c_str(),
+                       socketTCP.remote_endpoint().port());
+
                 std::cout << "console: ";
                 std::cout.write(str.data(), str.length());
                 std::cout.write("\n", 1);

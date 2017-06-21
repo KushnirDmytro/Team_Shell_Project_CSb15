@@ -11,6 +11,7 @@ class serverTCP;
 class session;
 
 
+unsigned int GLOBAL_status = 0;
 
 
 
@@ -34,7 +35,13 @@ const std::string currentDate() {
 }
 
 
-
+class DUMMY{
+public:
+    DUMMY(){
+        printf("NEW DUMMY!\n");
+    };
+    int STATE = 0;
+};
 
 
 using boost::asio::ip::tcp;
@@ -52,6 +59,12 @@ public:
     session(boost::asio::io_service& io_service)
             : socket_(io_service)
     {
+        printf("new session start!\n");
+    }
+
+    ~session()
+    {
+        printf("new session END!\n");
     }
 
     tcp::socket& socket()
@@ -62,6 +75,9 @@ public:
     void start()
     {
         boost::array<char, 256> buf;
+        GLOBAL_status++;
+        SESSION_STATUS++;
+
         socket_.async_read_some(boost::asio::buffer(data_, max_length),
                                 boost::bind(&session::handle_read, this,
                                             boost::asio::placeholders::error,
@@ -69,9 +85,24 @@ public:
     }
 
 private:
+
+    int SESSION_STATUS = 0;
+
+    void handle_stay_read(const boost::system::error_code& error,
+                     size_t bytes_transferred){
+
+    }
+    void handle_stay_write(const boost::system::error_code& error)
+    {}
+
+
     void handle_read(const boost::system::error_code& error,
                      size_t bytes_transferred)
     {
+
+
+
+
         if (!error  )
         {
             if (strcmp(data_, "h") == 0){
@@ -121,10 +152,14 @@ private:
 
             if (strlen(data_) > 0)
             {
-                printf("TCP sending %s to %s port %d\n",
+
+                printf("TCP sending %s to %s port %d\n GLOBAL STATUS %u\n SESSION STATUS %u\n",
                        data_,
                        socket_.remote_endpoint().address().to_string().c_str(),
-                       socket_.remote_endpoint().port());
+                       socket_.remote_endpoint().port(),
+                       GLOBAL_status,
+                SESSION_STATUS);
+                printf("");
 
 
                 boost::asio::async_write(socket_,
@@ -133,12 +168,12 @@ private:
                                                      boost::asio::placeholders::error));
                 memset(data_, 0, sizeof data_);
 
-
                 readSize = 0;
             }
         }
         else
         {
+            printf("deleting_session\n");
             delete this;
         }
     }
@@ -154,6 +189,7 @@ private:
         }
         else
         {
+            printf("deleting_session\n");
             delete this;
         }
     }
@@ -167,10 +203,15 @@ private:
 class serverTCP
 {
 public:
+
+    DUMMY *dumm;
+
     serverTCP(boost::asio::io_service& io_service, short port)
             : io_service_(io_service),
               acceptor_(io_service, tcp::endpoint(tcp::v4(), port))
     {
+        printf("new server\n");
+        dumm = new DUMMY;
         start_accept();
     }
 
@@ -178,6 +219,8 @@ private:
     void start_accept()
     {
         session* new_session = new session(io_service_);
+        dumm->STATE++;
+        printf("server asinc ACCEPT %d\n", dumm->STATE);
         acceptor_.async_accept(new_session->socket(),
                                boost::bind(&serverTCP::handle_accept, this, new_session,
                                            boost::asio::placeholders::error));
@@ -188,6 +231,7 @@ private:
     {
         if (!error)
         {
+            //TODO SESSION SHELL
             new_session->start();
         }
         else
@@ -213,7 +257,6 @@ int main(int argc, char* argv[])
 
         using namespace std; // For atoi.
         serverTCP sTCP(io_service, 2017);
-
 
         io_service.run();
     }
