@@ -5,7 +5,21 @@
 #include <iostream>
 #include "Reducer.h"
 #include "Tokenizer.h"
+#include "../../Env/Env.h"
 
+
+#include <cstring>
+#include <vector>
+#include <string>
+#include <boost/filesystem.hpp>
+#include <sstream>
+#include <iostream>
+#include "../EmbeddedFunc.h"
+#include "../coreFuncLib.h"
+
+
+#include "Tokenizer.h"
+#include "../LaneInterpreter.h"
 
 namespace shell_core {
     namespace utils {
@@ -77,9 +91,9 @@ namespace shell_core {
                         break;
                     }
                     case 'v':{
-             //           environment->varManager_->declareVariableLocally(new string ("_a"),
+//                        environment->varManager_->declareVariableLocally(new string (el.first),
 //                                                                                     new string ("b"));
-//
+
                     }
                     default: perror("unknown task token\n");
                 }

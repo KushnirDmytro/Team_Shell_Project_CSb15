@@ -8,8 +8,9 @@
 #include <string>
 #include <vector>
 #include "Tokenizer.h"
+#include "../../Env/Env.h"
 
- namespace shell_core {
+namespace shell_core {
 
 
 
@@ -27,6 +28,9 @@
 
 
      namespace utils {
+
+
+         extern env::Env *environment;
 
 
          class Reducer {

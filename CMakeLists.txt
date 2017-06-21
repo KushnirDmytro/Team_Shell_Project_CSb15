@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(mShell)
 
 set(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_FLAGS  "-pthread")
 
 set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h
@@ -55,7 +56,34 @@ set(SOURCE_FILES my_mkdir/mkdir_main.cpp
 add_executable(mmkdir ${SOURCE_FILES})
 
 
-FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
+
+set(SOURCE_FILES Shell_core/clientTCP.cpp
+        Env/User.cpp Env/User.h
+        Env/Env.cpp Env/Env.h
+        Env/Directory.cpp Env/Directory.h
+        Env/ConsoleView.cpp Env/ConsoleView.h
+
+
+        ${GCC_COVERAGE_LINK_FLAGS})
+add_executable(clientTCP ${SOURCE_FILES})
+
+set(SOURCE_FILES Shell_core/ServerBoost.cpp ${GCC_COVERAGE_LINK_FLAGS})
+add_executable(serverBoost ${SOURCE_FILES})
+
+
+
+FIND_PACKAGE( Boost COMPONENTS filesystem program_options system thread REQUIRED )
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+link_directories(${Boost_LIBRARY_DIR})
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
+target_link_libraries( serverBoost ${Boost_LIBRARIES} )
+
+target_link_libraries( clientTCP ${Boost_LIBRARIES} )
+
+
+#FIND_PACKAGE( Boost COMPONENTS filesystem program_options system REQUIRED )
 
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
@@ -81,3 +109,31 @@ pvs_studio_add_target(TARGET analyze ALL
         OUTPUT FORMAT errorfile
         ANALYZE mShell
         )
+
+
+#
+#cmake_minimum_required(VERSION 3.6)
+#project(socket_server)
+#
+#SET(CMAKE_CXX_FLAGS  "-pthread")
+#
+#set(CMAKE_CXX_STANDARD 11)
+#
+#set(SOURCE_FILES clientTCP.cpp ${GCC_COVERAGE_LINK_FLAGS})
+#
+#add_executable(clientTCP ${SOURCE_FILES})
+#set(SOURCE_FILES ServerBoost.cpp ${GCC_COVERAGE_LINK_FLAGS})
+#
+#add_executable(serverBoost ${SOURCE_FILES})
+#
+#
+#
+#FIND_PACKAGE( Boost COMPONENTS filesystem program_options system thread REQUIRED )
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+#
+#link_directories(${Boost_LIBRARY_DIR})
+#INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+#
+#target_link_libraries( serverBoost ${Boost_LIBRARIES} )
+#
+#target_link_libraries( clientTCP ${Boost_LIBRARIES} )
