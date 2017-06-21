@@ -1,0 +1,10 @@
+all:../socket_server
+
+../socket_server:main.o
+	g++ main.o -o ../socket_server -lrt
+
+main.o: main.cpp
+	g++ -c main.cpp ../Shell_core/EmbeddedFunc.cpp ../Shell_core/EmbeddedFunc.h ../Shell_core/coreFuncLib.cpp ../Shell_core/coreFuncLib.h ../Env/ConsoleView.cpp ../Env/ConsoleView.h ../Env/User.cpp ../Env/User.h ../Env/Env.cpp ../Env/Env.h ../Env/Directory.cpp ../Env/Directory.h ../Shell_core/Utils/LineSplitter.cpp ../Shell_core/Utils/LineSplitter.h ../Shell_core/Utils/Tokenizer.cpp ../Shell_core/Utils/Tokenizer.h ../Shell_core/LaneInterpreter.cpp ../Shell_core/LaneInterpreter.h ../Shell_core/Utils/FileLaneIterator.cpp ../Shell_core/Utils/FileLaneIterator.h ../ExternalFunc.cpp ../ExternalFunc.h  ../Shell_core/Reducer.cpp ../Shell_core/Reducer.h
+	
+clean:
+	rm -rf *.o ../socket_server

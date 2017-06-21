@@ -7,6 +7,7 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include "Env/ConsoleView.h"
+#include "Shell_core/Utils/FileLaneIterator.h"
 
 
 using boost::asio::ip::tcp;
@@ -21,28 +22,44 @@ string my_read_line(void)
 int main(int argc, char* argv[])
 {
     env::ConsoleView* example = new env::ConsoleView(nullptr, nullptr);
+    sh_core::utils::FileLaneIterator * fileLaneIterator;
+    if(argc == 4 && strcmp(argv[2], "-f")){
+        fileLaneIterator =  new sh_core::utils::FileLaneIterator(argv[3]);
+    }
     try
     {
         while (true) {
-            if (argc < 3) {
-                std::cerr << "Usage: client <host>" << std::endl;
-                return 1;
-            }
+//            if (argc < 3) {
+//                std::cerr << "Usage: client <host>" << std::endl;
+//                return 1;
+//            }
 
+            string str;
             boost::asio::io_service io_service;
 
             tcp::resolver resolver(io_service);
-            tcp::resolver::query queryTCP(argv[1], "2017");
+            tcp::resolver::query queryTCP(argv[1], "5002");
+//            tcp::resolver::query queryTCP("127.0.0.1", "2017");
             tcp::resolver::iterator endpoint_iterator = resolver.resolve(queryTCP);
 
             tcp::socket socketTCP(io_service);
             boost::asio::connect(socketTCP, endpoint_iterator);
 
+            if(argc == 3 && strcmp(argv[2], "-f")){
+                fileLaneIterator->getNextString(&str);
+                if(!fileLaneIterator -> fileIsReady()){
+                    return 0;
+                }
+            }
 
-            if ( true || (strcmp(argv[2], "h") == 0) || (strcmp(argv[2], "d") == 0) || (strcmp(argv[2], "t") == 0) ){
-                std::string m_SendBuffer = argv[2];
+//            if ( true || (strcmp(argv[2], "h") == 0) || (strcmp(argv[2], "d") == 0) || (strcmp(argv[2], "t") == 0) ){
+//                std::string m_SendBuffer = argv[2];
 
-                string str = my_read_line();
+//                std::cout << "[client]: new client is started";
+//                string str = "y";//argv[2];//my_read_line();
+            else{
+                str =  my_read_line();
+            }
 
                 printf("TCP CLIENT socket is open %d\n socket addr[%s]\n socket %d\n", socketTCP.is_open(),
                 socketTCP.remote_endpoint().address().to_string().c_str(),
@@ -82,7 +99,7 @@ int main(int argc, char* argv[])
 //                std::cout << "\n";
 //
 //                std::flush(std::cout);
-            }
+//            } //  ---------- end of if --------
 
 //            if (strcmp(argv[2], "m") == 0) {
 //
