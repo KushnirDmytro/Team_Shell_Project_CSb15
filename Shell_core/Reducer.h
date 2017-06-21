@@ -12,26 +12,24 @@
 
 namespace shell_core {
 
-
+    enum execution_mode{EMBEDDED, EXTERNAL, MSH_FILE, UNIVERSAL, NOT_EXECUTABLE};
 
      const int STANDART_DESK = -1;
      const int READ_SIDE = 0;
      const int WRITE_SIDE = 1;
 
 
-     struct chennelDesriptStruct{
+     struct execInformation{
          int *indeskPtr = new int(STANDART_DESK);
          int *outdeskPtr = new int(STANDART_DESK);
          int *errdeskPtr = new int(STANDART_DESK);
+         execution_mode exec_mode = UNIVERSAL;
      };
-     using arg_desk_pair = std::pair<vector<string*>*, chennelDesriptStruct*>;
+     using arg_desk_pair = std::pair<vector<string*>*, execInformation*>;
 
-
-
-
+    using token = std::pair<string, char>;
 
     extern env::Env *environment;
-
 
          class Reducer {
          public:
@@ -46,17 +44,28 @@ namespace shell_core {
                  bool isFirstElement = true;
                  bool waitingForVarValue = false;
                  bool waitingForGlobalVar=false;
+                 bool firstNodeInTask=false;
+                 bool lastNodeInTask=false;
                  bool ERROR_STATE = false;
+                 bool changeIn = false;
+                 bool changeOut = false;
+                 bool changeErr = false;
+                 bool nextFilenameIsDescriptor = false;
              };
              reducerState RS;
+             char outputRedirectBuf = '\0';
+             arg_desk_pair *execUnitBuf = nullptr;
+
              void create_new_exec_unit(arg_desk_pair* unit_addr);
              void handle_variables_assignment(const token* elem, string* variableNameBuf);
+             void handle_start_new_task(const token* elem);
+             void handle_end_task(const token* elem);
+             int redirectIt(token* elem, char redirFlag);
 
-             bool closesExecutionUnit(const char ch) const;
+
+             bool last_node_in_task(const char ch) const;
 
          };
      }
-
-
 
 #endif //MSHELL_REDUCER_H

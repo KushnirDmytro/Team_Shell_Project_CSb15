@@ -54,7 +54,7 @@
 //    * '<' - file to input redirrect
 //   'f' -file itself
 //   'd'
-//    * '.' - last tokeb
+//    * '.' - last token
 //    * '=' - setting variable
 //     * */
 //    /** 't' - token in string format listing formating
@@ -168,7 +168,7 @@ namespace sh_core {
         }
 
 
-        inline bool Tokenizer::lastTokenCharEquals(const char compare) const{
+        inline bool Tokenizer::lastCreatedTokenMarksEqual(const char compare) const{
             bool result;
             if ((tokens_vector_->size() > 0))
                 result = (compare == (tokens_vector_->end())->second);
@@ -363,13 +363,13 @@ namespace sh_core {
                                 }
                                 case '&': {
                                     flush_buf_to_tokens(&workBuffer);
-                                    if ((lastTokenCharEquals('2')  || lastTokenCharEquals('>')) ){
+                                    if ((lastCreatedTokenMarksEqual('2')  || lastCreatedTokenMarksEqual('>')) ){
                                         mst.isFile = true; // while proceeding throu tokens we'll get its meaning
+                                        break;
                                     }
 
                                     tokens_vector_->push_back(token("", '&')); //silent backstage mode for previous
                                     break;
-
 
 
 
