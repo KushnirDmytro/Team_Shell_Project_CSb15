@@ -5,7 +5,6 @@
 // Created by d1md1m on 28.03.17.
 //
 
-#include "LaneInterpreter.h"
 
 #include <wait.h>
 #include <iostream>
@@ -16,12 +15,15 @@
 #include "Utils/LineSplitter.h"
 #include "coreFuncLib.h"
 #include "Utils/FileLaneIterator.h"
+#include "ReducerToTasks.h"
+
+
+#include "LaneInterpreter.h"
 
 namespace fs = boost::filesystem;
 
 namespace sh_core {
 
-#include <string.h>
 
     extern string shell_script_interpreter_help_msg;
     extern string cd_help_msg;
@@ -201,6 +203,7 @@ namespace sh_core {
 
         string possibleFunc = string(cargs[0]);
 
+
         int result;
         if (funcLib->hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
         {
@@ -237,6 +240,8 @@ namespace sh_core {
 
     int LaneInterpreter::processSting(string *values) const{
 
+        ReducerToTasks *r2t = new ReducerToTasks();
+
 // ==================== testing module ===============
         int file_desk[2];
 
@@ -249,14 +254,12 @@ namespace sh_core {
 
         //arg_desk_pair *forLSout1 = new arg_desk_pair;
 
-
-
-
         vector<string> *argvecLS = new vector<string>;
         argvecLS->push_back(string("ls"));
 
         vector<string> *argvecWC = new vector<string>;
         argvecWC->push_back(string("wc"));
+
 
 
         int test_result_ls = myExecute2(argvecLS, chdOUT_LS);
@@ -265,6 +268,8 @@ namespace sh_core {
         std::cout << "test_result_ls :"<< test_result_ls<< std::endl;
 
         std::cout << "test_result_wc :"<< test_result_wc<< std::endl;
+        utils::Tokenizer *toker = new utils::Tokenizer();
+
 
 
 // ==================== testing module ===============

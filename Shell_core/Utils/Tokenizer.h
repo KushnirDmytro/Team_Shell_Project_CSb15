@@ -12,8 +12,8 @@
 
 using std::vector;
 using std::string;
-using std::vector;
 using token = std::pair<string, char>;
+
 namespace sh_core {
 
     namespace utils {

@@ -10,7 +10,7 @@
 #include "Utils/Tokenizer.h"
 #include "../Env/Env.h"
 
-namespace shell_core {
+namespace sh_core {
 
     enum execution_mode{EMBEDDED, EXTERNAL, MSH_FILE, UNIVERSAL, NOT_EXECUTABLE};
 
@@ -31,10 +31,10 @@ namespace shell_core {
 
     extern env::Env *environment;
 
-         class Reducer {
+         class ReducerToTasks {
          public:
-             Reducer();
-             ~Reducer();
+             ReducerToTasks();
+             ~ReducerToTasks();
 
              std::vector<arg_desk_pair*>* reduce(const vector<token>* toks);
 
@@ -56,13 +56,12 @@ namespace shell_core {
              char outputRedirectBuf = '\0';
              arg_desk_pair *execUnitBuf = nullptr;
 
-             void create_new_exec_unit(arg_desk_pair* unit_addr);
+             void create_new_exec_unit(arg_desk_pair** unit_addr);
              void handle_variables_assignment(const token* elem, string* variableNameBuf);
              void handle_start_new_task(const token* elem);
              void handle_end_task(const token* elem);
              int redirectIt(token* elem, char redirFlag);
-
-
+             void printResState(std::vector<arg_desk_pair*> *res);
              bool last_node_in_task(const char ch) const;
 
          };

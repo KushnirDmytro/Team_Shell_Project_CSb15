@@ -13,6 +13,8 @@
 #include "Shell_core/EmbeddedFunc.h"
 #include "Shell_core/Utils/LineSplitter.h"
 #include "Shell_core/LaneInterpreter.h"
+
+#include "Shell_core/ReducerToTasks.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -78,6 +80,10 @@ int my_loop()
 
 int main(int argc, char **argv)
 {
+
+//    sh_core::ReducerToTasks *red2 = new sh_core::ReducerToTasks();
+
+
 
     // TODO download old Env if User is registered
     sh_core::environment =  new env::Env();

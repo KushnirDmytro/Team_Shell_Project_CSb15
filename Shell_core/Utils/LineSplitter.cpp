@@ -14,6 +14,7 @@
 #include <iostream>
 #include "../EmbeddedFunc.h"
 #include "Tokenizer.h"
+#include "../ReducerToTasks.h"
 
 #include "LineSplitter.h"
 
@@ -70,8 +71,14 @@ namespace sh_core {
 
 
             Tokenizer *toker = new Tokenizer();
+            ReducerToTasks *r2t = new ReducerToTasks();
 
-            toker->tokenize(input_str);
+            vector<token > *vec = toker->tokenize(input_str);
+
+            r2t->reduce(vec);
+
+
+
 
 
 
@@ -100,7 +107,6 @@ namespace sh_core {
         }
 
 
-//produced Kovalchuk, Refactored & extracted by Kushnir
         int LineSplitter::convertStrVectorToChars(const vector<string> *args, char **cargs) const {
             size_t i;
 
@@ -113,11 +119,7 @@ namespace sh_core {
         }
 
 
-
-
-
     }
-
 }
 
 

@@ -5,9 +5,6 @@
 // Created by d1md1m on 18.06.17.
 //
 #include <iostream>
-#include "Reducer.h"
-#include "Utils/Tokenizer.h"
-#include "../Env/Env.h"
 
 
 #include <cstring>
@@ -17,32 +14,33 @@
 #include <sstream>
 #include <iostream>
 #include <fcntl.h>
+
+#include "../Env/Env.h"
 #include "EmbeddedFunc.h"
 #include "coreFuncLib.h"
-
-
 #include "Utils/Tokenizer.h"
-#include "LaneInterpreter.h"
+#include "ReducerToTasks.h"
 
 
-namespace shell_core {
+namespace sh_core {
+
 
     const bool DO_override_varaibles = true;
     const bool DONT_override_variables = false;
 
-        Reducer::Reducer() {}
+        ReducerToTasks::ReducerToTasks() {}
 
-        bool Reducer::last_node_in_task(const char ch) const {
+        bool ReducerToTasks::last_node_in_task(const char ch) const {
             return  ( ch=='\n' || ch=='.' || ch=='|' );
         }
 
-    inline void Reducer::handle_start_new_task(const token* elem){
+    inline void ReducerToTasks::handle_start_new_task(const token* elem){
 
     }
-    inline void Reducer::handle_end_task(const token* elem){
+    inline void ReducerToTasks::handle_end_task(const token* elem){
 
     }
-    inline int Reducer::redirectIt(token* elem, char redirFlag){
+    inline int ReducerToTasks::redirectIt(token* elem, char redirFlag){
 
 
         int fileDescriptor = -1;
@@ -112,13 +110,13 @@ namespace shell_core {
     }
 
 
-        inline void Reducer::create_new_exec_unit(arg_desk_pair* unit_addr){
-            unit_addr = new std::pair < std::vector < std::string * > *, execInformation * >;
-            unit_addr->first = new std::vector < std::string * >;
-            unit_addr->second = new execInformation;
+        inline void ReducerToTasks::create_new_exec_unit(arg_desk_pair** exec_unit){
+            *exec_unit = new std::pair < std::vector < std::string * > *, execInformation * >;
+            (*exec_unit)->first = new std::vector < std::string * >;
+            (*exec_unit)->second = new execInformation;
         }
 
-    inline void Reducer::handle_variables_assignment(const token* elem,string* variableNameBuf){
+    inline void ReducerToTasks::handle_variables_assignment(const token* elem,string* variableNameBuf){
         sh_core::environment->varManager_->
                 declareVariableLocally(new string (elem->first),
                                        new string (*variableNameBuf));
@@ -135,38 +133,35 @@ namespace shell_core {
 
 
 
-        std::vector<arg_desk_pair*>* Reducer::reduce(const vector<token> *toks) {
+        std::vector<arg_desk_pair*>* ReducerToTasks::reduce(const vector<token> *toks) {
+            // creating data structures and allocating buffers
             std::string variableNameBuf;
-
             for(auto el: *toks){
                 std::cout<<"st[" <<el.first << "]---{" << el.second << "}\n";
             }
             std::vector<arg_desk_pair*> *res = new std::vector<arg_desk_pair* >;
 
-            create_new_exec_unit(execUnitBuf);
+         //   create_new_exec_unit(execUnitBuf);
 
             // TODO consider do we need it??
             // execInformation* next_operation_descriptor = new execInformation;
-
             int *pipeSides [2];
-
-
-            if (!toks->empty()){
-
-            } else{
+            if (toks->empty()){
                 perror("Empty taks\n");
                 return res;
             }
+            RS.firstNodeInTask = true;
 
-            auto it = toks->front();
 
-
+// ==================== PREFORMING INTERPRETING STEP ==========================
             for (auto el : *toks ){
+
+    // ===================== CHECKING FOR SPECIAL STATES OF INTERPRETER==============
 
                 if(RS.nextFilenameIsDescriptor){
                     if( el.second != 'f'){
                         printf("Waiting for filedeskriptor, got [%c]\n attempting to use as file", el.second);
-                        el.second = 'f'; //risky but may work
+                        el.second = 'f'; //risky but may work with some notations
                     }
                 }
 
@@ -179,16 +174,14 @@ namespace shell_core {
                     if (el.second == '\n'){//Need to skip this step, repeated spaces
                         continue;
                     }
-                    create_new_exec_unit(execUnitBuf);
+                    create_new_exec_unit(&execUnitBuf);
                     if (RS.isConveyerOpened){
                         execUnitBuf->second->indeskPtr = pipeSides[READ_SIDE];
                         RS.isConveyerOpened = false;
                     }
                     RS.firstNodeInTask = false;
                 }
-
-
-                if (last_node_in_task(el.second) ) {
+                else if (last_node_in_task(el.second) ) {
                     // solving conveyer request
                     if (el.second == '|') {
                         if (!RS.isConveyerOpened) {
@@ -199,17 +192,17 @@ namespace shell_core {
                             perror("Cant provide Piping, allready bussy\n");
                         pipe(*pipeSides);
                     }
-
                     if (el.second == '.') {
-                        res->push_back(execUnitBuf);
                         std::cout << "met END_OF_TASK\n";
-                        break;
+                        res->push_back(execUnitBuf);
                     }
 
                     RS.firstNodeInTask = true;
+                    printResState(res);
+                    continue;
                 }
 
-
+                // ===================== *END* CHECKING FOR SPECIAL STATES OF INTERPRETER==============
 
                 switch (el.second){
                     case 's': {
@@ -274,11 +267,37 @@ namespace shell_core {
                         break;}
                     default: perror("unknown task token\n");
                 }
+
+
+
+                if (RS.ERROR_STATE) {
+                    perror("Error state detected\n");
+                    return res;
+                }
+
+                if(!el.first.empty())
+                    execUnitBuf->first->push_back(&el.first);
+
             }
 
             return res;
         }
 
-        Reducer::~Reducer() {}
+    void ReducerToTasks::printResState(std::vector<arg_desk_pair*> *res) {
+        for(auto i: *res){
+            for(auto j: *(i->first))
+                printf("[%s] >WITH> ", j->c_str());
+            printf("ex[%d], in[%d] out[%d] err[%d]\n",
+                   i->second->exec_mode,
+                   *(i->second->indeskPtr),
+                   *(i->second->outdeskPtr),
+                   *(i->second->errdeskPtr)
+            );
+        }
     }
+
+
+        ReducerToTasks::~ReducerToTasks() {}
+    }
+
 
