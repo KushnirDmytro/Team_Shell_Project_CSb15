@@ -36,7 +36,8 @@ set(SOURCE_FILES simple_server/main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/E
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
-        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h Shell_core/Reducer.cpp Shell_core/Reducer.h
+        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h
+        Shell_core/ReducerToTasks.cpp Shell_core/ReducerToTasks.h
 
         ${GCC_COVERAGE_LINK_FLAGS})
 add_executable(shell_server ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
