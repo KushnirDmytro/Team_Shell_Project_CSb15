@@ -42,7 +42,6 @@ namespace sh_core {
     }
     inline int ReducerToTasks::redirectIO(token *elem, char redirFlag){
 
-
         int fileDescriptor = -1;
         // ===== WORKING WITH EXISTING DESCRIPTORS
         if (strcmp(elem->first.c_str(), "1") ==0 )
@@ -70,7 +69,7 @@ namespace sh_core {
                 break;
             }
             case '&': {
-                fileDescriptor = open("dev/null", O_WRONLY);
+                fileDescriptor = open("/dev/null", O_WRONLY);
                 break;
             }
             default: {
@@ -112,6 +111,10 @@ namespace sh_core {
         return EXIT_SUCCESS;
     }
 
+    inline int handleVariableCall(const token* elem)const{
+        return EXIT_SUCCESS;
+    }
+
 
         inline void ReducerToTasks::create_new_exec_unit(arg_desk_pair* exec_unit){
             *exec_unit = *(new std::pair<vector<string>, execInformation>);
@@ -128,6 +131,9 @@ namespace sh_core {
                                                                        new string (*variableNameBuf),
                                                                        DO_override_varaibles);
         }
+        if (RS.waitingForGlobalVar)
+            printf("!GLOBAL! ");
+        printf("Varible assigned: N[%s]=>V[%s]\n", (*variableNameBuf).c_str(), elem->first.c_str());
         RS.waitingForGlobalVar = false;
         RS.waitingForVarValue = false;
         *variableNameBuf = "";
@@ -175,6 +181,7 @@ namespace sh_core {
                 if (RS.waitingForVarValue) {
                     //TODO make unpacking of element value
                     handle_variables_assignment(&el, &variableNameBuf);
+                    continue;
                 }
 
                 if (RS.firstNodeInTask){
@@ -223,6 +230,13 @@ namespace sh_core {
                         break;}
                     case '#': {execUnitBuf.second.exec_mode = NOT_EXECUTABLE;
                         break;}
+                    case '$':{
+                        if (!handleVariableCall(&el)){
+                            RS.ERROR_STATE = true;
+                            perror("variable call fail");
+                        }
+                        break;
+                    }
                     case 'm': {execUnitBuf.second.exec_mode = MSH_FILE;
                         break;}
                     case 'e':{RS.waitingForGlobalVar = true;} //no break intentionally
@@ -231,16 +245,11 @@ namespace sh_core {
                         if (el.first.empty()) { RS.ERROR_STATE = true;
                             perror("UNKNOWN FILENAME\n");
                         }
+                        execUnitBuf.second.exec_mode = NOT_EXECUTABLE; //this block allready executed
                         variableNameBuf = el.first;
-                        break;
+                        continue;
                         sh_core::environment->varManager_->declareVariableLocally(new string (el.first),
                                                                                      new string ("b"));
-                    }
-                    case 'E':{
-
-                    }
-                    case 'V':{
-
                     }
                     case '<':{RS.changeIn = true;
                         RS.nextFilenameIsDescriptor =  true;
@@ -254,9 +263,10 @@ namespace sh_core {
                         RS.nextFilenameIsDescriptor =  true;
                         outputRedirectBuf = '2';
                         break;}
-                    case '&':{RS.changeIn = true;
-                        RS.nextFilenameIsDescriptor =  true;
+                    case '&':{RS.changeOut = true;
+                        RS.changeErr = true;
                         outputRedirectBuf = '&';
+                        redirectIO(&el, outputRedirectBuf);
                         break;}
                     case 'f':{
                         if (RS.nextFilenameIsDescriptor){
@@ -272,6 +282,10 @@ namespace sh_core {
                     case '%':{}
                     case '\'':{}
                     case '"':{}
+                    case '!':{
+                        perror("Token reports error state\n");
+                        RS.ERROR_STATE = true;
+                    }
                     case '`':{ perror("DUDE, MAKE ME!!!");
                         break;}
                     default: perror("unknown task token\n");

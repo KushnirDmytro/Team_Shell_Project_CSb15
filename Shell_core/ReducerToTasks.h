@@ -62,10 +62,10 @@ namespace sh_core {
              void handle_start_new_task(const token* elem);
              void handle_end_task(const token* elem);
              int redirectIO(token *elem, char redirFlag);
-             void printResState(std::vector<arg_desk_pair> *res)const;
+             void printResState(taskList *res)const;
              bool last_node_in_task(const char ch) const;
              taskList* returnResult(taskList* ret) const;
-
+             int handleVariableCall(const token* elem)const;
          };
      }
 

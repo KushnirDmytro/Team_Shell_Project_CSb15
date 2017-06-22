@@ -75,7 +75,7 @@ namespace sh_core {
 
 
         inline bool Tokenizer::canBeVariableName(string* to_check){
-            if (!(to_check->empty()) ){
+            if (to_check->length() != 0){
 
                 char firts = to_check->at(0);
                 if (!(isalpha(firts) || (firts == '_'))){
@@ -133,10 +133,15 @@ namespace sh_core {
 
 
 
-                if (tokenChar =='v' || tokenChar == 'e' )
-                    if (!canBeVariableName(( new string(workBuffer->str().c_str())) ) ){
+                if (tokenChar =='v' || tokenChar == 'e' ) {
+                    std::string StrName = string(workBuffer->str().c_str());
+                    if (!canBeVariableName(&StrName) ){
                         mst.ERROR_STATE = true;
+                        perror("INVALID VARIABLE NAME [");
+                        printf("%s]\n", StrName.c_str() );
+                        return;
                     }
+                }
 
                 tokens_vector_->push_back(std::pair<string, char>(workBuffer->str(), tokenChar));
                 std::cout << "Flushing buf [" << (*workBuffer).str() << "]" <<std::endl;
@@ -162,7 +167,7 @@ namespace sh_core {
         inline bool Tokenizer::lastTokenStringEquals(const std::string *compare) const{
             bool result;
             if ((tokens_vector_->size() > 0))
-                result = strcmp( (tokens_vector_->end())->first.c_str(), (*compare).c_str()) == 0;
+                result = strcmp (tokens_vector_->front().first.c_str(), (*compare).c_str()) == 0;
             else
                 result = false;
             return result;
@@ -172,7 +177,7 @@ namespace sh_core {
         inline bool Tokenizer::lastCreatedTokenMarksEqual(const char compare) const{
             bool result;
             if ((tokens_vector_->size() > 0))
-                result = (compare == (tokens_vector_->end())->second);
+                result = (compare == (tokens_vector_->front().second) );
             else
                 result = false;
             return result;
