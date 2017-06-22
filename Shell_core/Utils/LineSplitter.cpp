@@ -67,6 +67,10 @@ namespace sh_core {
         //     *  '[text|token]' -- should be ok, token can't finish and text couldn't start from []
         //       * */
 
+        void alternateExec(){
+
+        }
+
         const vector<string> LineSplitter::mySplitLine( string *input_str) const {
 
 
@@ -75,8 +79,9 @@ namespace sh_core {
 
             vector<token > *vec = toker->tokenize(input_str);
 
-            r2t->reduce(vec);
+            auto tasks = r2t->reduce(vec);
 
+            // ALTERNATE EXEC BRANCH
 
 
 

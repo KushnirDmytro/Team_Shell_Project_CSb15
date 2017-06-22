@@ -25,7 +25,8 @@ namespace sh_core {
          int *errdeskPtr = new int(STANDART_DESK);
          execution_mode exec_mode = UNIVERSAL;
      };
-     using arg_desk_pair = std::pair<vector<string>, execInformation>;
+    using arg_desk_pair = std::pair<vector<string>, execInformation>;
+    using taskList = std::vector<arg_desk_pair>;
 
     using token = std::pair<string, char>;
 
@@ -60,9 +61,10 @@ namespace sh_core {
              void handle_variables_assignment(const token* elem, string* variableNameBuf);
              void handle_start_new_task(const token* elem);
              void handle_end_task(const token* elem);
-             int redirectIt(token* elem, char redirFlag);
-             void printResState(std::vector<arg_desk_pair> *res);
+             int redirectIO(token *elem, char redirFlag);
+             void printResState(std::vector<arg_desk_pair> *res)const;
              bool last_node_in_task(const char ch) const;
+             taskList* returnResult(taskList* ret) const;
 
          };
      }

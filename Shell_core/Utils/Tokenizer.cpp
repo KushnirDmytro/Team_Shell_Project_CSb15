@@ -439,6 +439,14 @@ namespace sh_core {
                                     // TODO REALIZE IDEA OF ENVIRONMENT
                                      break;
                                 }
+                                case '.':{
+                                    //TODO solve usage of this symbol
+                                    mst.isExrention = true;
+                                    workBuffer << ch;
+                                    std::cout << (char)ch << std::endl;
+                                    std::cout << workBuffer.str().c_str() << std::endl;
+                                    break;
+                                }
 
                                 default: {
                                     std::cout << "ERROR DECODING TOKENS" << std::endl;

@@ -20,6 +20,7 @@ namespace sh_core {
 
         struct machine_state{
             bool ERROR_STATE = false;
+            bool isExrention = false;
             bool isComment = false;
             bool isDoubleBrace = false;
             bool isInnerCommand = false;
@@ -40,6 +41,7 @@ namespace sh_core {
             void clean_all(){
                 ERROR_STATE = false;
                 isVariableCall = false;
+                isExrention = false;
                 isVariableName = false;
                 isVariableValue = false;
                 isComment = false;
@@ -65,7 +67,7 @@ namespace sh_core {
             }
 
             char getToken(){
-                if (ERROR_STATE) return 'X';
+                if (ERROR_STATE) return '!';
                 if (isFile) return 'f';
                 if (isMshScript) return 'm';
                 if (isDirectory) return 'd';

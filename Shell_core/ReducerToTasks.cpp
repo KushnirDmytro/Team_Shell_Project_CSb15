@@ -40,7 +40,7 @@ namespace sh_core {
     inline void ReducerToTasks::handle_end_task(const token* elem){
 
     }
-    inline int ReducerToTasks::redirectIt(token* elem, char redirFlag){
+    inline int ReducerToTasks::redirectIO(token *elem, char redirFlag){
 
 
         int fileDescriptor = -1;
@@ -55,15 +55,18 @@ namespace sh_core {
         const char* filename = elem->first.c_str();
         switch (redirFlag){
             case '<': {
-                fileDescriptor = open(filename, O_CREAT |O_RDONLY);
+                fileDescriptor = open(filename, O_CREAT |O_RDONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
+                                                                   S_IROTH |  S_IWOTH);
                 break;
             }
             case '>': {
-                fileDescriptor = open(filename, O_CREAT |O_WRONLY);
+                fileDescriptor = open(filename, O_CREAT |O_WRONLY,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
+                                                                  S_IROTH |  S_IWOTH);
                 break;
             }
             case '2': {
-                fileDescriptor = open(filename, O_CREAT |O_WRONLY);
+                fileDescriptor = open(filename, O_CREAT |O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
+                                                                   S_IROTH |  S_IWOTH);
                 break;
             }
             case '&': {
@@ -145,14 +148,14 @@ namespace sh_core {
 
             // TODO consider do we need it??
             // execInformation* next_operation_descriptor = new execInformation;
-            int *pipeSides [2];
-            pipeSides[0] = new int(-1);
-            pipeSides[1] = new int(-1);
+            int pipeSides [2];
+//            pipeSides[0] = new int(-1);
+//            pipeSides[1] = new int(-1);
 
 
             if (toks->empty()){
                 perror("Empty taks\n");
-                return res;
+                return returnResult(res);
             }
             RS.firstNodeInTask = true;
 
@@ -180,7 +183,7 @@ namespace sh_core {
                     }
                     create_new_exec_unit(&execUnitBuf);
                     if (RS.isConveyerOpened){
-                        execUnitBuf.second.indeskPtr = pipeSides[READ_SIDE];
+                        *(execUnitBuf.second.indeskPtr) = pipeSides[READ_SIDE];
                         RS.isConveyerOpened = false;
                     }
                     RS.firstNodeInTask = false;
@@ -189,18 +192,19 @@ namespace sh_core {
                     // solving conveyer request
                     if (el.second == '|') {
                         if (!RS.isConveyerOpened) {
-                            execUnitBuf.second.outdeskPtr = pipeSides[WRITE_SIDE];
+                            pipe(pipeSides);
+                            *(execUnitBuf.second.outdeskPtr) = pipeSides[WRITE_SIDE];
                             RS.isConveyerOpened = true;
                         }
                         else
                             perror("Cant provide Piping, allready bussy\n");
-                        pipe(*pipeSides);
+                        printf("piping from %d -> to %d\n", pipeSides[WRITE_SIDE], pipeSides[READ_SIDE]);
                     }
                     if (el.second == '.') {
                         std::cout << "met END_OF_TASK\n";
-                        res->push_back(execUnitBuf);
                     }
 
+                    res->push_back(execUnitBuf);
                     RS.firstNodeInTask = true;
                     printResState(res);
                     continue;
@@ -257,7 +261,7 @@ namespace sh_core {
                     case 'f':{
                         if (RS.nextFilenameIsDescriptor){
                             RS.nextFilenameIsDescriptor = false;
-                            if(redirectIt(&el, outputRedirectBuf)){
+                            if(redirectIO(&el, outputRedirectBuf)){
                                 perror("Problem redirrecting to file");
                                 RS.ERROR_STATE = true;
                             }
@@ -277,25 +281,38 @@ namespace sh_core {
 
                 if (RS.ERROR_STATE) {
                     perror("Error state detected\n");
-                    return res;
+                    return returnResult(res);
                 }
 
                 if(!el.first.empty()) {
                     printf("BUF_SIZE = %u\n", (unsigned int) execUnitBuf.first.size());
-                    printf("Pushing [%s] into [",el.first.c_str());
+                    printf("Pushing [%s]~{%c} into [",el.first.c_str(), el.second);
                     for(string i:execUnitBuf.first){
                         printf(" {%s}",i.c_str());
                     }
                     printf("]\n");
+
+
                     execUnitBuf.first.push_back(el.first);
+
+
+                    printf("Now buf is [");
+                    for(string i:execUnitBuf.first){
+                        printf(" {%s}",i.c_str());
+                    }
+                    printf("]\n");
+
+                }
+                else {
+                    printf("special TOK: [%c]\n", el.second);
                 }
 
             }
-
-            return res;
+            return returnResult(res);
         }
 
-    void ReducerToTasks::printResState(std::vector<arg_desk_pair> *res) {
+    void ReducerToTasks::printResState(std::vector<arg_desk_pair> *res)const {
+        printf("REZ SIZE{%d}", (int)res->size());
         for(auto i: *res){
             for(auto j: i.first)
                 printf("[%s] >WITH> ", j.c_str());
@@ -308,7 +325,10 @@ namespace sh_core {
         }
     }
 
-
+    taskList* ReducerToTasks::returnResult(taskList* ret)const{
+        printResState(ret);
+        return ret;
+    }
         ReducerToTasks::~ReducerToTasks() {}
     }
 
