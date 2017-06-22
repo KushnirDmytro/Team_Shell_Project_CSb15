@@ -25,7 +25,7 @@ namespace sh_core {
          int *errdeskPtr = new int(STANDART_DESK);
          execution_mode exec_mode = UNIVERSAL;
      };
-     using arg_desk_pair = std::pair<vector<string*>*, execInformation*>;
+     using arg_desk_pair = std::pair<vector<string>, execInformation>;
 
     using token = std::pair<string, char>;
 
@@ -36,7 +36,7 @@ namespace sh_core {
              ReducerToTasks();
              ~ReducerToTasks();
 
-             std::vector<arg_desk_pair*>* reduce(const vector<token>* toks);
+             std::vector<arg_desk_pair>* reduce(const vector<token>* toks);
 
          private:
              struct reducerState{
@@ -54,14 +54,14 @@ namespace sh_core {
              };
              reducerState RS;
              char outputRedirectBuf = '\0';
-             arg_desk_pair *execUnitBuf = nullptr;
+             arg_desk_pair execUnitBuf;
 
-             void create_new_exec_unit(arg_desk_pair** unit_addr);
+             void create_new_exec_unit(arg_desk_pair* exec_unit);
              void handle_variables_assignment(const token* elem, string* variableNameBuf);
              void handle_start_new_task(const token* elem);
              void handle_end_task(const token* elem);
              int redirectIt(token* elem, char redirFlag);
-             void printResState(std::vector<arg_desk_pair*> *res);
+             void printResState(std::vector<arg_desk_pair> *res);
              bool last_node_in_task(const char ch) const;
 
          };

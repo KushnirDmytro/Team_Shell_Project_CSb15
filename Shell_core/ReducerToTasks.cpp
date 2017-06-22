@@ -46,9 +46,9 @@ namespace sh_core {
         int fileDescriptor = -1;
         // ===== WORKING WITH EXISTING DESCRIPTORS
         if (strcmp(elem->first.c_str(), "1") ==0 )
-            fileDescriptor = *(execUnitBuf->second->outdeskPtr);
+            fileDescriptor = *(execUnitBuf.second.outdeskPtr);
         if (strcmp(elem->first.c_str(), "2") ==0)
-            fileDescriptor = *(execUnitBuf->second->outdeskPtr);
+            fileDescriptor = *(execUnitBuf.second.outdeskPtr);
 
 
         // ===== CREATING NEW FILEDESCRIPTOR
@@ -85,20 +85,20 @@ namespace sh_core {
 
         switch (redirFlag){
             case '<':{
-               *(execUnitBuf->second->indeskPtr) = fileDescriptor;
+               *(execUnitBuf.second.indeskPtr) = fileDescriptor;
                 break;
             }
             case '>':{
-                *(execUnitBuf->second->outdeskPtr) = fileDescriptor;
+                *(execUnitBuf.second.outdeskPtr) = fileDescriptor;
                 break;
             }
             case '2':{
-                *(execUnitBuf->second->errdeskPtr) = fileDescriptor;
+                *(execUnitBuf.second.errdeskPtr) = fileDescriptor;
                 break;
             }
             case '&':{
-                *(execUnitBuf->second->outdeskPtr) = fileDescriptor;
-                *(execUnitBuf->second->errdeskPtr) = fileDescriptor;
+                *(execUnitBuf.second.outdeskPtr) = fileDescriptor;
+                *(execUnitBuf.second.errdeskPtr) = fileDescriptor;
                 break;
             }
             default:{
@@ -110,10 +110,10 @@ namespace sh_core {
     }
 
 
-        inline void ReducerToTasks::create_new_exec_unit(arg_desk_pair** exec_unit){
-            *exec_unit = new std::pair < std::vector < std::string * > *, execInformation * >;
-            (*exec_unit)->first = new std::vector < std::string * >;
-            (*exec_unit)->second = new execInformation;
+        inline void ReducerToTasks::create_new_exec_unit(arg_desk_pair* exec_unit){
+            *exec_unit = *(new std::pair<vector<string>, execInformation>);
+//            (*exec_unit)->first = new std::vector < std::string * >;
+//            (*exec_unit)->second = new execInformation;
         }
 
     inline void ReducerToTasks::handle_variables_assignment(const token* elem,string* variableNameBuf){
@@ -133,19 +133,23 @@ namespace sh_core {
 
 
 
-        std::vector<arg_desk_pair*>* ReducerToTasks::reduce(const vector<token> *toks) {
+        std::vector<arg_desk_pair>* ReducerToTasks::reduce(const vector<token> *toks) {
             // creating data structures and allocating buffers
             std::string variableNameBuf;
             for(auto el: *toks){
                 std::cout<<"st[" <<el.first << "]---{" << el.second << "}\n";
             }
-            std::vector<arg_desk_pair*> *res = new std::vector<arg_desk_pair* >;
+            std::vector<arg_desk_pair> *res = new std::vector<arg_desk_pair>;
 
          //   create_new_exec_unit(execUnitBuf);
 
             // TODO consider do we need it??
             // execInformation* next_operation_descriptor = new execInformation;
             int *pipeSides [2];
+            pipeSides[0] = new int(-1);
+            pipeSides[1] = new int(-1);
+
+
             if (toks->empty()){
                 perror("Empty taks\n");
                 return res;
@@ -176,7 +180,7 @@ namespace sh_core {
                     }
                     create_new_exec_unit(&execUnitBuf);
                     if (RS.isConveyerOpened){
-                        execUnitBuf->second->indeskPtr = pipeSides[READ_SIDE];
+                        execUnitBuf.second.indeskPtr = pipeSides[READ_SIDE];
                         RS.isConveyerOpened = false;
                     }
                     RS.firstNodeInTask = false;
@@ -185,7 +189,7 @@ namespace sh_core {
                     // solving conveyer request
                     if (el.second == '|') {
                         if (!RS.isConveyerOpened) {
-                            execUnitBuf->second->outdeskPtr = pipeSides[WRITE_SIDE];
+                            execUnitBuf.second.outdeskPtr = pipeSides[WRITE_SIDE];
                             RS.isConveyerOpened = true;
                         }
                         else
@@ -206,16 +210,16 @@ namespace sh_core {
 
                 switch (el.second){
                     case 's': {
-                        execUnitBuf->first->push_back(new string(el.first));
-                        break;
+                        //execUnitBuf.first.push_back(el.first);
+                        break; //just let it get in buf
                     }
-                    case 'i': {execUnitBuf->second->exec_mode = EMBEDDED;
+                    case 'i': {execUnitBuf.second.exec_mode = EMBEDDED;
                         break;}
-                    case 'o': {execUnitBuf->second->exec_mode = EXTERNAL;
+                    case 'o': {execUnitBuf.second.exec_mode = EXTERNAL;
                         break;}
-                    case '#': {execUnitBuf->second->exec_mode = NOT_EXECUTABLE;
+                    case '#': {execUnitBuf.second.exec_mode = NOT_EXECUTABLE;
                         break;}
-                    case 'm': {execUnitBuf->second->exec_mode = MSH_FILE;
+                    case 'm': {execUnitBuf.second.exec_mode = MSH_FILE;
                         break;}
                     case 'e':{RS.waitingForGlobalVar = true;} //no break intentionally
                     case 'v':{
@@ -259,6 +263,7 @@ namespace sh_core {
                             }
 
                         }
+                        break;
                     }
                     case '%':{}
                     case '\'':{}
@@ -275,23 +280,30 @@ namespace sh_core {
                     return res;
                 }
 
-                if(!el.first.empty())
-                    execUnitBuf->first->push_back(&el.first);
+                if(!el.first.empty()) {
+                    printf("BUF_SIZE = %u\n", (unsigned int) execUnitBuf.first.size());
+                    printf("Pushing [%s] into [",el.first.c_str());
+                    for(string i:execUnitBuf.first){
+                        printf(" {%s}",i.c_str());
+                    }
+                    printf("]\n");
+                    execUnitBuf.first.push_back(el.first);
+                }
 
             }
 
             return res;
         }
 
-    void ReducerToTasks::printResState(std::vector<arg_desk_pair*> *res) {
+    void ReducerToTasks::printResState(std::vector<arg_desk_pair> *res) {
         for(auto i: *res){
-            for(auto j: *(i->first))
-                printf("[%s] >WITH> ", j->c_str());
+            for(auto j: i.first)
+                printf("[%s] >WITH> ", j.c_str());
             printf("ex[%d], in[%d] out[%d] err[%d]\n",
-                   i->second->exec_mode,
-                   *(i->second->indeskPtr),
-                   *(i->second->outdeskPtr),
-                   *(i->second->errdeskPtr)
+                   i.second.exec_mode,
+                   *(i.second.indeskPtr),
+                   *(i.second.outdeskPtr),
+                   *(i.second.errdeskPtr)
             );
         }
     }
