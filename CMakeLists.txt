@@ -3,6 +3,8 @@ project(mShell)
 
 set(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS  "-pthread")
+#SET(GCC_COVERAGE_LINK_FLAGS  "-lrt")
+
 
 set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h
@@ -19,6 +21,25 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         #my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h
         Shell_core/ReducerToTasks.cpp Shell_core/ReducerToTasks.h)
 add_executable(mShell ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
+
+set(SOURCE_FILES simple_server/main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
+        Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h
+        Env/ConsoleView.cpp Env/ConsoleView.h
+        Env/User.cpp Env/User.h
+        Env/Env.cpp Env/Env.h
+        Env/Directory.cpp Env/Directory.h
+        Shell_core/Utils/LineSplitter.cpp Shell_core/Utils/LineSplitter.h
+        Shell_core/Utils/Tokenizer.cpp
+
+        Shell_core/Utils/Tokenizer.h
+        Shell_core/LaneInterpreter.cpp Shell_core/LaneInterpreter.h
+        Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
+        ExternalFunc.cpp ExternalFunc.h
+        my_ls/ExternLS.cpp my_ls/ExternLS.h
+        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h Shell_core/Reducer.cpp Shell_core/Reducer.h
+
+        ${GCC_COVERAGE_LINK_FLAGS})
+add_executable(shell_server ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
 
 
 set(SOURCE_FILES my_ls/main_ls.cpp
@@ -61,7 +82,7 @@ set(SOURCE_FILES clientTCP.cpp
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
         Env/ConsoleView.cpp Env/ConsoleView.h
-
+        Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
 
         ${GCC_COVERAGE_LINK_FLAGS})
 add_executable(clientTCP ${SOURCE_FILES})
@@ -87,6 +108,7 @@ target_link_libraries( clientTCP ${Boost_LIBRARIES} )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 target_link_libraries( mShell  ${Boost_LIBRARIES} )
+target_link_libraries( shell_server  ${Boost_LIBRARIES} rt)
 #target_link_libraries( myLsStaticLauncher ${Boost_LIBRARIES} )
 target_link_libraries( mrm ${Boost_LIBRARIES} )
 target_link_libraries( mls ${Boost_LIBRARIES} )
