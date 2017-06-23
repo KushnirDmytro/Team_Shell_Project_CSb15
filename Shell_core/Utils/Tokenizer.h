@@ -19,6 +19,7 @@ namespace sh_core {
     namespace utils {
 
         struct machine_state{
+            bool toIgnoreDelimitersAndComments = false; // do not reset autimatically
             bool ERROR_STATE = false;
             bool isExtention = false;
             bool isComment = false;
@@ -116,6 +117,10 @@ namespace sh_core {
 
         public:
             Tokenizer();
+
+            int setIgnoreDelimiters(bool value);
+
+            int getIgnoreDeliminers(bool &valueAddr);
 
             vector<token> * tokenize(const string *str);
 

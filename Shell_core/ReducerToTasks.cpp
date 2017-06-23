@@ -25,6 +25,7 @@
 namespace sh_core {
 
 
+
     const bool DO_override_varaibles = true;
     const bool DONT_override_variables = false;
 
@@ -308,15 +309,27 @@ namespace sh_core {
                         }
                         break;
                     }
-                    case '%':{}
-                    case '\'':{}
-                    case '"':{}
+                    case '%':{} //REGEX
+                    case '\'':{
+                        break;
+                    } // doing nothing, just place as it is
+                    case '"':{
+                        toker.setIgnoreDelimiters(true);
+                        const vector<token> *toksBuf = toker.tokenize(&el.first);
+                        std::vector<arg_desk_pair>* vector_buf = reduce(toksBuf);
+                        res->insert(res->end(), vector_buf->begin(), vector_buf->end());
+
+//                        res->emplace_back(vector_buf);
+
+                        toker.setIgnoreDelimiters(false);
+                        continue;
+                    } // substitute variables, instead of mutating string place other
+                    case '`':{ perror("DUDE, MAKE ME!!!"); //execute as a task then result in value
+                        break;}
                     case '!':{
                         perror("Token reports error state\n");
                         RS.ERROR_STATE = true;
                     }
-                    case '`':{ perror("DUDE, MAKE ME!!!");
-                        break;}
                     default: perror("unknown task token\n");
                 }
 

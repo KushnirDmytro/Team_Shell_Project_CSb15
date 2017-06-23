@@ -40,6 +40,9 @@ namespace sh_core {
              std::vector<arg_desk_pair>* reduce(const vector<token>* toks);
 
          private:
+
+             utils::Tokenizer toker;
+
              struct reducerState{
                  bool isConveyerOpened = false;
                  bool isFirstElement = true;
@@ -54,6 +57,7 @@ namespace sh_core {
                  bool nextFilenameIsDescriptor = false;
              };
              reducerState RS;
+
              char outputRedirectBuf = '\0';
              arg_desk_pair execUnitBuf;
 

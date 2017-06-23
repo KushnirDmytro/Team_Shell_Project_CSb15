@@ -74,6 +74,17 @@ namespace sh_core {
         }
 
 
+
+        int Tokenizer::setIgnoreDelimiters(bool value){
+            mst.toIgnoreDelimitersAndComments = value;
+            return EXIT_SUCCESS;
+        }
+
+        int Tokenizer::getIgnoreDeliminers(bool &valueAddr){
+            valueAddr = mst.toIgnoreDelimitersAndComments;
+            return EXIT_SUCCESS;
+        }
+
         inline bool Tokenizer::canBeVariableName(string* to_check){
             if (to_check->length() != 0){
 
@@ -283,9 +294,11 @@ namespace sh_core {
                             break;
                         }
                         case '#': {
-                            mst.isComment = true;
-                            if (comment_proceed(&ss, &workBuffer))
-                                return form_result();  // situation of error
+                            if (!mst.toIgnoreDelimitersAndComments) {
+                                mst.isComment = true;
+                                if (comment_proceed(&ss, &workBuffer))
+                                    return form_result();  // situation of error
+                            }
                             break;
                         }
 
@@ -295,6 +308,10 @@ namespace sh_core {
                     }
                     //   workBuffer.str("");
                 } else { //===========================================delimiters check
+
+
+
+                    if (!mst.toIgnoreDelimitersAndComments){
 
                     founded_char_position = delimiters_.find_first_of(ch);
                     if (founded_char_position != std::string::npos) {
@@ -322,9 +339,10 @@ namespace sh_core {
                         }
 
                         if (!ss.good()) {
-                          //  std::cout << "ERROR, can't find closing pair for opening char!" << std::endl;
+                            //  std::cout << "ERROR, can't find closing pair for opening char!" << std::endl;
                             return form_result();
                         }
+                    }
 
 
 
