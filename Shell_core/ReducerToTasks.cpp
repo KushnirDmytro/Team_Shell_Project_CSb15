@@ -111,7 +111,28 @@ namespace sh_core {
         return EXIT_SUCCESS;
     }
 
-    inline int ReducerToTasks::handleVariableCall(const token* elem)const{
+    inline int ReducerToTasks::handleVariableCall(const token* elem){
+        printf("Env Var state before CALL:\n");
+        environment->varManager_->show_local_variables();
+
+
+        // controll vector opera
+
+        const std::string *varNamePtr = &elem->first;
+        const std::string *varValuePtr = new string("");
+        if (environment->varManager_->doesVariableDeclaredLocally(varNamePtr)){
+            varValuePtr = environment->varManager_->getLocalVar(varNamePtr);
+        }else if(environment->varManager_->doesVariableDeclaredGlobaly(varNamePtr)){
+            varValuePtr = environment->varManager_->getGlobalVar(varNamePtr);
+            printf("GLOBALL ");
+        } else{
+            perror("UNKNOWN VAR_NAME");
+            return EXIT_FAILURE;
+        }
+        execUnitBuf.first.push_back(*varValuePtr); // copy value to vector
+
+        printf("varValue got [%s]\n", (*varValuePtr).c_str());
+
         return EXIT_SUCCESS;
     }
 
@@ -123,17 +144,23 @@ namespace sh_core {
         }
 
     inline void ReducerToTasks::handle_variables_assignment(const token* elem,string* variableNameBuf){
+        printf("Env Var state before:\n");
+        environment->varManager_->show_local_variables();
+
+
         sh_core::environment->varManager_->
-                declareVariableLocally(new string (elem->first),
-                                       new string (*variableNameBuf));
+                declareVariableLocally(new string (*variableNameBuf),
+                                       new string (elem->first));
         if (RS.waitingForGlobalVar){
-            sh_core::environment->varManager_->declareVariableGlobally(new string (elem->first),
-                                                                       new string (*variableNameBuf),
+            sh_core::environment->varManager_->declareVariableGlobally(new string (*variableNameBuf),
+                                                                       new string (elem->first),
                                                                        DO_override_varaibles);
-        }
-        if (RS.waitingForGlobalVar)
             printf("!GLOBAL! ");
+
+        }
         printf("Varible assigned: N[%s]=>V[%s]\n", (*variableNameBuf).c_str(), elem->first.c_str());
+        printf("Env Var state after:\n");
+        environment->varManager_->show_local_variables();
         RS.waitingForGlobalVar = false;
         RS.waitingForVarValue = false;
         *variableNameBuf = "";
@@ -238,6 +265,7 @@ namespace sh_core {
                         break;
                     }
                     case 'm': {execUnitBuf.second.exec_mode = MSH_FILE;
+                        execUnitBuf.first.push_back( el.first);
                         break;}
                     case 'e':{RS.waitingForGlobalVar = true;} //no break intentionally
                     case 'v':{

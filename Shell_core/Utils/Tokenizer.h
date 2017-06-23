@@ -68,6 +68,7 @@ namespace sh_core {
 
             char getToken(){
                 if (ERROR_STATE) return '!';
+                if (isVariableCall) return '$';
                 if (isFile) return 'f';
                 if (isMshScript) return 'm';
                 if (isDirectory) return 'd';
@@ -79,7 +80,6 @@ namespace sh_core {
                 if (isReverceBrace) return '`';
                 if (isRegexp) return '%';
                 //if (isGlobalVar) return 'G';
-                if (isVariableCall) return '$';
                 if (isVariableName) {
                     if (isGlobal) return 'e' ;
                     else return 'v';}
@@ -95,7 +95,7 @@ namespace sh_core {
         private:
             machine_state mst;
 
-            const std::string special_symbols_ = "%_*/|><.&=\\";
+            const std::string special_symbols_ = "$%_*/|><.&=\\";
             const std::string open_pair_symbols_ = "'\"`#";
             const std::string delimiters_ = " \t\r\n\a";
             const std::string EOL_ = "\r\n\a";

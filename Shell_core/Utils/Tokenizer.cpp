@@ -390,6 +390,7 @@ namespace sh_core {
 
                                 case '$': {
                                     flush_buf_to_tokens(&workBuffer); //proved
+
                                     // TODO check if such a variable is defined
                                     mst.isVariableCall = true;
                                     break;

@@ -65,7 +65,7 @@ namespace sh_core {
              void printResState(taskList *res)const;
              bool last_node_in_task(const char ch) const;
              taskList* returnResult(taskList* ret) const;
-             int handleVariableCall(const token* elem)const;
+             int handleVariableCall(const token* elem);
          };
      }
 

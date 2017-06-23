@@ -55,8 +55,11 @@ namespace env {
 
 
     std::string* Env::VarManager::getLocalVar(const std::string* varName){
-        if (doesVariableDeclaredLocally(varName))
-            return new string(getenv(varName->c_str()));
+        if (doesVariableDeclaredLocally(varName)) {
+            printf("map at [%s] has [%s] \n", (*varName).c_str(), (env_->variables_->at(*varName)).c_str());
+
+            return new string(env_->variables_->at(*varName));
+        }
         else return new string("UNDEFINED_VAR");
     }
 
