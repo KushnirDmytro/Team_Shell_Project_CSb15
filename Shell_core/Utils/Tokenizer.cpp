@@ -398,13 +398,15 @@ namespace sh_core {
 
                                 case '=': {
 
-                                    bool isGlobal = false;
+                                    //bool isGlobal = false;
                                     mst.isVariableName = true;
-                                    isGlobal = lastTokenStringEquals(new string("export"));
-                                    mst.isGlobal = isGlobal;
+                                    if (lastTokenStringEquals(new string("export")) ){
+                                        tokens_vector_->pop_back(); // extracting "export" token
+                                        mst.isGlobal = true;
+                                    }
+
                                     flush_buf_to_tokens(&workBuffer); //previous token part proceeded
                                     mst.isVariableValue = true;
-                                    mst.isGlobal = isGlobal;
 
 
                                     const bool rewriting = true;
@@ -447,7 +449,7 @@ namespace sh_core {
                                 }
                                 case '.':{
                                     //TODO solve usage of this symbol
-                                    mst.isExrention = true;
+                                    mst.isExtention = true;
                                     workBuffer << ch;
                                     std::cout << (char)ch << std::endl;
                                     std::cout << workBuffer.str().c_str() << std::endl;

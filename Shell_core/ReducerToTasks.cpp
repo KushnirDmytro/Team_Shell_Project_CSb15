@@ -119,7 +119,7 @@ namespace sh_core {
         // controll vector opera
 
         const std::string *varNamePtr = &elem->first;
-        const std::string *varValuePtr = new string("");
+        const std::string *varValuePtr = nullptr;
         if (environment->varManager_->doesVariableDeclaredLocally(varNamePtr)){
             varValuePtr = environment->varManager_->getLocalVar(varNamePtr);
         }else if(environment->varManager_->doesVariableDeclaredGlobaly(varNamePtr)){
@@ -147,16 +147,17 @@ namespace sh_core {
         printf("Env Var state before:\n");
         environment->varManager_->show_local_variables();
 
-
-        sh_core::environment->varManager_->
-                declareVariableLocally(new string (*variableNameBuf),
-                                       new string (elem->first));
         if (RS.waitingForGlobalVar){
             sh_core::environment->varManager_->declareVariableGlobally(new string (*variableNameBuf),
                                                                        new string (elem->first),
                                                                        DO_override_varaibles);
             printf("!GLOBAL! ");
 
+        }
+        else {
+            sh_core::environment->varManager_->declareVariableLocally(
+                    new string(*variableNameBuf),
+                    new string(elem->first));
         }
         printf("Varible assigned: N[%s]=>V[%s]\n", (*variableNameBuf).c_str(), elem->first.c_str());
         printf("Env Var state after:\n");
@@ -258,11 +259,11 @@ namespace sh_core {
                     case '#': {execUnitBuf.second.exec_mode = NOT_EXECUTABLE;
                         break;}
                     case '$':{
-                        if (!handleVariableCall(&el)){
+                        if (handleVariableCall(&el)){
                             RS.ERROR_STATE = true;
                             perror("variable call fail");
                         }
-                        break;
+                        continue; // need not to put name of a variable itself
                     }
                     case 'm': {execUnitBuf.second.exec_mode = MSH_FILE;
                         execUnitBuf.first.push_back( el.first);
