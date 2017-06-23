@@ -111,7 +111,7 @@ namespace sh_core {
         return EXIT_SUCCESS;
     }
 
-    inline int handleVariableCall(const token* elem)const{
+    inline int ReducerToTasks::handleVariableCall(const token* elem)const{
         return EXIT_SUCCESS;
     }
 

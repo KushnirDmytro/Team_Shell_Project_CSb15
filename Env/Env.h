@@ -31,11 +31,13 @@ namespace env {
             VarManager(Env *env);
             ~VarManager();
 
-            bool doesVariableDeclared(const std::string* compare) const;
+            bool doesVariableDeclaredLocally(const std::string *compare) const;
 
-            std::string* getGlobalVar(const std::string* compare);
+            std::string* getGlobalVar(const std::string* varName);
 
-            bool doesVariableDeclaredGlobaly(const std::string* compare) const;
+            std::string* getLocalVar(const std::string* varName);
+
+            bool doesVariableDeclaredGlobaly(const std::string* varName) const;
 
             int declareVariableGlobally(const std::string* varName, const std::string* varValue, bool toOverride ) const;
 

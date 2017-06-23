@@ -37,21 +37,29 @@ namespace env {
 
     Env::VarManager::~VarManager(){}
 
-    bool Env::VarManager::doesVariableDeclared(const std::string* compare) const{
+    bool Env::VarManager::doesVariableDeclaredLocally(const std::string *compare) const{
         auto search_iter = env_->variables_->find(*compare);
         return  (search_iter != env_->variables_->end() );
     }
 
-    bool Env::VarManager::doesVariableDeclaredGlobaly(const std::string* compare) const{
-        char *x = getenv(compare->c_str());
+    bool Env::VarManager::doesVariableDeclaredGlobaly(const std::string* varName) const{
+        char *x = getenv(varName->c_str());
         return (x!=NULL); //true if var is declared
     }
 
-    std::string* Env::VarManager::getGlobalVar(const std::string* compare) {
-        if (doesVariableDeclaredGlobaly(compare))
-            return new string(getenv(compare->c_str()));
-        else return nullptr;
+    std::string* Env::VarManager::getGlobalVar(const std::string* varName) {
+        if (doesVariableDeclaredGlobaly(varName))
+            return new string(getenv(varName->c_str()));
+        else return new string("UNDEFINED_VAR");
     }
+
+
+    std::string* Env::VarManager::getLocalVar(const std::string* varName){
+        if (doesVariableDeclaredLocally(varName))
+            return new string(getenv(varName->c_str()));
+        else return new string("UNDEFINED_VAR");
+    }
+
 
     int Env::VarManager::declareVariableGlobally(const std::string* varName, const std::string* varValue, bool toOverride ) const{
         if (env_->user_->getUser_rights().toChangaGlobalVariables ) {

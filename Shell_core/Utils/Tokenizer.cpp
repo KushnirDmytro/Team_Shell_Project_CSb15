@@ -410,10 +410,10 @@ namespace sh_core {
                                     const bool not_rewriting = false;
                                     // TESTBLOCK
 
-                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+                                    std::cout << environment->varManager_->doesVariableDeclaredLocally(new string("_a")) << std::endl;
                                     environment->varManager_->declareVariableLocally(new string ("_a"),
                                                                                      new string ("b"));
-//                                    std::cout << environment->varManager_->doesVariableDeclared(new string ("_a")) << std::endl;
+//                                    std::cout << environment->varManager_->doesVariableDeclaredLocally(new string ("_a")) << std::endl;
 //                                    std::cout << environment->varManager_->getGlobalVar(new string ("_a")) << std::endl;
 //
 //
