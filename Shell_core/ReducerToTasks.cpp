@@ -144,12 +144,43 @@ namespace sh_core {
 //            (*exec_unit)->second = new execInformation;
         }
 
-    inline void ReducerToTasks::handle_variables_assignment(const token* elem,string* variableNameBuf){
+
+    int ReducerToTasks::justSubstituteVars(const string *args){
+
+        string argsBuf = *args;
+
+        std::stringstream ss;
+
+        size_t  pos = args->find_first_of('$');
+        while (pos != std::string::npos){
+
+        }
+
+//                        res->emplace_back(vector_buf);
+
+        toker.setIgnoreDelimiters(false);
+        return EXIT_SUCCESS;
+    }
+
+
+
+    inline void ReducerToTasks::handle_variables_assignment(const token* elem,string* variableNamePtr){
         printf("Env Var state before:\n");
         environment->varManager_->show_local_variables();
+//        std::string valueToAssign = elem->first;
+//
+//        std::vector<arg_desk_pair>* vector_buf; = reduce(toksBuf);
+//        result_buf->insert(result_buf->end(), vector_buf->begin(), vector_buf->end());
+
+//
+//        if (elem->second == '"'){ // need to substitute
+//            justSubstituteVars(&valueToAssign, vector_buf);
+//            valueToAssign; // concat to string
+//
+//        }
 
         if (RS.waitingForGlobalVar){
-            sh_core::environment->varManager_->declareVariableGlobally(new string (*variableNameBuf),
+            sh_core::environment->varManager_->declareVariableGlobally(new string (*variableNamePtr),
                                                                        new string (elem->first),
                                                                        DO_override_varaibles);
             printf("!GLOBAL! ");
@@ -157,15 +188,15 @@ namespace sh_core {
         }
         else {
             sh_core::environment->varManager_->declareVariableLocally(
-                    new string(*variableNameBuf),
+                    new string(*variableNamePtr),
                     new string(elem->first));
         }
-        printf("Varible assigned: N[%s]=>V[%s]\n", (*variableNameBuf).c_str(), elem->first.c_str());
+        printf("Varible assigned: N[%s]=>V[%s]\n", (*variableNamePtr).c_str(), elem->first.c_str());
         printf("Env Var state after:\n");
         environment->varManager_->show_local_variables();
         RS.waitingForGlobalVar = false;
         RS.waitingForVarValue = false;
-        *variableNameBuf = "";
+        *variableNamePtr = "";
     }
 
 
@@ -324,7 +355,17 @@ namespace sh_core {
                         toker.setIgnoreDelimiters(false);
                         continue;
                     } // substitute variables, instead of mutating string place other
-                    case '`':{ perror("DUDE, MAKE ME!!!"); //execute as a task then result in value
+                    case '`':{
+
+                        //TODO customize buffer name for each session and delete then
+                        el.first = el.first.append(" > tempBufFile 2>&1");
+
+                        const vector<token> *toksBuf = toker.tokenize(&el.first);
+                        std::vector<arg_desk_pair>* vector_buf = reduce(toksBuf);
+
+                        //TODO execute it, read from this file to var
+
+                        perror("DUDE, MAKE ME!!!"); //execute as a task then result in value
                         break;}
                     case '!':{
                         perror("Token reports error state\n");

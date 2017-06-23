@@ -62,7 +62,7 @@ namespace sh_core {
              arg_desk_pair execUnitBuf;
 
              void create_new_exec_unit(arg_desk_pair* exec_unit);
-             void handle_variables_assignment(const token* elem, string* variableNameBuf);
+             void handle_variables_assignment(const token* elem, string* variableNamePtr);
              void handle_start_new_task(const token* elem);
              void handle_end_task(const token* elem);
              int redirectIO(token *elem, char redirFlag);
@@ -70,6 +70,7 @@ namespace sh_core {
              bool last_node_in_task(const char ch) const;
              taskList* returnResult(taskList* ret) const;
              int handleVariableCall(const token* elem);
+             int justSubstituteVars(const string *args);
          };
      }
 
