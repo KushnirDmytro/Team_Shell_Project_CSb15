@@ -6,7 +6,6 @@
 //
 #include <iostream>
 
-
 #include <cstring>
 #include <vector>
 #include <string>
@@ -30,7 +29,6 @@ namespace sh_core {
     const bool DONT_override_variables = false;
 
         ReducerToTasks::ReducerToTasks() {}
-
         bool ReducerToTasks::last_node_in_task(const char ch) const {
             return  ( ch=='\n' || ch=='.' || ch=='|' );
         }
@@ -112,15 +110,11 @@ namespace sh_core {
         return EXIT_SUCCESS;
     }
 
-    inline int ReducerToTasks::handleVariableCall(const token* elem){
+    inline int ReducerToTasks::handleVariableCall(const std::string* varNamePtr, std::string *varValuePtr){
         printf("Env Var state before CALL:\n");
         environment->varManager_->show_local_variables();
-
-
         // controll vector opera
-
-        const std::string *varNamePtr = &elem->first;
-        const std::string *varValuePtr = nullptr;
+        //const std::string *varNamePtr = &elem->first;
         if (environment->varManager_->doesVariableDeclaredLocally(varNamePtr)){
             varValuePtr = environment->varManager_->getLocalVar(varNamePtr);
         }else if(environment->varManager_->doesVariableDeclaredGlobaly(varNamePtr)){
@@ -130,7 +124,6 @@ namespace sh_core {
             perror("UNKNOWN VAR_NAME");
             return EXIT_FAILURE;
         }
-        execUnitBuf.first.push_back(*varValuePtr); // copy value to vector
 
         printf("varValue got [%s]\n", (*varValuePtr).c_str());
 
@@ -139,32 +132,83 @@ namespace sh_core {
 
 
         inline void ReducerToTasks::create_new_exec_unit(arg_desk_pair* exec_unit){
-            *exec_unit = *(new std::pair<vector<string>, execInformation>);
+            *exec_unit = *(new std::pair<vector<std::string>, execInformation>);
 //            (*exec_unit)->first = new std::vector < std::string * >;
 //            (*exec_unit)->second = new execInformation;
         }
 
 
-    int ReducerToTasks::justSubstituteVars(const string *args){
+    int ReducerToTasks::justSubstituteVars(const std::string *args, std::string *rez){
 
-        string argsBuf = *args;
+        std::string argsBuf = *args;  //initial string
+        std::string *rezBuf = nullptr;
 
         std::stringstream ss;
+        std::string strBuf = *args;
+        std::string varNameBuf;
+        size_t  pos = strBuf.find_first_of('$');
 
-        size_t  pos = args->find_first_of('$');
-        while (pos != std::string::npos){
 
+        char *bufArgs = (char*) args->c_str(); //discarding const
+
+        char* saveprtr;
+
+        char markOfVar[] = {'$'};
+
+        const char *delims =  " \n\t\r";
+
+        char* tokenized_part = strtok_r(bufArgs, markOfVar , &saveprtr);
+
+        while (tokenized_part != NULL){
+
+            ss<<tokenized_part;
+            printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
+            varNameBuf = strtok_r(NULL, delims, &saveprtr);
+            if (handleVariableCall(&varNameBuf , rezBuf)){
+                return EXIT_FAILURE;
+            }
+
+            printf("+Var_Name [%s]  Var_val  [%s]\n", varNameBuf,  rezBuf->c_str());
+            ss<<rezBuf;
+            tokenized_part = strtok_r(NULL, markOfVar, &saveprtr);
+            printf("+token [%s]  \n", tokenized_part);
+            printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
         }
 
-//                        res->emplace_back(vector_buf);
-
-        toker.setIgnoreDelimiters(false);
+        rez = new string(ss.str().c_str());
         return EXIT_SUCCESS;
+        //while (pch != NULL)
+//
+//        while (pos != std::string::npos){
+//            ss << strBuf.substr(0, pos); // pos - 1 ???
+//            printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
+//            //if (environment->varManager_)
+//            pref;
+//            strBuf = strBuf.substr(pos, strBuf.length());
+//            pos = strBuf.find_first_of(" \t\n\r");
+//            if (pos == std::string::npos){
+//                printf("Error varname\n");
+//                break;
+//            }
+//            varNameBuf = strBuf.substr(0, pos);
+//            if (handleVariableCall(&varNameBuf , rezBuf)){
+//                return EXIT_FAILURE;
+//            }
+//            ss << *rezBuf;
+//            printf("+VAR size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
+//            pos = strBuf.find_first_of('$');
+//        }
+
+
+//                        res->emplace_back(vector_buf);
+//
+//        toker.setIgnoreDelimiters(false);
+//        return EXIT_SUCCESS;
     }
 
 
 
-    inline void ReducerToTasks::handle_variables_assignment(const token* elem,string* variableNamePtr){
+    inline void ReducerToTasks::handle_variables_assignment(const token* elem, std::string* variableNamePtr){
         printf("Env Var state before:\n");
         environment->varManager_->show_local_variables();
 //        std::string valueToAssign = elem->first;
@@ -180,16 +224,16 @@ namespace sh_core {
 //        }
 
         if (RS.waitingForGlobalVar){
-            sh_core::environment->varManager_->declareVariableGlobally(new string (*variableNamePtr),
-                                                                       new string (elem->first),
+            sh_core::environment->varManager_->declareVariableGlobally(new std::string (*variableNamePtr),
+                                                                       new std::string (elem->first),
                                                                        DO_override_varaibles);
             printf("!GLOBAL! ");
 
         }
         else {
             sh_core::environment->varManager_->declareVariableLocally(
-                    new string(*variableNamePtr),
-                    new string(elem->first));
+                    new std::string(*variableNamePtr),
+                    new std::string(elem->first));
         }
         printf("Varible assigned: N[%s]=>V[%s]\n", (*variableNamePtr).c_str(), elem->first.c_str());
         printf("Env Var state after:\n");
@@ -291,10 +335,12 @@ namespace sh_core {
                     case '#': {execUnitBuf.second.exec_mode = NOT_EXECUTABLE;
                         break;}
                     case '$':{
-                        if (handleVariableCall(&el)){
+                        std::string *varValuePtr = nullptr;
+                        if (handleVariableCall(&el.first, varValuePtr)){
                             RS.ERROR_STATE = true;
                             perror("variable call fail");
                         }
+                        execUnitBuf.first.push_back(*varValuePtr); // copy value to vector
                         continue; // need not to put name of a variable itself
                     }
                     case 'm': {execUnitBuf.second.exec_mode = MSH_FILE;
@@ -309,8 +355,7 @@ namespace sh_core {
                         execUnitBuf.second.exec_mode = NOT_EXECUTABLE; //this block allready executed
                         variableNameBuf = el.first;
                         continue;
-                        sh_core::environment->varManager_->declareVariableLocally(new string (el.first),
-                                                                                     new string ("b"));
+
                     }
                     case '<':{RS.changeIn = true;
                         RS.nextFilenameIsDescriptor =  true;
@@ -345,14 +390,19 @@ namespace sh_core {
                         break;
                     } // doing nothing, just place as it is
                     case '"':{
-                        toker.setIgnoreDelimiters(true);
-                        const vector<token> *toksBuf = toker.tokenize(&el.first);
-                        std::vector<arg_desk_pair>* vector_buf = reduce(toksBuf);
-                        res->insert(res->end(), vector_buf->begin(), vector_buf->end());
+                        std::string rezBuf;
+                        justSubstituteVars(&el.first, &rezBuf);
 
-//                        res->emplace_back(vector_buf);
+                        execUnitBuf.first.push_back(rezBuf);
 
-                        toker.setIgnoreDelimiters(false);
+//                        toker.setIgnoreDelimiters(true);
+//                        const vector<token> *toksBuf = toker.tokenize(&el.first);
+//                        std::vector<arg_desk_pair>* vector_buf = reduce(toksBuf);
+//                        res->insert(res->end(), vector_buf->begin(), vector_buf->end());
+//
+////                        res->emplace_back(vector_buf);
+//
+//                        toker.setIgnoreDelimiters(false);
                         continue;
                     } // substitute variables, instead of mutating string place other
                     case '`':{
@@ -384,7 +434,7 @@ namespace sh_core {
                 if(!el.first.empty()) {
                     printf("BUF_SIZE = %u\n", (unsigned int) execUnitBuf.first.size());
                     printf("Pushing [%s]~{%c} into [",el.first.c_str(), el.second);
-                    for(string i:execUnitBuf.first){
+                    for(std::string i:execUnitBuf.first){
                         printf(" {%s}",i.c_str());
                     }
                     printf("]\n");
@@ -394,7 +444,7 @@ namespace sh_core {
 
 
                     printf("Now buf is [");
-                    for(string i:execUnitBuf.first){
+                    for(std::string i:execUnitBuf.first){
                         printf(" {%s}",i.c_str());
                     }
                     printf("]\n");
