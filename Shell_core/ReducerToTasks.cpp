@@ -165,6 +165,7 @@ namespace sh_core {
             ss<<tokenized_part;
             printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
             varNameBuf = strtok_r(bufArgs, delims, &saveprtr);
+            varNameBuf = varNameBuf.substr(1, varNameBuf.length()-1);
             if (handleVariableCall(&varNameBuf , rezBuf)){
                 return EXIT_FAILURE;
             }
