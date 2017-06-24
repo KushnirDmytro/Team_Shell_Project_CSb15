@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "str = " << str << std::endl;
                 if (!fileLaneIterator->fileIsReady()) {
                     str = my_read_line();
-//                    return 0;
+                    return 0;
                 }
             } else{
                 str = my_read_line();
