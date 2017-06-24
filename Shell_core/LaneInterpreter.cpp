@@ -107,6 +107,7 @@ namespace sh_core {
         if (dest == nullptr)
             dest = args[0];
 
+        std::cout << "at myExternLauncherChanneled: dest = " << dest << std::endl;
         pid_t pid, wpid;
         int status;
 
@@ -194,6 +195,7 @@ namespace sh_core {
 
     int LaneInterpreter::myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const{
 
+
         char **cargs = new char *[args->size() + 1];
         size_t args_number = args->size();
 
@@ -202,7 +204,6 @@ namespace sh_core {
         splitter->convertStrVectorToChars(args, cargs);
 
         string possibleFunc = string(cargs[0]);
-
 
         int result;
         if (funcLib->hasSuchEmbedded(&possibleFunc)) // case when we have such a func_ in our lib
@@ -225,15 +226,18 @@ namespace sh_core {
 
             }
             else{ // CALLING EXTERN FUNC <======================
+
                 if (funcLib->hasSuchExternal(&possibleFunc)) {
                     result = myExternLauncherChanneled(cargs, ch_str, funcLib->external_lib_.at(possibleFunc)->string().c_str());
                     //using full pathname instead of just local one
                 } else
+                    std::cout << "at myExecute2: possibleFunc = "  << possibleFunc << std::endl;
                     result = myExternLauncherChanneled(cargs, ch_str );
             }
         }
 
         delete cargs;
+        std::cout << "at myExecute2: result = " << result << std::endl;
         return result;
     }
 

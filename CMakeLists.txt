@@ -22,7 +22,7 @@ set(SOURCE_FILES core_main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFu
         Shell_core/ReducerToTasks.cpp Shell_core/ReducerToTasks.h)
 add_executable(mShell ${SOURCE_FILES} Env/Env.cpp Env/Env.h)
 
-set(SOURCE_FILES simple_server/main.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
+set(SOURCE_FILES server.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Shell_core/coreFuncLib.cpp Shell_core/coreFuncLib.h
         Env/ConsoleView.cpp Env/ConsoleView.h
         Env/User.cpp Env/User.h
