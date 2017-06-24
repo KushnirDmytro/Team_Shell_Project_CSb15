@@ -153,6 +153,7 @@ namespace sh_core {
 
         char* saveprtr;
 
+        // Tokenize on '$' ==> if number of parts > 1 ==> eather put as it is into string, or get first char
         char markOfVar[] = {'$'};
 
         const char *delims =  " \n\t\r";
@@ -163,7 +164,7 @@ namespace sh_core {
 
             ss<<tokenized_part;
             printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
-            varNameBuf = strtok_r(NULL, delims, &saveprtr);
+            varNameBuf = strtok_r(bufArgs, delims, &saveprtr);
             if (handleVariableCall(&varNameBuf , rezBuf)){
                 return EXIT_FAILURE;
             }

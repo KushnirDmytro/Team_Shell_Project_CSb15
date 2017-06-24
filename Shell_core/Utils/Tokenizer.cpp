@@ -311,7 +311,7 @@ namespace sh_core {
 
 
 
-                    if (!mst.toIgnoreDelimitersAndComments){
+                   // if (!mst.toIgnoreDelimitersAndComments){
 
                     founded_char_position = delimiters_.find_first_of(ch);
                     if (founded_char_position != std::string::npos) {
@@ -346,7 +346,7 @@ namespace sh_core {
 
 
 
-                    } else {
+                     else {
 // ==============================proceed other special tokens ===============================
                         founded_char_position = special_symbols_.find_first_of(ch);
                         if (founded_char_position != std::string::npos) {
