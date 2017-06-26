@@ -344,7 +344,7 @@ namespace sh_core {
 
     int LaneInterpreter::myExecute3(const vector<string> *const args, const execInformation* ch_str) const{
 
-        if (ch_str->exec_mode) //shortcut
+        if (ch_str->exec_mode == NOT_EXECUTABLE) //shortcut
             return EXIT_SUCCESS;
 
 
