@@ -50,6 +50,8 @@ namespace sh_core {
 
         chennelDesriptStruct defaultDescriptors;
 
+        execInformation *hostExecInfo;
+
 
         // launcher for custom modules
         //int myExternLauncher(char **args, const char* destination = nullptr) const;
@@ -65,6 +67,8 @@ namespace sh_core {
 
 
         int myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const;
+
+        int myExecute3(const vector<string> *const args, const execInformation* ch_str) const;
     public:
 
 

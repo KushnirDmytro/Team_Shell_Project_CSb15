@@ -41,6 +41,8 @@ namespace sh_core {
     LaneInterpreter::LaneInterpreter() {
         funcLib = new coreFuncLib();
 
+        hostExecInfo = new execInformation;
+
         splitter = new utils::LineSplitter();
     }
 //tests
@@ -93,6 +95,53 @@ namespace sh_core {
         return EXIT_SUCCESS;
     }
 
+    int configureIOChannales3(const execInformation *ch_str){
+
+        if( *ch_str->indeskPtr != STANDART_DESK )
+        {
+            close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
+            if(dup2(*(ch_str->indeskPtr), STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
+                perror( "dup2 failed on STD IN" );
+                return EXIT_FAILURE;
+            }
+            close(*(ch_str->indeskPtr));
+
+        }
+        if(*ch_str->outdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
+        {
+
+            close(*ch_str->indeskPtr); /* first close the read end of the pipe */
+            if(dup2(*ch_str->outdeskPtr, STDOUT_FILENO) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
+                perror( "dup2 failed of STD OUT" );
+                return EXIT_FAILURE;
+            }
+            close(*ch_str->outdeskPtr);
+
+        }
+
+        if(*ch_str->errdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
+        {
+            //close(p[0]); /* first close the read end of the pipe */
+            if(dup2(*ch_str->errdeskPtr, STDERR_FILENO) == -1){ /* stdERR == write end of the pipe (side of the pipe in which errordata is written)*/
+                perror( "dup2 failed of STD ERR" );
+                return EXIT_FAILURE;
+            }
+            close(*ch_str->errdeskPtr);
+
+        }
+        return EXIT_SUCCESS;
+    }
+
+
+    inline void closeParrentDescriptors3(const execInformation* ch_str ){
+        if (*ch_str->indeskPtr != STANDART_DESK)
+            close(*ch_str->indeskPtr);
+        if (*ch_str->outdeskPtr != STANDART_DESK)
+            close(*ch_str->outdeskPtr);
+        if (*ch_str->errdeskPtr != STANDART_DESK)
+            close(*ch_str->errdeskPtr);
+    }
+
     inline void closeParrentDescriptors(const chennelDesriptStruct* ch_str ){
         if (*ch_str->indeskPtr != STANDART_DESK)
             close(*ch_str->indeskPtr);
@@ -110,7 +159,6 @@ namespace sh_core {
         std::cout << "at myExternLauncherChanneled: dest = " << dest << std::endl;
         pid_t pid, wpid;
         int status;
-
 
         pid = fork();
         if (pid == 0) {
@@ -134,6 +182,58 @@ namespace sh_core {
         } else {
             // Parent process
            closeParrentDescriptors(ch_str);
+
+
+            do { //TODO provide tests for invalid scenarios of exec (a.e. failed launch file and stay in shell copy)
+                wpid = waitpid(pid, &status, WUNTRACED);
+                /*
+                 * WUNTRACED
+                 * also return if a child has stopped (but not traced via ptrace(2)).
+                 * Status for traced children which have stopped is provided even if this option is not specified.
+                 * WIFEXITED(status)
+                 * returns true if the child terminated normally, that is, by calling exit(3) or _exit(2),
+                 * or by returning from main().
+                 * WIFSIGNALED(status)
+                 * returns true if the child process was terminated by a signal.
+                 */
+            } while (!WIFEXITED(status) &&
+                     !WIFSIGNALED(status)); //checks for valid scenarios of exiting (we borrowed it)
+        }
+
+        return EXIT_SUCCESS;
+    }
+
+
+    int myExternLauncherChanneled3(char **const args, const execInformation* ch_str , const char* dest) {
+        if (dest == nullptr)
+            dest = args[0];
+
+        std::cout << "at myExternLauncherChanneled: dest = " << dest << std::endl;
+        pid_t pid, wpid;
+        int status;
+
+        pid = fork();
+        if (pid == 0) {
+
+
+            //  we are in Child process
+
+            if (configureIOChannales3(ch_str)){ // <= channeling here
+                return EXIT_FAILURE;
+            }
+
+
+
+            if (execvp(dest, args) == -1) {
+                perror("my_Shell failed to launch this file");
+            }
+            exit(EXIT_SUCCESS);
+        } else if (pid < 0) {
+            // Error forking
+            perror("my_Shell failed to fork");
+        } else {
+            // Parent process
+            closeParrentDescriptors3(ch_str);
 
 
             do { //TODO provide tests for invalid scenarios of exec (a.e. failed launch file and stay in shell copy)
@@ -195,7 +295,6 @@ namespace sh_core {
 
     int LaneInterpreter::myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const{
 
-
         char **cargs = new char *[args->size() + 1];
         size_t args_number = args->size();
 
@@ -242,6 +341,74 @@ namespace sh_core {
     }
 
 
+
+    int LaneInterpreter::myExecute3(const vector<string> *const args, const execInformation* ch_str) const{
+
+
+        char **cargs = new char *[args->size() + 1];
+        size_t args_number = args->size();
+
+        // we'll need this debugging part 2
+        //std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
+        splitter->convertStrVectorToChars(args, cargs);
+
+        string firstArg = string(cargs[0]);
+
+        int resultCode = EXIT_FAILURE;
+
+        switch (ch_str->exec_mode){
+            case NOT_EXECUTABLE:{
+                break;
+            }
+            case EMBEDDED:{
+                if (configureIOChannales3(ch_str)){
+                    perror("failed on channel switch");
+                    return EXIT_FAILURE;
+                }
+                resultCode = funcLib->embedded_lib_.at(firstArg)->call(args_number, cargs);
+
+                if (configureIOChannales3(hostExecInfo)){
+                    perror("failed on channel switch");
+                    return EXIT_FAILURE;
+                }
+                break;
+            }
+
+            case MSH_FILE:{
+                if (configureIOChannales3(ch_str)){
+                    perror("failed on channel switch");
+                    return EXIT_FAILURE;
+                }
+
+                resultCode = interpretScriptFile(&firstArg);
+
+                if (configureIOChannales3(hostExecInfo)){
+                    perror("failed on channel switch");
+                    return EXIT_FAILURE;
+                }
+                break;
+            }
+
+            case EXTERNAL:{
+                resultCode = myExternLauncherChanneled3(cargs, ch_str, funcLib->external_lib_.at(firstArg)->string().c_str());
+                break;
+            }
+            case UNIVERSAL: {
+                std::cout << "at myExecute2: possibleFunc = "  << firstArg << std::endl;
+                resultCode = myExternLauncherChanneled3(cargs, ch_str, nullptr );
+                break;
+            }
+            default: {
+                printf("Unknown execution mode!!!\n");
+            }
+        }
+
+
+        return resultCode;
+    }
+
+
+
     int LaneInterpreter::processSting(string *values) const{
 
         ReducerToTasks *r2t = new ReducerToTasks();
@@ -278,12 +445,25 @@ namespace sh_core {
 
 // ==================== testing module ===============
 
+        vector<arg_desk_pair>* tasks = new vector<arg_desk_pair >;
         // TODO change for tokenizer
-        const vector<string> args = splitter->mySplitLine(values);
+        const vector<string> args = splitter->mySplitLine(values,  tasks);
+
 
         // TODO check this suspicious place for bugs
 
+        printf("======EXPERIMENTAL EXECUTE STARTED===========\n");
+        for (arg_desk_pair single_task: *tasks){
+            myExecute3(&single_task.first, &single_task.second);
+        }
+        printf("======EXPERIMENTAL EXECUTE FINISHED===========\n");
+
         return myExecute2(&args, &defaultDescriptors);
+
+
+
+
+
     }
 
 
