@@ -116,9 +116,9 @@ namespace sh_core {
         // controll vector opera
         //const std::string *varNamePtr = &elem->first;
         if (environment->varManager_->doesVariableDeclaredLocally(varNamePtr)){
-            varValuePtr = environment->varManager_->getLocalVar(varNamePtr);
+            *varValuePtr =  *(environment->varManager_->getLocalVar(varNamePtr));
         }else if(environment->varManager_->doesVariableDeclaredGlobaly(varNamePtr)){
-            varValuePtr = environment->varManager_->getGlobalVar(varNamePtr);
+            *varValuePtr = *(environment->varManager_->getGlobalVar(varNamePtr));
             printf("GLOBALL ");
         } else{
             perror("UNKNOWN VAR_NAME");
@@ -137,17 +137,18 @@ namespace sh_core {
 //            (*exec_unit)->second = new execInformation;
         }
 
-
+// used in ["] token case. situation when in string variable calls has to be replaced with it's values
     int ReducerToTasks::justSubstituteVars(const std::string *args, std::string *rez){
 
-        std::string argsBuf = *args;  //initial string
-        std::string *rezBuf = nullptr;
+        std::string argsBuf = *args ;  //initial string
+        std::string *rezBuf = new string();
 
-        std::stringstream ss;
+        std::stringstream resultBuf;
         std::string strBuf = *args;
         std::string varNameBuf;
-        size_t  pos = strBuf.find_first_of('$');
-
+        size_t variableStartPosition = strBuf.find_first_of('$');
+        size_t variableEndPosition = variableStartPosition;
+        //size_t variable
 
         char *bufArgs = (char*) args->c_str(); //discarding const
 
@@ -158,54 +159,42 @@ namespace sh_core {
 
         const char *delims =  " \n\t\r";
 
-        char* tokenized_part = strtok_r(bufArgs, markOfVar , &saveprtr);
 
-        while (tokenized_part != NULL){
+        while (variableStartPosition != std::string::npos){
+            resultBuf << strBuf.substr(0, variableStartPosition); // pos - 1 ??? //putting current constant prefix in buf
+            printf("+PREF size %d buf is [%s]\n", (int)resultBuf.str().length(),  resultBuf.str().c_str());
 
-            ss<<tokenized_part;
-            printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
-            varNameBuf = strtok_r(bufArgs, delims, &saveprtr);
-            varNameBuf = varNameBuf.substr(1, varNameBuf.length()-1);
+            //if (environment->varManager_)
+        //    pref;
+
+            strBuf = strBuf.substr(variableStartPosition+1, strBuf.length() - variableStartPosition - 1);
+            //deleting buffer prefix together with [$] mark
+
+            variableEndPosition = strBuf.find_first_of(" \t\n\r\0");
+
+            if (variableEndPosition == std::string::npos) {
+                varNameBuf = strBuf;
+            }
+            else {
+                varNameBuf = strBuf.substr(0, variableEndPosition);
+                strBuf = strBuf.substr(variableEndPosition, strBuf.length() - variableEndPosition);
+            }
+            printf("var name request for [%s]\n", varNameBuf.c_str());
             if (handleVariableCall(&varNameBuf , rezBuf)){
                 return EXIT_FAILURE;
             }
+            printf("request[%s] ==> result[%s]\n", varNameBuf.c_str(), rezBuf->c_str());
 
-            printf("+Var_Name [%s]  Var_val  [%s]\n", varNameBuf,  rezBuf->c_str());
-            ss<<rezBuf;
-            tokenized_part = strtok_r(NULL, markOfVar, &saveprtr);
-            printf("+token [%s]  \n", tokenized_part);
-            printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
+
+            resultBuf << *rezBuf;
+            printf("+VAR size %d buf is [%s]\n", (int)resultBuf.str().length(),  resultBuf.str().c_str());
+            variableStartPosition = strBuf.find_first_of('$');
         }
 
-        rez = new string(ss.str().c_str());
-        return EXIT_SUCCESS;
-        //while (pch != NULL)
-//
-//        while (pos != std::string::npos){
-//            ss << strBuf.substr(0, pos); // pos - 1 ???
-//            printf("+PREF size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
-//            //if (environment->varManager_)
-//            pref;
-//            strBuf = strBuf.substr(pos, strBuf.length());
-//            pos = strBuf.find_first_of(" \t\n\r");
-//            if (pos == std::string::npos){
-//                printf("Error varname\n");
-//                break;
-//            }
-//            varNameBuf = strBuf.substr(0, pos);
-//            if (handleVariableCall(&varNameBuf , rezBuf)){
-//                return EXIT_FAILURE;
-//            }
-//            ss << *rezBuf;
-//            printf("+VAR size %d buf is [%s]\n", (int)ss.str().length(),  ss.str().c_str());
-//            pos = strBuf.find_first_of('$');
-//        }
+        *rez = resultBuf.str();
 
-
-//                        res->emplace_back(vector_buf);
-//
 //        toker.setIgnoreDelimiters(false);
-//        return EXIT_SUCCESS;
+        return EXIT_SUCCESS;
     }
 
 
@@ -337,7 +326,7 @@ namespace sh_core {
                     case '#': {execUnitBuf.second.exec_mode = NOT_EXECUTABLE;
                         break;}
                     case '$':{
-                        std::string *varValuePtr = nullptr;
+                        std::string *varValuePtr = new string();
                         if (handleVariableCall(&el.first, varValuePtr)){
                             RS.ERROR_STATE = true;
                             perror("variable call fail");
@@ -392,10 +381,10 @@ namespace sh_core {
                         break;
                     } // doing nothing, just place as it is
                     case '"':{
-                        std::string rezBuf;
-                        justSubstituteVars(&el.first, &rezBuf);
+                        std::string *rezBufPtr = new string() ;
+                        justSubstituteVars(&el.first, rezBufPtr);
 
-                        execUnitBuf.first.push_back(rezBuf);
+                        execUnitBuf.first.push_back(*rezBufPtr);
 
 //                        toker.setIgnoreDelimiters(true);
 //                        const vector<token> *toksBuf = toker.tokenize(&el.first);
