@@ -82,6 +82,8 @@ int start_loop(int newsockfd) {
         if (read(newsockfd, buffer, 255) < 0) {
             error("reading from socket");
         }
+//        std::cout << "at start_loop: buffer = "<<buffer << std::endl;
+
         str_buffer = buffer;
         received = split(buffer);
 
@@ -90,7 +92,11 @@ int start_loop(int newsockfd) {
 
             //TODO handler for returning "0"
         }
-        //
+
+        std::cout << "at start_loop: str_buffer = "<<str_buffer << std::endl;
+        status = sh_core::interpreter->processSting(&str_buffer);
+        std::cout << "at start_loop: status = "<<status << std::endl;
+
         response = "response";
         /* Write a response to the client
            * equal to send() without any flags as last arg
@@ -99,17 +105,8 @@ int start_loop(int newsockfd) {
         if (write(newsockfd, response.c_str(), response.size()) < 0) {
             error("writing to socket");
         }
-        //
-        std::cout << "at start_loop: str_buffer = "<<str_buffer << std::endl;
-        status = sh_core::interpreter->processSting(&str_buffer);
-        std::cout << "at start_loop: status = "<<status << std::endl;
-
-
-        std::cout << "at start_loop - before while(!status)" << std::endl;
 
     } while (!status);
-
-    std::cout << "at start_loop - after while(!status)" << std::endl;
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
 

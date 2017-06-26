@@ -156,7 +156,6 @@ namespace sh_core {
         if (dest == nullptr)
             dest = args[0];
 
-        std::cout << "at myExternLauncherChanneled: dest = " << dest << std::endl;
         pid_t pid, wpid;
         int status;
 
@@ -330,13 +329,11 @@ namespace sh_core {
                     result = myExternLauncherChanneled(cargs, ch_str, funcLib->external_lib_.at(possibleFunc)->string().c_str());
                     //using full pathname instead of just local one
                 } else
-                    std::cout << "at myExecute2: possibleFunc = "  << possibleFunc << std::endl;
                     result = myExternLauncherChanneled(cargs, ch_str );
             }
         }
 
         delete cargs;
-        std::cout << "at myExecute2: result = " << result << std::endl;
         return result;
     }
 
@@ -418,7 +415,7 @@ namespace sh_core {
         ReducerToTasks *r2t = new ReducerToTasks();
 
 // ==================== testing module ===============
-        int file_desk[2];
+       /* int file_desk[2];
 
         pipe(file_desk);
 
@@ -426,8 +423,6 @@ namespace sh_core {
         *(chdOUT_LS->outdeskPtr) = file_desk[WRITE_SIDE];
         chennelDesriptStruct *chdIN_WC = new chennelDesriptStruct();
         *(chdIN_WC->indeskPtr) = file_desk[READ_SIDE];
-
-        //arg_desk_pair *forLSout1 = new arg_desk_pair;
 
         vector<string> *argvecLS = new vector<string>;
         argvecLS->push_back(string("ls"));
@@ -442,7 +437,7 @@ namespace sh_core {
         int test_result_wc = myExecute2(argvecWC, chdIN_WC);
         std::cout << "test_result_ls :"<< test_result_ls<< std::endl;
 
-        std::cout << "test_result_wc :"<< test_result_wc<< std::endl;
+        std::cout << "test_result_wc :"<< test_result_wc<< std::endl;*/
         utils::Tokenizer *toker = new utils::Tokenizer();
 
 

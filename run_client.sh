@@ -7,7 +7,7 @@
 
 #default options args
 directory=$PWD
-runsNum=2
+runsNum=100
 
 #other global variables
 
@@ -59,19 +59,12 @@ main () {
     do
           outputs[$i]=" $[i+1] - $(run) "
 		  echo "Start new client"
-#          IFS=': ' read -r -a array <<< "${outputs[$i]}"
-#          arrayTotal[$i]=${array[3]}
-#          sumTotal=$[ sumTotal+${arrayTotal[$i]}]
-#          if  [ ${arrayTotal[$i]} -lt $minTotal ]
-#          then
-#              minTotal=${arrayTotal[$i]}
-#          fi
+
     done
-#	echo $($directory/clientTCP 127.0.0.1 t)
 }
 
 #main
-for i in `seq 0 $[runsNum-1]`; do ($directory/clientTCP 127.0.0.1 -f commands.txt &); done
+for i in `seq 0 $[runsNum-1]`; do ($directory/clientTCP 127.0.0.1 -f ./testfile.msh &); done
 
 
 
