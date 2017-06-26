@@ -23,7 +23,7 @@ namespace sh_core {
             LineSplitter();
 
             // left it here = line delimiters_ " \t\r\n\a"
-            const vector<string> mySplitLine(string *input_str, std::vector<arg_desk_pair> * tasks) const;
+            const vector<string> mySplitLine(string *input_str, std::vector<arg_desk_pair> ** tasks) const;
 
 //produced Kovalchuk, Refactored & extracted by Kushnir
             int convertStrVectorToChars(const vector<string> *args, char **cargs) const;

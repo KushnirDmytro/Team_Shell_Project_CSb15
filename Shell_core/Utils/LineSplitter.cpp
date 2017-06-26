@@ -71,7 +71,7 @@ namespace sh_core {
 
         }
 
-        const vector<string> LineSplitter::mySplitLine( string *input_str, std::vector<arg_desk_pair> * tasks) const {
+        const vector<string> LineSplitter::mySplitLine( string *input_str, std::vector<arg_desk_pair> ** tasks) const {
 
 
             Tokenizer *toker = new Tokenizer();
@@ -79,7 +79,7 @@ namespace sh_core {
 
             vector<token > *vec = toker->tokenize(input_str);
 
-            auto resultingTasks = r2t->reduce(vec);
+            *tasks = r2t->reduce(vec);
 
             // ALTERNATE EXEC BRANCH
 

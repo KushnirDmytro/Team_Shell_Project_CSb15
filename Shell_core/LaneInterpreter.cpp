@@ -344,12 +344,16 @@ namespace sh_core {
 
     int LaneInterpreter::myExecute3(const vector<string> *const args, const execInformation* ch_str) const{
 
+        if (ch_str->exec_mode) //shortcut
+            return EXIT_SUCCESS;
+
 
         char **cargs = new char *[args->size() + 1];
         size_t args_number = args->size();
 
         // we'll need this debugging part 2
         //std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
+
         splitter->convertStrVectorToChars(args, cargs);
 
         string firstArg = string(cargs[0]);
@@ -394,7 +398,7 @@ namespace sh_core {
                 break;
             }
             case UNIVERSAL: {
-                std::cout << "at myExecute2: possibleFunc = "  << firstArg << std::endl;
+                std::cout << "at myExecute3: possibleFunc = "  << firstArg << std::endl;
                 resultCode = myExternLauncherChanneled3(cargs, ch_str, nullptr );
                 break;
             }
@@ -445,15 +449,18 @@ namespace sh_core {
 
 // ==================== testing module ===============
 
-        vector<arg_desk_pair>* tasks = new vector<arg_desk_pair >;
+        vector<arg_desk_pair> **tasksPtrHolder;
+        //vector<arg_desk_pair> *tasksPtr = new vector<arg_desk_pair>;
+        tasksPtrHolder = new( vector<arg_desk_pair >*);
+       //* tasks  = new vector<arg_desk_pair >;
         // TODO change for tokenizer
-        const vector<string> args = splitter->mySplitLine(values,  tasks);
+        const vector<string> args = splitter->mySplitLine(values,  tasksPtrHolder);
 
 
         // TODO check this suspicious place for bugs
 
         printf("======EXPERIMENTAL EXECUTE STARTED===========\n");
-        for (arg_desk_pair single_task: *tasks){
+        for (arg_desk_pair single_task: **tasksPtrHolder){
             myExecute3(&single_task.first, &single_task.second);
         }
         printf("======EXPERIMENTAL EXECUTE FINISHED===========\n");
