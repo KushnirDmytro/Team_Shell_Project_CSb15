@@ -95,10 +95,20 @@ namespace sh_core {
         return EXIT_SUCCESS;
     }
 
-    int configureIOChannales3(const execInformation *ch_str){
 
+
+    int LaneInterpreter::ManagerIODescriptors::configureIOChannales3(const execInformation *ch_str) {
+
+        bool isSavingNeeded = (ch_str->exec_mode == EMBEDDED || ch_str->exec_mode==MSH_FILE);
         if( *ch_str->indeskPtr != STANDART_UNDEF_DESK )
         {
+            if (isSavingNeeded) {
+                if (saveDescriptor(STDIN_FILENO)){
+                    perror("Descriptor save failed\n");
+                    return EXIT_FAILURE;
+                };
+            }
+
            // close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
             if(dup2(*(ch_str->indeskPtr), STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
                 perror( "dup2 failed on STD IN" );
@@ -110,6 +120,12 @@ namespace sh_core {
         if(*ch_str->outdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
 
+            if (isSavingNeeded) {
+                if (saveDescriptor(STDOUT_FILENO)){
+                    perror("Descriptor save failed\n");
+                    return EXIT_FAILURE;
+                };
+            }
          //   close(*ch_str->indeskPtr); /* first close the read end of the pipe */
             if(dup2(*ch_str->outdeskPtr, STDOUT_FILENO) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
                 perror( "dup2 failed of STD OUT" );
@@ -121,6 +137,13 @@ namespace sh_core {
 
         if(*ch_str->errdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
+
+            if (isSavingNeeded) {
+                if (saveDescriptor(STDERR_FILENO)){
+                    perror("Descriptor save failed\n");
+                    return EXIT_FAILURE;
+                };
+            }
             //close(p[0]); /* first close the read end of the pipe */
             if(dup2(*ch_str->errdeskPtr, STDERR_FILENO) == -1){ /* stdERR == write end of the pipe (side of the pipe in which errordata is written)*/
                 perror( "dup2 failed of STD ERR" );
@@ -203,7 +226,7 @@ namespace sh_core {
     }
 
 
-    int myExternLauncherChanneled3(char **const args, const execInformation* ch_str , const char* dest) {
+    int LaneInterpreter::myExternLauncherChanneled3(char **const args, const execInformation* ch_str , const char* dest) {
         if (dest == nullptr)
             dest = args[0];
 
@@ -217,7 +240,7 @@ namespace sh_core {
 
             //  we are in Child process
 
-            if (configureIOChannales3(ch_str)){ // <= channeling here
+            if (descriptorManager_.configureIOChannales3(ch_str)){ // <= channeling here
                 return EXIT_FAILURE;
             }
 
@@ -337,9 +360,48 @@ namespace sh_core {
         return result;
     }
 
+    int LaneInterpreter::ManagerIODescriptors::saveDescriptor(int descNumber) {
+        int descCode = (descNumber + 100);
+        dup2(descNumber, descCode);
+        deskMemmory[descNumber] = true;
+        return EXIT_SUCCESS;
+    }
 
+    int LaneInterpreter::ManagerIODescriptors::restoreDeskriptors(
+    //        int descNumber
+    ) {
+        int decodedDescr;
+        for(auto i : deskMemmory){
+            if (i){
+                close(i);
+                decodedDescr = (i + 100);
+                int ret = dup2(decodedDescr, i);
+                if (ret == -1){
+                    perror("failed to restore deskr");
+                    printf("ret [%d] deskr: [%d]\n",ret, i);
+                    return EXIT_FAILURE;
+            }
+        }
+        }
+        return EXIT_SUCCESS;
+    }
 
-    int LaneInterpreter::myExecute3(const vector<string> *const args, const execInformation* ch_str) const{
+    int LaneInterpreter::ManagerIODescriptors::deallocateSavedDeskriptor(int descNumber) {
+        int decodedDescr;
+        for(auto i : deskMemmory){
+            if (i){
+                if (close(i)){
+                    perror("failed to close deskr");
+                    printf("%d\n", i);
+                    return EXIT_FAILURE;
+                }
+                deskMemmory[i] = false;
+            }
+        }
+        return EXIT_SUCCESS;
+    }
+
+    int LaneInterpreter::myExecute3(const vector<string> *const args, const execInformation* ch_str){
 
         if (ch_str->exec_mode == NOT_EXECUTABLE) //shortcut
             return EXIT_SUCCESS;
@@ -362,33 +424,36 @@ namespace sh_core {
                 break;
             }
             case EMBEDDED:{
-                if (configureIOChannales3(ch_str)){
+                // TODO make save deskriptor
+
+
+                if (descriptorManager_.configureIOChannales3(ch_str)){
                     perror("failed on channel switch");
                     return EXIT_FAILURE;
                 }
                 resultCode = funcLib->embedded_lib_.at(firstArg)->call(args_number, cargs);
-
-                if (configureIOChannales3(hostExecInfo)){
-                    perror("failed on channel switch");
+//TODO make restore deskriptor
+                if (descriptorManager_.restoreDeskriptors()){
+                    perror("failed on restore deskriptors");
                     return EXIT_FAILURE;
                 }
                 break;
             }
-
-            case MSH_FILE:{
-                if (configureIOChannales3(ch_str)){
-                    perror("failed on channel switch");
-                    return EXIT_FAILURE;
-                }
-
-                resultCode = interpretScriptFile(&firstArg);
-
-                if (configureIOChannales3(hostExecInfo)){
-                    perror("failed on channel switch");
-                    return EXIT_FAILURE;
-                }
-                break;
-            }
+//
+//            case MSH_FILE:{
+//                if (configureIOChannales3(ch_str)){
+//                    perror("failed on channel switch");
+//                    return EXIT_FAILURE;
+//                }
+//
+//                resultCode = interpretScriptFile(&firstArg);
+//
+//                if (configureIOChannales3(hostExecInfo)){
+//                    perror("failed on channel switch");
+//                    return EXIT_FAILURE;
+//                }
+//                break;
+//            }
 
             case EXTERNAL:{
                 resultCode = myExternLauncherChanneled3(cargs, ch_str, funcLib->external_lib_.at(firstArg)->string().c_str());
@@ -410,7 +475,7 @@ namespace sh_core {
 
 
 
-    int LaneInterpreter::processSting(string *values) const{
+    int LaneInterpreter::processSting(string *values) {
 
         ReducerToTasks *r2t = new ReducerToTasks();
 

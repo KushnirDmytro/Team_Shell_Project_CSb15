@@ -50,6 +50,29 @@ namespace sh_core {
 
     class LaneInterpreter {
     private:
+        int myExternLauncherChanneled3(char **const args, const execInformation* ch_str , const char* dest);
+        class ManagerIODescriptors{
+
+        public:
+            ManagerIODescriptors(){
+                deskMemmory[0] = deskMemmory[1] = deskMemmory[2] = false;
+            };
+
+
+
+            execInformation storedDescriptor;
+            bool deskMemmory[3];
+            int configureIOChannales3(const execInformation *ch_str);
+            // decoding desc # formula: (- (desk+3))
+            int deallocateSavedDeskriptor(int descNumber);
+            int saveDescriptor(int descCode);
+            int restoreDeskriptors(
+           //         int descCode
+            );
+
+        };
+
+        ManagerIODescriptors descriptorManager_;
 
         utils::LineSplitter *splitter;
 
@@ -73,7 +96,7 @@ namespace sh_core {
 
         int myExecute2(const vector<string> *const args, const chennelDesriptStruct* ch_str) const;
 
-        int myExecute3(const vector<string> *const args, const execInformation* ch_str) const;
+        int myExecute3(const vector<string> *const args, const execInformation* ch_str) ;
     public:
 
 
@@ -82,7 +105,7 @@ namespace sh_core {
 
         LaneInterpreter();
 
-        int processSting(string * values) const;
+        int processSting(string * values) ;
 
         ~LaneInterpreter();
         //TODO filemasks via regexp
