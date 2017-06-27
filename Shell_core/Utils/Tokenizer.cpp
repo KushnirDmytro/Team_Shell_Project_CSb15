@@ -395,9 +395,9 @@ namespace sh_core {
                                     tokens_vector_->push_back(token("", '&')); //silent backstage mode for previous
                                     break;
 
+// TODO make silent mode (and test it)
 
-
-                                } // TODO make silent mode
+                                }
                                 case '|': {
                                     tokens_vector_->push_back(token("", '|')); //conveyor
                                     break;

@@ -23,6 +23,7 @@ namespace sh_core {
 
 
      struct execInformation{
+         bool customisedIO = false;
          int *indeskPtr = new int(STANDART_UNDEF_DESK);
          int *outdeskPtr = new int(STANDART_UNDEF_DESK);
          int *errdeskPtr = new int(STANDART_UNDEF_DESK);

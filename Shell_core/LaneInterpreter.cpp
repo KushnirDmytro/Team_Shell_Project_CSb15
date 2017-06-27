@@ -99,7 +99,7 @@ namespace sh_core {
 
         if( *ch_str->indeskPtr != STANDART_UNDEF_DESK )
         {
-            close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
+           // close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
             if(dup2(*(ch_str->indeskPtr), STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
                 perror( "dup2 failed on STD IN" );
                 return EXIT_FAILURE;
@@ -110,7 +110,7 @@ namespace sh_core {
         if(*ch_str->outdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
 
-            close(*ch_str->indeskPtr); /* first close the read end of the pipe */
+         //   close(*ch_str->indeskPtr); /* first close the read end of the pipe */
             if(dup2(*ch_str->outdeskPtr, STDOUT_FILENO) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
                 perror( "dup2 failed of STD OUT" );
                 return EXIT_FAILURE;

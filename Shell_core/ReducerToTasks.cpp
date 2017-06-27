@@ -372,9 +372,8 @@ namespace sh_core {
                                 perror("Problem redirrecting to file");
                                 RS.ERROR_STATE = true;
                             }
-
                         }
-                        break;
+                        continue; // don't need it in call args
                     }
                     case '%':{} //REGEX
                     case '\'':{
