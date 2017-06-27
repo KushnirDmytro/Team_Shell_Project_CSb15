@@ -23,16 +23,21 @@
 
 namespace sh_core {
 
-    extern const int STANDART_DESK;// = -1;
+    extern const int STANDART_UNDEF_DESK;// = -1;
+    extern const int STANDART_IN_DESK;// = -1;
+    extern const int STANDART_OUT_DESK;// = -1;
+    extern const int STANDART_ERR_DESK;// = -1;
+
     extern  const int READ_SIDE;// = 0;
     extern  const int WRITE_SIDE;// = 1;
 
 
 
     struct chennelDesriptStruct{
-        int *indeskPtr = new int(STANDART_DESK);
-        int *outdeskPtr = new int(STANDART_DESK);
-        int *errdeskPtr = new int(STANDART_DESK);
+
+        int *indeskPtr = new int(STANDART_UNDEF_DESK);
+        int *outdeskPtr = new int(STANDART_UNDEF_DESK);
+        int *errdeskPtr = new int(STANDART_UNDEF_DESK);
     };
  //   using arg_desk_pair = std::pair<vector<string*>*, chennelDesriptStruct*>;
 

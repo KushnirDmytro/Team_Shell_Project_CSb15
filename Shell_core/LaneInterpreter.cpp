@@ -60,7 +60,7 @@ namespace sh_core {
 
     int configureIOChannales(const chennelDesriptStruct *ch_str){
 
-        if( *ch_str->indeskPtr != STANDART_DESK )
+        if( *ch_str->indeskPtr != STANDART_UNDEF_DESK )
         {
             close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
             if(dup2(*(ch_str->indeskPtr), STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
@@ -70,7 +70,7 @@ namespace sh_core {
             close(*(ch_str->indeskPtr));
 
         }
-        if(*ch_str->outdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
+        if(*ch_str->outdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
 
             close(*ch_str->indeskPtr); /* first close the read end of the pipe */
@@ -82,7 +82,7 @@ namespace sh_core {
 
         }
 
-        if(*ch_str->errdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
+        if(*ch_str->errdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
             //close(p[0]); /* first close the read end of the pipe */
             if(dup2(*ch_str->errdeskPtr, STDERR_FILENO) == -1){ /* stdERR == write end of the pipe (side of the pipe in which errordata is written)*/
@@ -97,7 +97,7 @@ namespace sh_core {
 
     int configureIOChannales3(const execInformation *ch_str){
 
-        if( *ch_str->indeskPtr != STANDART_DESK )
+        if( *ch_str->indeskPtr != STANDART_UNDEF_DESK )
         {
             close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
             if(dup2(*(ch_str->indeskPtr), STDIN_FILENO) == -1){ /* stdin == read end of the pipe (side of the pipe where data is read)*/
@@ -107,7 +107,7 @@ namespace sh_core {
             close(*(ch_str->indeskPtr));
 
         }
-        if(*ch_str->outdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
+        if(*ch_str->outdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
 
             close(*ch_str->indeskPtr); /* first close the read end of the pipe */
@@ -119,7 +119,7 @@ namespace sh_core {
 
         }
 
-        if(*ch_str->errdeskPtr != STANDART_DESK) /* stdout == write end of the pipe */
+        if(*ch_str->errdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
         {
             //close(p[0]); /* first close the read end of the pipe */
             if(dup2(*ch_str->errdeskPtr, STDERR_FILENO) == -1){ /* stdERR == write end of the pipe (side of the pipe in which errordata is written)*/
@@ -134,20 +134,20 @@ namespace sh_core {
 
 
     inline void closeParrentDescriptors3(const execInformation* ch_str ){
-        if (*ch_str->indeskPtr != STANDART_DESK)
+        if (*ch_str->indeskPtr != STANDART_UNDEF_DESK)
             close(*ch_str->indeskPtr);
-        if (*ch_str->outdeskPtr != STANDART_DESK)
+        if (*ch_str->outdeskPtr != STANDART_UNDEF_DESK)
             close(*ch_str->outdeskPtr);
-        if (*ch_str->errdeskPtr != STANDART_DESK)
+        if (*ch_str->errdeskPtr != STANDART_UNDEF_DESK)
             close(*ch_str->errdeskPtr);
     }
 
     inline void closeParrentDescriptors(const chennelDesriptStruct* ch_str ){
-        if (*ch_str->indeskPtr != STANDART_DESK)
+        if (*ch_str->indeskPtr != STANDART_UNDEF_DESK)
             close(*ch_str->indeskPtr);
-        if (*ch_str->outdeskPtr != STANDART_DESK)
+        if (*ch_str->outdeskPtr != STANDART_UNDEF_DESK)
             close(*ch_str->outdeskPtr);
-        if (*ch_str->errdeskPtr != STANDART_DESK)
+        if (*ch_str->errdeskPtr != STANDART_UNDEF_DESK)
             close(*ch_str->errdeskPtr);
     }
 

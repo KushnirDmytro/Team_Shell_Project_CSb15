@@ -14,15 +14,18 @@ namespace sh_core {
 
     enum execution_mode{EMBEDDED, EXTERNAL, MSH_FILE, UNIVERSAL, NOT_EXECUTABLE};
 
-     const int STANDART_DESK = -1;
+    const int STANDART_UNDEF_DESK = -1;
+    const int STANDART_IN_DESK = STDIN_FILENO;// = 0;
+    const int STANDART_OUT_DESK= STDOUT_FILENO;// = 1;
+    const int STANDART_ERR_DESK =STDERR_FILENO;// = 2;
      const int READ_SIDE = 0;
      const int WRITE_SIDE = 1;
 
 
      struct execInformation{
-         int *indeskPtr = new int(STANDART_DESK);
-         int *outdeskPtr = new int(STANDART_DESK);
-         int *errdeskPtr = new int(STANDART_DESK);
+         int *indeskPtr = new int(STANDART_UNDEF_DESK);
+         int *outdeskPtr = new int(STANDART_UNDEF_DESK);
+         int *errdeskPtr = new int(STANDART_UNDEF_DESK);
          execution_mode exec_mode = UNIVERSAL;
      };
     using arg_desk_pair = std::pair<vector<string>, execInformation>;
