@@ -126,6 +126,10 @@ namespace sh_core {
 
             ~Tokenizer();
             void flush_buf_to_tokens(std::stringstream *workBuffer);
+
+
+            void TRUNC_buf(std::stringstream *workBuffer);
+
             inline vector<token>* form_result();
 
             };

@@ -135,13 +135,22 @@ namespace sh_core {
             else return EXIT_FAILURE;
         }
 
+        inline void Tokenizer::TRUNC_buf(std::stringstream *workBuffer){
+            std::cout << "TRUNKING buf [" << (*workBuffer).str() << "]" <<std::endl;
+            std::cout << "Vector NOW :" << std::endl;
+            for (auto el: *tokens_vector_){
+                std::cout << "str: [" << el.first << "]" << "ch: {"<<  el.second << "}" << std::endl;
+            }
+            workBuffer->str("");
+            mst.clean_all();
+        }
+
         inline void Tokenizer::flush_buf_to_tokens(std::stringstream *workBuffer) {
             if (workBuffer->rdbuf()->in_avail() != 0) {
                 char tokenChar = mst.getToken();
                 if (tokenChar == 's')
                     if (!concretize_attempt(workBuffer)) // if some improvement made
                         tokenChar = mst.getToken();
-
 
 
                 if (tokenChar =='v' || tokenChar == 'e' ) {
@@ -370,11 +379,15 @@ namespace sh_core {
 
                                     //=========================+EXECUTION REDIRECTION BLOCK
                                 case '>': {
-                                    flush_buf_to_tokens(&workBuffer);
+                                    std::string workbuf_contain = workBuffer.str().c_str();
                                     if (strcmp(workBuffer.str().c_str(), "2") == 0) {
+                                        TRUNC_buf(&workBuffer);
                                         tokens_vector_->push_back(token("", '2')); //STD ERR
-                                    } else
+                                    } else {
+                                        flush_buf_to_tokens(&workBuffer);
                                         tokens_vector_->push_back(token("", '>')); // STD OUT
+                                    }
+
                                     mst.isFile = true;
                                     workBuffer.str(""); //???
                                     break;
