@@ -400,9 +400,21 @@ namespace sh_core {
                         continue;
                     } // substitute variables, instead of mutating string place other
                     case '`':{
+                        // algorithm:
+                        // 1) plan execution with changed stdout
+                        //   1.1) form bufferFile name
+                        //   1.2) append directions for such execution
+                        // 2) interpret:
+                        //      2.1) tokenize
+                        //      2.2) form task
+                        //      2.3) launch task
+                        // 3) read info from file here
+                        // 4) delete buffer file
+                        // 5) continue execution
 
+                        std::string task_buffer;
                         //TODO customize buffer name for each session and delete then
-                        el.first = el.first.append(" > tempBufFile 2>&1");
+                        el.first = el.first.append(" > tempBufFile");
 
                         const vector<token> *toksBuf = toker.tokenize(&el.first);
                         std::vector<arg_desk_pair>* vector_buf = reduce(toksBuf);
