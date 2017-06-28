@@ -430,7 +430,7 @@ namespace sh_core {
                         // 4) delete buffer file
                         // 5) continue execution
 
-                        std::string tempBufName = "tempBufFile"; //todo customise this filename
+                        std::string tempBufName = environment->user_->getName() + "@" + environment->user_->getHostname() + "__tempbuf__"; //todo customise this filename
                         std::string task_string_buffer = el.first + " > " + tempBufName;
 
                         interpreter->processSting(&task_string_buffer);
@@ -449,13 +449,10 @@ namespace sh_core {
                                    (int)resultPtr->at(resultPtr->length() -1));
                         }
 
+                        if (remove(tempBufName.c_str())){
+                            perror("Error deleting file\n");
+                        }
 
-                        //TODO customize buffer name for each session and delete then
-
-
-                        //TODO execute it, read from this file to var
-
-                       // perror("DUDE, MAKE ME!!!"); //execute as a task then result in value
                         break;}
                     case '!':{
                         perror("Token reports error state\n");
