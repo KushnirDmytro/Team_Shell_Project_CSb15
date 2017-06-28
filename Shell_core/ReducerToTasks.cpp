@@ -286,6 +286,7 @@ namespace sh_core {
                     create_new_exec_unit(&execUnitBuf);
                     if (RS.isConveyerOpened){
                         *(execUnitBuf.second.indeskPtr) = pipeSides[READ_SIDE];
+                        execUnitBuf.second.unusedPipeSides[WRITE_SIDE] = pipeSides[WRITE_SIDE];
                         RS.isConveyerOpened = false;
                     }
                     RS.firstNodeInTask = false;
@@ -296,6 +297,7 @@ namespace sh_core {
                         if (!RS.isConveyerOpened) {
                             pipe(pipeSides);
                             *(execUnitBuf.second.outdeskPtr) = pipeSides[WRITE_SIDE];
+                            execUnitBuf.second.unusedPipeSides[READ_SIDE] = pipeSides[READ_SIDE];
                             RS.isConveyerOpened = true;
                         }
                         else

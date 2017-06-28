@@ -411,7 +411,7 @@ namespace sh_core {
         size_t args_number = args->size();
 
         // we'll need this debugging part 2
-        //std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
+        std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
 
         splitter->convertStrVectorToChars(args, cargs);
 
@@ -425,7 +425,6 @@ namespace sh_core {
             }
             case EMBEDDED:{
                 // TODO make save deskriptor
-
 
                 if (descriptorManager_.configureIOChannales3(ch_str)){
                     closeParrentDescriptors3(ch_str);
