@@ -13,12 +13,15 @@
 #include <sstream>
 #include <iostream>
 #include <fcntl.h>
+#include <fstream>
+//#include <backward/strstream>
 
 #include "../Env/Env.h"
 #include "EmbeddedFunc.h"
 #include "coreFuncLib.h"
 #include "Utils/Tokenizer.h"
 #include "ReducerToTasks.h"
+#include "LaneInterpreter.h"
 
 
 namespace sh_core {
@@ -235,9 +238,24 @@ namespace sh_core {
     }
 
 
+    int read_from_file_to_string(std::string fileName, std::string *bufferAddr){
 
+        std::ifstream fileStream(fileName);
+        if (!fileStream.good()){
+            perror("failed to create stream from file\n");
+            return EXIT_FAILURE;
+        }
 
-        std::vector<arg_desk_pair>* ReducerToTasks::reduce(const vector<token> *toks) {
+        fileStream.seekg(0, std::ios::end);
+        bufferAddr->reserve(fileStream.tellg());
+        fileStream.seekg(0, std::ios::beg);
+
+        bufferAddr->assign((std::istreambuf_iterator<char>(fileStream)),
+                   std::istreambuf_iterator<char>());
+        return EXIT_SUCCESS;
+    }
+
+    std::vector<arg_desk_pair>* ReducerToTasks::reduce(const vector<token> *toks) {
             // creating data structures and allocating buffers
             std::string variableNameBuf;
             for(auto el: *toks){
@@ -412,16 +430,25 @@ namespace sh_core {
                         // 4) delete buffer file
                         // 5) continue execution
 
-                        std::string task_buffer;
-                        //TODO customize buffer name for each session and delete then
-                        el.first = el.first.append(" > tempBufFile");
+                        std::string tempBufName = "tempBufFile"; //todo customise this filename
+                        std::string task_string_buffer = el.first + " > " + tempBufName;
 
-                        const vector<token> *toksBuf = toker.tokenize(&el.first);
-                        std::vector<arg_desk_pair>* vector_buf = reduce(toksBuf);
+                        interpreter->processSting(&task_string_buffer);
+
+                        std::string *resultPtr = &el.first;
+
+                        read_from_file_to_string(tempBufName, resultPtr);
+
+
+                        printf("GOT FROM FILE:\n %s\n", resultPtr->c_str());
+
+
+                        //TODO customize buffer name for each session and delete then
+
 
                         //TODO execute it, read from this file to var
 
-                        perror("DUDE, MAKE ME!!!"); //execute as a task then result in value
+                       // perror("DUDE, MAKE ME!!!"); //execute as a task then result in value
                         break;}
                     case '!':{
                         perror("Token reports error state\n");
@@ -462,7 +489,7 @@ namespace sh_core {
 
             }
             return returnResult(res);
-        }
+        };
 
     void ReducerToTasks::printResState(std::vector<arg_desk_pair> *res)const {
         printf("REZ SIZE{%d}", (int)res->size());
