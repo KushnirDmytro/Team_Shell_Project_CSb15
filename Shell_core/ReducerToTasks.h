@@ -24,7 +24,9 @@ namespace sh_core {
 
      struct execInformation{
          bool customisedIO = false;
-         int unusedPipeSides[2];
+         bool isReadingFromPipe = false;
+         bool isWritingToPipe = false;
+         int unusedPipeSides[2] = {-2, -2};
          int *indeskPtr = new int(STANDART_UNDEF_DESK);
          int *outdeskPtr = new int(STANDART_UNDEF_DESK);
          int *errdeskPtr = new int(STANDART_UNDEF_DESK);

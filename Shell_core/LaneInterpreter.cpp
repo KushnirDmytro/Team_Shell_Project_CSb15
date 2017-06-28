@@ -107,6 +107,11 @@ namespace sh_core {
                     perror("Descriptor save failed\n");
                     return EXIT_FAILURE;
                 };
+            }else{
+                if (ch_str->isReadingFromPipe)
+                    close(ch_str->unusedPipeSides[WRITE_SIDE]);
+                if (ch_str->isWritingToPipe)
+                    close(ch_str->unusedPipeSides[READ_SIDE]);
             }
 
            // close (*ch_str->outdeskPtr);  /* first close the write end of the pipe */
@@ -125,6 +130,8 @@ namespace sh_core {
                     perror("Descriptor save failed\n");
                     return EXIT_FAILURE;
                 };
+            }else{
+
             }
          //   close(*ch_str->indeskPtr); /* first close the read end of the pipe */
             if(dup2(*ch_str->outdeskPtr, STDOUT_FILENO) == -1){ /* stdout == write end of the pipe (side of the pipe in which data is written)*/
@@ -243,7 +250,6 @@ namespace sh_core {
             if (descriptorManager_.configureIOChannales3(ch_str)){ // <= channeling here
                 return EXIT_FAILURE;
             }
-
 
 
             if (execvp(dest, args) == -1) {
@@ -424,7 +430,7 @@ namespace sh_core {
                 break;
             }
             case EMBEDDED:{
-                // TODO make save deskriptor
+                // TODO make nice pipes
 
                 if (descriptorManager_.configureIOChannales3(ch_str)){
                     closeParrentDescriptors3(ch_str);
