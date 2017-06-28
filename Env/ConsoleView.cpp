@@ -71,7 +71,7 @@ namespace env {
             }
 
             resultMsg = userName + "@" + hostName + ": ";
-            printf(resultMsg.c_str());
+            printf("%s",resultMsg.c_str());
         }
     };
 

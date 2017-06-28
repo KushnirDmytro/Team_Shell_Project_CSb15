@@ -21,8 +21,8 @@ namespace extrn {
 
 
     struct GrepConfigStruct {
-        fs::path *filename_to_read;
-        std::string *regexp_notation;
+        std::vector<fs::path> *filenames_to_read;
+        std::string *filter_pattern_;
         bool invert_filter_ = false;
         bool from_file_ = false;
         bool ignore_latter_case_ = false;
@@ -32,16 +32,16 @@ namespace extrn {
 
     class ExternGrep : public ExternalFunc {
 
-        GrepConfigStruct grep_flags_;
+        GrepConfigStruct grep_status_;
 
         class GREP_OptsManager : public DefaultOptionsManager {
 
             // ============Inner_class lvl 2
             class GREP_FILE_OptsManager : public DefaultOptionsManager {
             private:
-                fs::path* filename;
+                std::vector<fs::path>* filenames;
             public:
-                GREP_FILE_OptsManager(string name, bool* file_input_flag, fs::path* host_filename_holder);
+                GREP_FILE_OptsManager(string name, bool* file_input_flag, std::vector<fs::path>* host_filename_holder);
 
                 ~GREP_FILE_OptsManager();
 
@@ -84,6 +84,13 @@ namespace extrn {
                     std::string &help_msg);
 
         int call(size_t nargs, char **argv) override;
+
+        int analyse_input(vector<string> argsVec);
+
+        int getFlags(vector<string> argsVec);
+
+        bool regexpFilter(std::string *arg);
+        int myGrepStaticLauncher(size_t nargs, char **argv);
 
         ~ExternGrep();
 

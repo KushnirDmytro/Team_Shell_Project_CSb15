@@ -35,7 +35,7 @@ namespace extrn{
         // I just decide not to get behaviour out of class in generic case
 
         //printf("Initialization and checks performed successfully\n");
-        return 0;
+        return EXIT_SUCCESS;
     }
 
 }

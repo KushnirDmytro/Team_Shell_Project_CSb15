@@ -14,7 +14,7 @@
 #include "../Env/ConsoleView.h"
 #include "../Shell_core/EmbeddedFunc.h"
 #include "../Shell_core/Utils/LineSplitter.h"
-#include "t.h"
+#include "ExternGrep.h"
 //====================CLASSES IMPORT END=====================
 
 
@@ -29,33 +29,15 @@ namespace sh_core {
 
 
 namespace extrn{
-    int myMkdirStaticLauncher(size_t nargs, char **args);
+    //TODO allocate goo static launcher
+    int myGrepStaticLauncher(size_t nargs, char **args){
+        printf("PLACEHOLDER!!!\n");
+        return  EXIT_SUCCESS;
+    };
 
     extrn::ExternGrep *MgrepObject; //forvard static declaration
 
-//just activator-function
-    int myMkdirStaticLauncher(size_t nargs, char **argv) {
 
-
-
-        boost::system::error_code error_code;
-        fs::path pathBuf;
-        for(int i = 1; i < nargs; ++i) {
-            pathBuf = fs::current_path() ;
-            pathBuf /= fs::path(argv[i]);
-            if (fs::exists(pathBuf)){
-                printf("[%s] already exists, skipping it\n", pathBuf.c_str());
-                continue;
-            }
-            if ( ! fs::create_directory(pathBuf, error_code)) {
-                perror(error_code.message().c_str());
-            }else{
-                printf("directory [%s] successfully created \n", pathBuf.c_str());
-            }
-        }
-
-        return 0;
-    }
 
 }
 
@@ -63,11 +45,11 @@ namespace extrn{
 int main(int argc, char **argv)
 {
 
-    string mkdir_help = "Argument required for this function\n"
-            "input mkdir <directoryName>  to create your directory (or directories)\n";
+    string mgrep_help = "filters arguments from file or std IN according to test_phrase\n"
+            "input : grep [options] PATTERN [FILE...]  \n";
 
 
-    extrn::MgrepObject = new extrn::ExternGrep("EXTERN_MKDIR", extrn::myMkdirStaticLauncher, mkdir_help);
+    extrn::MgrepObject = new extrn::ExternGrep("EXTERN_MKDIR", extrn::myGrepStaticLauncher, mgrep_help);
 
     int result = extrn::MgrepObject->call(static_cast<size_t >(argc), argv);
 

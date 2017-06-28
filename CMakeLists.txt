@@ -36,7 +36,7 @@ set(SOURCE_FILES server.cpp Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.
         Shell_core/Utils/FileLaneIterator.cpp Shell_core/Utils/FileLaneIterator.h
         ExternalFunc.cpp ExternalFunc.h
         my_ls/ExternLS.cpp my_ls/ExternLS.h
-        my_mkdir/t.cpp my_mkdir/ExternMkdir.h
+        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h
         Shell_core/ReducerToTasks.cpp Shell_core/ReducerToTasks.h
 
         ${GCC_COVERAGE_LINK_FLAGS})
@@ -67,7 +67,7 @@ set(SOURCE_FILES cp_master/cp_main.cpp )
 add_executable(mcp ${SOURCE_FILES})
 
 set(SOURCE_FILES my_mkdir/mkdir_main.cpp
-        my_mkdir/t.cpp my_mkdir/ExternMkdir.h
+        my_mkdir/ExternMkdir.cpp my_mkdir/ExternMkdir.h
         Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         Env/ConsoleView.cpp Env/ConsoleView.h
         Env/User.cpp Env/User.h
@@ -77,7 +77,7 @@ set(SOURCE_FILES my_mkdir/mkdir_main.cpp
 add_executable(mmkdir ${SOURCE_FILES})
 
 set(SOURCE_FILES my_grep/mgrep_main.cpp
-        my_grep/ExternGrep.cpp my_grep/t.h
+        my_grep/ExternGrep.cpp my_grep/ExternGrep.h
         Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
         ExternalFunc.cpp ExternalFunc.h
         Env/ConsoleView.cpp Env/ConsoleView.h

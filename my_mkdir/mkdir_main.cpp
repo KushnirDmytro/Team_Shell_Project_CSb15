@@ -36,8 +36,6 @@ namespace extrn{
 //just activator-function
     int myMkdirStaticLauncher(size_t nargs, char **argv) {
 
-
-
         boost::system::error_code error_code;
         fs::path pathBuf;
         for(int i = 1; i < nargs; ++i) {
