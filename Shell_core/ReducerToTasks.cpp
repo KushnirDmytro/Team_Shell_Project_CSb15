@@ -439,8 +439,15 @@ namespace sh_core {
 
                         read_from_file_to_string(tempBufName, resultPtr);
 
-
                         printf("GOT FROM FILE:\n %s\n", resultPtr->c_str());
+                        printf("last read char is [%c] code[%d]\n", resultPtr->at(resultPtr->length() -1), (int)resultPtr->at(resultPtr->length() -1));
+                        std::string badEnds = "\n\r\t";
+                        while ( badEnds.find(resultPtr->back()) != std::string::npos ){
+                            resultPtr->resize(resultPtr->length()-1);
+                            printf("last read char is [%c] code[%d]\n",
+                                   resultPtr->at(resultPtr->length() -1),
+                                   (int)resultPtr->at(resultPtr->length() -1));
+                        }
 
 
                         //TODO customize buffer name for each session and delete then

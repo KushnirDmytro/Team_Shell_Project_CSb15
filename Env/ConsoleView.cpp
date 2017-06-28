@@ -57,16 +57,21 @@ namespace env {
 
     inline void ConsoleView::displayHost() const {
         if (current_user_->getName().length() > 0 || current_user_->getHostname().length() > 0) {
-            //TODO refactor to stringbuilder
+
+            std::string userName = "";
+            std::string hostName = "";
+            std::string resultMsg;
+
             if (current_user_->getName().length() > 0) {
-                printf("%s", current_user_->getName().c_str());
+                userName = current_user_->getName().c_str();
             }
 
             if (current_user_->getHostname().length() > 0) {
-                printf("@%s", current_user_->getHostname().c_str());
+                hostName = current_user_->getHostname().c_str();
             }
 
-            printf(": ");
+            resultMsg = userName + "@" + hostName + ": ";
+            printf(resultMsg.c_str());
         }
     };
 
