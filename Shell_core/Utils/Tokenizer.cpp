@@ -187,7 +187,7 @@ namespace sh_core {
         inline bool Tokenizer::lastTokenStringEquals(const std::string *compare) const{
             bool result;
             if ((tokens_vector_->size() > 0))
-                result = strcmp (tokens_vector_->front().first.c_str(), (*compare).c_str()) == 0;
+                result = strcmp (tokens_vector_->back().first.c_str(), (*compare).c_str()) == 0;
             else
                 result = false;
             return result;
@@ -197,7 +197,7 @@ namespace sh_core {
         inline bool Tokenizer::lastCreatedTokenMarksEqual(const char compare) const{
             bool result;
             if ((tokens_vector_->size() > 0))
-                result = (compare == (tokens_vector_->front().second) );
+                result = (compare == (tokens_vector_->back().second) );
             else
                 result = false;
             return result;

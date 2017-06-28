@@ -45,38 +45,38 @@ namespace sh_core {
         // ===== WORKING WITH EXISTING DESCRIPTORS
         if (strcmp(elem->first.c_str(), "1") ==0 )
             fileDescriptor = *(execUnitBuf.second.outdeskPtr);
-        if (strcmp(elem->first.c_str(), "2") ==0)
-            fileDescriptor = *(execUnitBuf.second.outdeskPtr);
+        else if (strcmp(elem->first.c_str(), "2") ==0)
+            fileDescriptor = *(execUnitBuf.second.errdeskPtr);
+        else {
 
-
-        // ===== CREATING NEW FILEDESCRIPTOR
-        const char* filename = elem->first.c_str();
-        switch (redirFlag){
-            case '<': {
-                fileDescriptor = open(filename, O_CREAT |O_RDONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
-                                                                   S_IROTH |  S_IWOTH);
-                break;
-            }
-            case '>': {
-                fileDescriptor = open(filename, O_CREAT |O_WRONLY,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
-                                                                  S_IROTH |  S_IWOTH);
-                break;
-            }
-            case '2': {
-                fileDescriptor = open(filename, O_CREAT |O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
-                                                                   S_IROTH |  S_IWOTH);
-                break;
-            }
-            case '&': {
-                fileDescriptor = open("/dev/null", O_WRONLY);
-                break;
-            }
-            default: {
-                fileDescriptor = -1;
-                perror("unknown flag for IO redirect\n");
+            // ===== CREATING NEW FILEDESCRIPTOR
+            const char *filename = elem->first.c_str();
+            switch (redirFlag) {
+                case '<': {
+                    fileDescriptor = open(filename, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
+                                                                        S_IROTH | S_IWOTH);
+                    break;
+                }
+                case '>': {
+                    fileDescriptor = open(filename, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
+                                                                        S_IROTH | S_IWOTH);
+                    break;
+                }
+                case '2': {
+                    fileDescriptor = open(filename, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
+                                                                        S_IROTH | S_IWOTH);
+                    break;
+                }
+                case '&': {
+                    fileDescriptor = open("/dev/null", O_WRONLY);
+                    break;
+                }
+                default: {
+                    fileDescriptor = -1;
+                    perror("unknown flag for IO redirect\n");
+                }
             }
         }
-
 
         if (fileDescriptor < 0){
             perror("error opening file");

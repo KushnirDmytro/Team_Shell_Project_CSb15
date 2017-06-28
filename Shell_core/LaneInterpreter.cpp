@@ -114,7 +114,7 @@ namespace sh_core {
                 perror( "dup2 failed on STD IN" );
                 return EXIT_FAILURE;
             }
-            close(*(ch_str->indeskPtr));
+           // close(*(ch_str->indeskPtr));
 
         }
         if(*ch_str->outdeskPtr != STANDART_UNDEF_DESK) /* stdout == write end of the pipe */
@@ -131,7 +131,7 @@ namespace sh_core {
                 perror( "dup2 failed of STD OUT" );
                 return EXIT_FAILURE;
             }
-            close(*ch_str->outdeskPtr);
+         //   close(*ch_str->outdeskPtr);
 
         }
 
@@ -149,7 +149,7 @@ namespace sh_core {
                 perror( "dup2 failed of STD ERR" );
                 return EXIT_FAILURE;
             }
-            close(*ch_str->errdeskPtr);
+         //   close(*ch_str->errdeskPtr);
 
         }
         return EXIT_SUCCESS;
@@ -428,6 +428,7 @@ namespace sh_core {
 
 
                 if (descriptorManager_.configureIOChannales3(ch_str)){
+                    closeParrentDescriptors3(ch_str);
                     perror("failed on channel switch");
                     return EXIT_FAILURE;
                 }
