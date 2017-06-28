@@ -416,9 +416,6 @@ namespace sh_core {
         char **cargs = new char *[args->size() + 1];
         size_t args_number = args->size();
 
-        // we'll need this debugging part 2
-        std::cout << "NUMBER OF ARGS FOUND: " << args_number << std::endl;
-
         splitter->convertStrVectorToChars(args, cargs);
 
         string firstArg = string(cargs[0]);
@@ -430,36 +427,35 @@ namespace sh_core {
                 break;
             }
             case EMBEDDED:{
-                // TODO make nice pipes
-
                 if (descriptorManager_.configureIOChannales3(ch_str)){
                     closeParrentDescriptors3(ch_str);
                     perror("failed on channel switch");
                     return EXIT_FAILURE;
                 }
                 resultCode = funcLib->embedded_lib_.at(firstArg)->call(args_number, cargs);
-//TODO make restore deskriptor
+
                 if (descriptorManager_.restoreDeskriptors()){
                     perror("failed on restore deskriptors");
                     return EXIT_FAILURE;
                 }
                 break;
             }
-//
-//            case MSH_FILE:{
-//                if (configureIOChannales3(ch_str)){
-//                    perror("failed on channel switch");
-//                    return EXIT_FAILURE;
-//                }
-//
-//                resultCode = interpretScriptFile(&firstArg);
-//
-//                if (configureIOChannales3(hostExecInfo)){
-//                    perror("failed on channel switch");
-//                    return EXIT_FAILURE;
-//                }
-//                break;
-//            }
+
+            case MSH_FILE:{
+                if (descriptorManager_.configureIOChannales3(ch_str)){
+                    closeParrentDescriptors3(ch_str);
+                    perror("failed on channel switch");
+                    return EXIT_FAILURE;
+                }
+
+                resultCode = interpretScriptFile(&firstArg);
+
+                if (descriptorManager_.restoreDeskriptors()){
+                    perror("failed on channel switch");
+                    return EXIT_FAILURE;
+                }
+                break;
+            }
 
             case EXTERNAL:{
                 resultCode = myExternLauncherChanneled3(cargs, ch_str, funcLib->external_lib_.at(firstArg)->string().c_str());

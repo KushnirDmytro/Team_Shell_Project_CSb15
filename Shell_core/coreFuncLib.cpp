@@ -13,6 +13,7 @@
 
 
 #include <climits>
+#include <uchar.h>
 #include "coreFuncLib.h"
 #include "../Env/Env.h"
 #include "EmbeddedFunc.h"
@@ -88,6 +89,7 @@ namespace sh_core{
         printf(" 'mpwd' -- > returns current directory | arguments <NULL>\n");
         printf(" 'mcd' [pass]  -- > changes current execution dirrectory to [pass] 1 argument required\n");
         printf(" 'mmysh' <script_filename>.sh can launch *.msh scripts interpreting them\n");
+        printf(" 'mecho' <argument> outputs value of argument given\n");
 
         printf(" Registered external functions:\n");
 
@@ -146,9 +148,12 @@ namespace sh_core{
 
     }
 
-    ///
     int mEcho(size_t nargs, char **args) {
-    //    printf("%s\n", args);
+        for (size_t indx =1; indx < nargs; ++indx) {
+            printf("%s", args[indx]);
+            ++indx;
+        }
+        printf("\n");
         return EXIT_SUCCESS;
     }
 

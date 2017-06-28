@@ -430,7 +430,7 @@ namespace sh_core {
                         // 4) delete buffer file
                         // 5) continue execution
 
-                        std::string tempBufName = environment->user_->getName() + "@" + environment->user_->getHostname() + "__tempbuf__"; //todo customise this filename
+                        std::string tempBufName = environment->user_->getName() + "@" + environment->user_->getHostname() + "__tempbuf__";
                         std::string task_string_buffer = el.first + " > " + tempBufName;
 
                         interpreter->processSting(&task_string_buffer);
