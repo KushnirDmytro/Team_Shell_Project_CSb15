@@ -79,11 +79,12 @@ add_executable(mmkdir ${SOURCE_FILES})
 set(SOURCE_FILES my_grep/mgrep_main.cpp
         my_grep/ExternGrep.cpp my_grep/ExternGrep.h
         Shell_core/EmbeddedFunc.cpp Shell_core/EmbeddedFunc.h
+        ExternalFunc.cpp ExternalFunc.h
         Env/ConsoleView.cpp Env/ConsoleView.h
         Env/User.cpp Env/User.h
         Env/Env.cpp Env/Env.h
         Env/Directory.cpp Env/Directory.h
-        ExternalFunc.cpp ExternalFunc.h)
+        )
 add_executable(mgrep ${SOURCE_FILES})
 
 

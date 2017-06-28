@@ -50,7 +50,6 @@ namespace extrn {
                               bool * state_of_success  = nullptr,
                               std::map<string, DefaultOptionsManager *> *opts_map_ =
                               new std::map<string, DefaultOptionsManager *> {});
-
         virtual ~DefaultOptionsManager();
 
 
