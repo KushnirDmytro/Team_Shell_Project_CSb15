@@ -10,7 +10,7 @@
 
 #include "../Shell_core/EmbeddedFunc.h"
 #include "../ExternalFunc.h"
-#include "ExternGrep.h"
+#include "t.h"
 
 
 
@@ -112,6 +112,10 @@ namespace extrn{
         initialNargs_ = nargs;
         initialVargs_ = argv;
         printf("PLACEHOLDER 4 GREP\n");
+        if (needToPrintHelp(nargs, argv)) {
+            outputHelp(help_info_);
+            return EXIT_SUCCESS;
+        }
 //        int result_code = sh_core::EmbeddedFunc::call(nargs, argv);
 //        return result_code;
         return EXIT_SUCCESS;

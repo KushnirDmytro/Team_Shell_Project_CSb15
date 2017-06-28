@@ -355,7 +355,7 @@ namespace extrn {
 
         if (needToPrintHelp(nargs, argv)) {
             outputHelp(help_info_);
-            return 1;
+            return EXIT_SUCCESS;
         }
 
         extractPassesFromArgs(nargs, argv, &passes_to_apply_);

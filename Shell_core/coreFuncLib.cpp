@@ -94,7 +94,7 @@ namespace sh_core{
         printf(" Registered external functions:\n");
 
         printf(" 'mls' (detailed options mls -h) to list directory contain\n");
-        printf(" 'mgrep' <filter_condition> (detailed options mgrep -h) [args list] returnes filtered according to rule args\n");
+        printf(" 'mgrep' (detailed options mgrep -h) <args list> <to> copies one file  to another\n");
 
         printf(" 'mmv' <filename> <directory>  moves <filename> to <directory> \n");
         printf(" 'mrm' FULL filename removes selected file\n");
@@ -170,8 +170,7 @@ namespace sh_core{
                 {"mrm", absPathTo("mrm")},
                 {"mcp", absPathTo("mcp")},
                 {"mmv", absPathTo("mmv")},
-                {"mmkdir", absPathTo("mmkdir")},
-                {"mgrep", absPathTo("mgrep")}
+                {"mmkdir", absPathTo("mmkdir")}
         };
 
         embedded_lib_= {

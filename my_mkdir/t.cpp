@@ -11,7 +11,7 @@
 
 
 namespace extrn{
-    ExternGrep::ExternGrep(const string &name,
+    ExternMkdir::ExternMkdir(const string &name,
                 sh_core::callable_function funct_to_assign,
                 string &help_msg):ExternalFunc(name,
             funct_to_assign,
@@ -21,12 +21,16 @@ namespace extrn{
         noargs_allowed_ = false;
     }
 
-    int  ExternGrep::call(size_t nargs, char **argv){
+    int  ExternMkdir::call(size_t nargs, char **argv){
         initialNargs_ = nargs;
         initialVargs_ = argv;
+        if (needToPrintHelp(nargs, argv)) {
+            outputHelp(help_info_);
+            return EXIT_SUCCESS;
+        }
         int result_code = sh_core::EmbeddedFunc::call(nargs, argv);
         return result_code;
     };
 
-    ExternGrep::~ExternGrep(){};
+    ExternMkdir::~ExternMkdir(){};
 }
