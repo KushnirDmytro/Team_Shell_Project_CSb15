@@ -54,6 +54,8 @@ namespace sh_core {
         class ManagerIODescriptors{
 
         public:
+
+            // TODO move it to ENV
             ManagerIODescriptors(){
                 deskMemmory[0] = deskMemmory[1] = deskMemmory[2] = false;
             };

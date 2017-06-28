@@ -31,7 +31,7 @@ namespace sh_core {
 namespace extrn{
     int myMkdirStaticLauncher(size_t nargs, char **args);
 
-    extrn::ExternMkdir *MkdirObject; //forvard static declaration
+    extrn::ExternGrep *MgrepObject; //forvard static declaration
 
 //just activator-function
     int myMkdirStaticLauncher(size_t nargs, char **argv) {
@@ -67,12 +67,12 @@ int main(int argc, char **argv)
             "input mkdir <directoryName>  to create your directory (or directories)\n";
 
 
-    extrn::MkdirObject = new extrn::ExternMkdir("EXTERN_MKDIR", extrn::myMkdirStaticLauncher, mkdir_help);
+    extrn::MgrepObject = new extrn::ExternGrep("EXTERN_MKDIR", extrn::myMkdirStaticLauncher, mkdir_help);
 
-    int result = extrn::MkdirObject->call(static_cast<size_t >(argc), argv);
+    int result = extrn::MgrepObject->call(static_cast<size_t >(argc), argv);
 
     //=====================MEMORY CLEAN / SHUTDOWN==========================
-    delete extrn::MkdirObject;
+    delete extrn::MgrepObject;
     //=====================MEMORY CLEAN SHUTDOWN END==========================
 
     return result;

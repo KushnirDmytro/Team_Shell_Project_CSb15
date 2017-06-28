@@ -15,17 +15,17 @@
 
 namespace extrn {
 
-    class ExternMkdir : public ExternalFunc {
+    class ExternGrep : public ExternalFunc {
 
         bool allGoingFine = true;
     public:
-        ExternMkdir(const std::string &name,
+        ExternGrep(const std::string &name,
                     sh_core::callable_function funct_to_assign,
                     std::string &help_msg);
 
         int call(size_t nargs, char **argv) override;
 
-        ~ExternMkdir();
+        ~ExternGrep();
 
     };
 }

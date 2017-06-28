@@ -7,11 +7,11 @@
 
 
 #include <string>
-#include "ExternMkdir.h"
+#include "ExternGrep.h"
 
 
 namespace extrn{
-    ExternMkdir::ExternMkdir(const string &name,
+    ExternGrep::ExternGrep(const string &name,
                 sh_core::callable_function funct_to_assign,
                 string &help_msg):ExternalFunc(name,
             funct_to_assign,
@@ -21,12 +21,14 @@ namespace extrn{
         noargs_allowed_ = false;
     }
 
-    int  ExternMkdir::call(size_t nargs, char **argv){
+    int  ExternGrep::call(size_t nargs, char **argv){
         initialNargs_ = nargs;
         initialVargs_ = argv;
-        int result_code = sh_core::EmbeddedFunc::call(nargs, argv);
-        return result_code;
+        printf("PLACEHOLDER 4 GREP\n");
+//        int result_code = sh_core::EmbeddedFunc::call(nargs, argv);
+//        return result_code;
+        return EXIT_SUCCESS;
     };
 
-    ExternMkdir::~ExternMkdir(){};
+    ExternGrep::~ExternGrep(){};
 }

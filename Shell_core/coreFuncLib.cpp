@@ -93,11 +93,13 @@ namespace sh_core{
 
         printf(" Registered external functions:\n");
 
-        printf(" 'mls' (detailed options ls -h) to list directory contain\n");
+        printf(" 'mls' (detailed options mls -h) to list directory contain\n");
+        printf(" 'mgrep' <filter_condition> (detailed options mgrep -h) [args list] returnes filtered according to rule args\n");
 
         printf(" 'mmv' <filename> <directory>  moves <filename> to <directory> \n");
         printf(" 'mrm' FULL filename removes selected file\n");
         printf(" 'mcp' <from> <to> copies one file  to another\n");
+
 
         printf(" In case of external function option_name_ inputed (some Shell extentions) it will be executed if founded\n");
 
@@ -168,7 +170,8 @@ namespace sh_core{
                 {"mrm", absPathTo("mrm")},
                 {"mcp", absPathTo("mcp")},
                 {"mmv", absPathTo("mmv")},
-                {"mmkdir", absPathTo("mmkdir")}
+                {"mmkdir", absPathTo("mmkdir")},
+                {"mgrep", absPathTo("mgrep")}
         };
 
         embedded_lib_= {
